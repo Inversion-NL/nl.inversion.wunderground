@@ -1,0 +1,223 @@
+{
+    "id": "nl.inversion.wunderground",
+    "name": {
+        "en": "Weather Underground",
+        "nl": "Weather Underground"
+    },
+    "description": {
+        "en": "Informs you about the weather",
+        "nl": "Geeft je informatie over het weer"
+    },
+    "version": "0.0.1",
+    "compatibility": "0.x || 1.x",
+    "category": "internet",
+    "author": {
+        "name": "Robin van Kekem",
+        "email": "roady1979@gmail.com"
+    },
+    "permissions": [
+        "homey:manager:speech-input",
+        "homey:manager:speech-output",
+        "homey:manager:geolocation"
+    ],
+    "dependencies": {
+        "wundernode": "*"
+    },
+    "flow": {
+
+        "triggers": [
+            {
+              "id": "temp_changed",
+              "title": {
+                  "en": "Temperature has changed",
+                  "nl": "Temperatuur is veranderd"
+              },
+              "tokens": [
+                {
+                    "name": "temp",
+                    "title": {
+                        "en": "temp",
+                        "nl": "temp"
+                    },
+                    "example": {
+                        "en": "5",
+                        "nl": "5"
+                    }
+                },
+                {
+                  "name": "hum",
+                  "title": {
+                    "en": "hum",
+                    "nl": "vocht"
+                  },
+                  "example": {
+                    "en": "50%",
+                    "nl": "50%"
+                  }
+                },
+                {
+                  "name": "weather",
+                  "title": {
+                    "en": "weather",
+                    "nl": "weer"
+                  },
+                  "example": {
+                    "en": "Cloudy",
+                    "nl": "Bewolkt"
+                  }
+                }
+              ]
+          },
+          {
+            "id": "temp_above",
+            "title": {
+              "en": "Temperature is above",
+              "nl": "Temperatuur is hoger dan"
+            },
+            "tokens": [
+              {
+                "name": "temp",
+                "title": {
+                  "en": "temp",
+                  "nl": "temp"
+                },
+                "example": {
+                  "en": "5",
+                  "nl": "5"
+                }
+              },
+              {
+                "name": "hum",
+                "title": {
+                  "en": "hum",
+                  "nl": "vocht"
+                },
+                "example": {
+                  "en": "50%",
+                  "nl": "50%"
+                }
+              },
+              {
+                "name": "weather",
+                "title": {
+                  "en": "weather",
+                  "nl": "weer"
+                },
+                "example": {
+                  "en": "Cloudy",
+                  "nl": "Bewolkt"
+                }
+              }
+            ],
+            "args":
+                [
+                  {
+                    "name": "variable",
+                    "type": "number",
+                    "placeholder" :
+                      {
+                        "en": "degrees celsius",
+                        "nl": "graden celsius"
+                      }
+                  }
+                ]
+          },
+          {
+            "id": "temp_below",
+            "title": {
+              "en": "Temperature is below",
+              "nl": "Temperatuur is lager dan"
+            },
+            "tokens": [
+              {
+                "name": "temp",
+                "title": {
+                  "en": "temp",
+                  "nl": "temp"
+                },
+                "example": {
+                  "en": "5",
+                  "nl": "5"
+                }
+              },
+              {
+                "name": "hum",
+                "title": {
+                  "en": "hum",
+                  "nl": "vocht"
+                },
+                "example": {
+                  "en": "50%",
+                  "nl": "50%"
+                }
+              },
+              {
+                "name": "weather",
+                "title": {
+                  "en": "weather",
+                  "nl": "weer"
+                },
+                "example": {
+                  "en": "Cloudy",
+                  "nl": "Bewolkt"
+                }
+              }
+            ],
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "degrees celsius",
+                  "nl": "graden celsius"
+                }
+              }
+            ]
+          }
+        ],
+
+        "conditions": [
+          {
+            "id": "temp_above",
+            "title": {
+              "en": "Temperature !{{is|isn't}} above",
+              "nl": "Temperatuur !{{is|is niet}} hoger dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "degrees celsius",
+                  "nl": "graden celsius"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "temp_below",
+            "title": {
+              "en": "Temperature !{{is|isn't}} below",
+              "nl": "Temperatuur !{{is|is niet}} lager dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "degrees celsius",
+                  "nl": "graden celsius"
+                }
+              }
+            ]
+          }
+        ]
+    }
+}

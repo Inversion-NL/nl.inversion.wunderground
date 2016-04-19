@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+
+</head>
+<body>
+
+<h1>Weather Underground</h1>
+<p>On this page, you will be able to adjust the settings of the Weather Underground app.</p>
+
+<p id="error" style="color: red;"></p>
+<p id="success" style="color: #5fd225;"></p>
+
+<fieldset>
+    <legend>Settings</legend>
+
+    <div class="field row">
+        <label for="country">Country</label>
+        <input id="country" type="text" value=""/>
+    </div>
+
+    <div class="field row">
+        <label for="city">City</label>
+        <input id="city" type="text" value=""/>
+    </div>
+
+    <div class="field row">
+        <label for="update">Update every (min)</label>
+        <input id="update" type="number" value=""/>
+    </div>
+
+</fieldset>
+
+<button class="right" id="saver" onclick="save()">Save changes</button>
+
+<script type="text/javascript">
+    function onHomeyReady(){
+        Homey.get('country', function(err, country) {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById('country').value = country
+            }
+        })
+
+        Homey.get('city', function(err, city) {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById('city').value = city
+            }
+        })
+
+        Homey.get('update', function(err, update) {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById('update').value = update
+            }
+        })
+
+        Homey.ready()
+    }
+    function save() {
+        Homey.set('country', document.getElementById('country').value);
+        Homey.set('city', document.getElementById('city').value);
+        Homey.set('update', document.getElementById('update').value);
+    }
+</script>
+
+</body>
+</html>
