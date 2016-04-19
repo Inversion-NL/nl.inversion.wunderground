@@ -26,7 +26,7 @@ var self = {
         Homey.log("");
         Homey.log("Locale: " + locale);
 
-        //self.createInsightsLog();
+        self.createInsightsLog();
 
         // Get user settings
         update = Homey.manager('settings').get('update');
@@ -63,7 +63,10 @@ var self = {
         if (temp_c_int > args.variable) {
             Homey.log("temp is above!");
             callback(null, true);       // err, result
-        } else callback(null, false);   // err, result
+        } else {
+            Homey.log("temp is not above");
+            callback(null, false);   // err, result
+        }
 },
 
     tempBelow: function(callback, args) {
@@ -74,7 +77,10 @@ var self = {
         if (temp_c_int < args.variable) {
             Homey.log("temp is below!");
             callback(null, true);       // err, result
-        } else callback(null, false);   // err, result
+        } else {
+            Homey.log("temp is not below");
+            callback(null, false);   // err, result
+        }
     },
 
     //get location
@@ -130,7 +136,7 @@ var self = {
                 if (err) {
                     // Catch error
                     Homey.log("Request error:");
-                    Homey.log(err);
+                    return Homey.error(err);
                 } else {
                     //Homey.log(response);
                     var city = response.current_observation.display_location.city;
@@ -150,10 +156,15 @@ var self = {
                     if (value_exist(wind_dir)) Homey.log("Wind direction: " + wind_dir);
                     if (value_exist(wind_degrees)) Homey.log("Wind degrees: " + wind_degrees);
                     if (value_exist(wind_kph)) Homey.log("Wind speed: " + wind_kph);
-                    if (value_exist(pressure_mb)) Homey.log("Pressure: " + pressure_mb);
                     if (value_exist(dewpoint_c)) Homey.log("Dew point: " + dewpoint_c);
-                    if (value_exist(feelslike_c)) Homey.log("Feels like: " + feelslike_c);
-
+                    if (value_exist(pressure_mb)) {
+                        Homey.log("Pressure: " + pressure_mb);
+                        pressure_mb = parseInt(pressure_mb);
+                    }
+                    if (value_exist(feelslike_c)) {
+                        Homey.log("Feels like: " + feelslike_c);
+                        feelslike_c = parseInt(feelslike_c);
+                    }
                     if (value_exist(relative_humidity)) {
                         // Cut % sign
                         relative_humidity = relative_humidity.substring(0, relative_humidity.length - 1);
@@ -179,7 +190,14 @@ var self = {
                         // Start triggers
                         self.tempAboveBelow(temp_c_int, relative_humidity, weather_state);
 
-                        //addInsightsEntryTemp(temp_c_int);
+                        // Add data to insights
+                        self.addInsightsEntryTemp(temp_c_int);
+                        self.addInsightsEntryHum(hum_int);
+                        self.addInsightsEntryFeelsLike(feelslike_c);
+                        self.addInsightsEntryPressure(pressure_mb);
+                        self.addInsightsEntryWindSpeed(wind_kph);
+                        self.addInsightsEntryDewPoint(dewpoint_c);
+
                     }
                     if (value_exist(observation_epoch)) {
                         var date = new Date(0);
@@ -188,7 +206,7 @@ var self = {
                     }
                 }
             }
-       )
+      )
     },
 
     // Handler for status changes
@@ -208,57 +226,161 @@ var self = {
         Homey.log('Sending trigger temp_above and temp_below with tokens: ' + JSON.stringify(tokens));
         Homey.manager('flow').trigger('temp_above', tokens);
         Homey.manager('flow').trigger('temp_below', tokens);
-    }
-/*
-    createInsightsLog: function() {
-        // Get a log, made by this app
-        Homey.manager('insights').getLog(string 'temp', function callback(mixed err, array logs) {
-            if (err) {
-                Homey.manager('insights').createLog('temp', {
-                    label: {
-                        en: 'Temperature',
-                        nl: 'Temperatuur'
-                    },
-                    type: 'number',
-                    units: {
-                        en: 'C'
-                        nl: 'C'
-                    },
-                    decimals: 0
-                }, function callback(err , success){
-                    if(err) return Homey.error(err);
-                });
-            }
-        };
+    },
 
-        Homey.manager('insights').getLog(string 'hum', function callback(mixed err, array logs) {
-            if (err) {
-                Homey.manager('insights').createLog('hum', {
-                    label: {
-                        en: 'Humidity (relative)',
-                        nl: 'Lucht vochtigheid (relatief)'
-                    },
-                    type: 'number',
-                    units: {
-                        en: '%'
-                        nl: '%'
-                    },
-                    decimals: 0
-                }, function callback(err , success){
-                    if(err) return Homey.error(err);
-                });
+    createInsightsLog: function() {
+
+        Homey.manager('insights').createLog('temp', {
+            label: {
+                en: 'Temperature',
+                nl: 'Temperature'
+            },
+            type: 'number',
+            units: {
+                en: 'C',
+                nl: 'C'
+            },
+            decimals: 0
+            },
+        function callback(err, success){
+            if(err) {
+                Homey.log('createLog temp');
+                return Homey.error(err);
             }
-        };
+        });
+
+        Homey.manager('insights').createLog('hum', {
+            label: {
+                en: 'Humidity (relative)',
+                nl: 'Vochtigheid (relatieve)'
+            },
+            type: 'number',
+            units: {
+                en: '%',
+                nl: '%'
+            },
+            decimals: 0
+            },
+        function callback(err, success){
+            if(err) {
+                Homey.log('createLog hum');
+                return Homey.error(err);
+            }
+        });
+
+        Homey.manager('insights').createLog('feelslike_c', {
+            label: {
+                en: 'Feels like',
+                nl: 'Gevoelstemperatuur'
+            },
+            type: 'number',
+            units: {
+                en: 'C',
+                nl: 'C'
+            },
+            decimals: 0
+            },
+        function callback(err, success){
+            if(err) {
+                Homey.log('createLog feelslike_c');
+                return Homey.error(err);
+            }
+        });
+
+        Homey.manager('insights').createLog('pressure_mb', {
+            label: {
+                en: 'Pressure',
+                nl: 'Luchtdruk'
+            },
+            type: 'number',
+            units: {
+                en: 'mbar',
+                nl: 'mbar'
+            },
+            decimals: 0
+            },
+        function callback(err, success){
+            if(err) {
+                Homey.log('createLog pressure_mb');
+                return Homey.error(err);
+            }
+        });
+
+        Homey.manager('insights').createLog('wind_kph', {
+            label: {
+                en: 'Wind speed',
+                nl: 'Windsnelheid'
+            },
+            type: 'number',
+            units: {
+                en: 'kph',
+                nl: 'kph'
+            },
+            decimals: 0
+            },
+        function callback(err, success){
+            if(err) {
+                Homey.log('createLog wind_kph');
+                return Homey.error(err);
+            }
+        });
+
+        Homey.manager('insights').createLog('dewpoint_c', {
+            label: {
+                en: 'Dew point',
+                nl: 'Dauwpunt'
+            },
+            type: 'number',
+            units: {
+                en: 'C',
+                nl: 'C'
+            },
+            decimals: 0
+            },
+        function callback(err, success){
+            if(err) {
+                Homey.log('createLog dewpoint_c');
+                return Homey.error(err);
+            }
+        });
+
     },
 
     addInsightsEntryTemp: function(temp) {
-        Homey.manager('insights').createEntry('temp', temp, new Date(), function(err, success){})
+        Homey.manager('insights').createEntry('temp', temp, new Date(), function(err, success){
+            if (err) return Homey.error(err);
+        })
     },
 
     addInsightsEntryHum: function(hum) {
-        Homey.manager('insights').createEntry('hum', hum, new Date(), function(err, success){})
+        Homey.manager('insights').createEntry('hum', hum, new Date(), function(err, success){
+            if (err) return Homey.error(err);
+        })
+    },
+
+    addInsightsEntryFeelsLike: function(feelslike_c) {
+        Homey.manager('insights').createEntry('feelslike_c', feelslike_c, new Date(), function(err, success){
+            if (err) return Homey.error(err);
+        })
+    },
+
+    addInsightsEntryPressure: function(pressure_mb) {
+        Homey.manager('insights').createEntry('pressure_mb', pressure_mb, new Date(), function(err, success){
+            if (err) return Homey.error(err);
+        })
+    },
+
+    addInsightsEntryWindSpeed: function(wind_kph) {
+        Homey.manager('insights').createEntry('wind_kph', wind_kph, new Date(), function(err, success){
+            if (err) return Homey.error(err);
+        })
+    },
+
+    addInsightsEntryDewPoint: function(dewpoint_c) {
+        Homey.manager('insights').createEntry('dewpoint_c', dewpoint_c, new Date(), function(err, success){
+            if (err) return Homey.error(err);
+        })
     }
-    */
 }
 
 module.exports = self;
