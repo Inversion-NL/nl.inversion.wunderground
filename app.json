@@ -56,7 +56,7 @@
                   }
                 },
                 {
-                  "name": "weather",
+                  "name": "weather_descr",
                   "title": {
                     "en": "weather",
                     "nl": "weer"
@@ -68,6 +68,50 @@
                 }
               ]
           },
+
+          {
+            "id": "hum_changed",
+            "title": {
+              "en": "Humidity has changed",
+              "nl": "Luchtvochtigheid is veranderd"
+            },
+            "tokens": [
+              {
+                "name": "hum",
+                "title": {
+                  "en": "hum",
+                  "nl": "vocht"
+                },
+                "example": {
+                  "en": "50",
+                  "nl": "50"
+                }
+              },
+              {
+                "name": "temp",
+                "title": {
+                  "en": "temp",
+                  "nl": "temp"
+                },
+                "example": {
+                  "en": "5",
+                  "nl": "5"
+                }
+              },
+              {
+                "name": "weather_descr",
+                "title": {
+                  "en": "weather",
+                  "nl": "weer"
+                },
+                "example": {
+                  "en": "Cloudy",
+                  "nl": "Bewolkt"
+                }
+              }
+            ]
+          },
+
           {
             "id": "temp_above",
             "title": {
@@ -98,7 +142,7 @@
                 }
               },
               {
-                "name": "weather",
+                "name": "weather_descr",
                 "title": {
                   "en": "weather",
                   "nl": "weer"
@@ -122,6 +166,7 @@
                   }
                 ]
           },
+
           {
             "id": "temp_below",
             "title": {
@@ -152,7 +197,117 @@
                 }
               },
               {
-                "name": "weather",
+                "name": "weather_descr",
+                "title": {
+                  "en": "weather",
+                  "nl": "weer"
+                },
+                "example": {
+                  "en": "Cloudy",
+                  "nl": "Bewolkt"
+                }
+              }
+            ],
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "degrees celsius",
+                  "nl": "graden celsius"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "hum_above",
+            "title": {
+              "en": "Humidity is above",
+              "nl": "Luchtvochtigheid is hoger dan"
+            },
+            "tokens": [
+              {
+                "name": "hum",
+                "title": {
+                  "en": "hum",
+                  "nl": "vocht"
+                },
+                "example": {
+                  "en": "50%",
+                  "nl": "50%"
+                }
+              },
+              {
+                "name": "temp",
+                "title": {
+                  "en": "temp",
+                  "nl": "temp"
+                },
+                "example": {
+                  "en": "5",
+                  "nl": "5"
+                }
+              },
+              {
+                "name": "weather_descr",
+                "title": {
+                  "en": "weather",
+                  "nl": "weer"
+                },
+                "example": {
+                  "en": "Cloudy",
+                  "nl": "Bewolkt"
+                }
+              }
+            ],
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "humidity (%)",
+                  "nl": "Luchtvochtigheid (%)"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "hum_below",
+            "title": {
+              "en": "Humidity is below",
+              "nl": "Luchtvochtigheid is lager dan"
+            },
+            "tokens": [
+              {
+                "name": "hum",
+                "title": {
+                  "en": "hum",
+                  "nl": "vocht"
+                },
+                "example": {
+                  "en": "50%",
+                  "nl": "50%"
+                }
+              },
+              {
+                "name": "temp",
+                "title": {
+                  "en": "temp",
+                  "nl": "temp"
+                },
+                "example": {
+                  "en": "5",
+                  "nl": "5"
+                }
+              },
+              {
+                "name": "weather_descr",
                 "title": {
                   "en": "weather",
                   "nl": "weer"
@@ -214,6 +369,46 @@
                 {
                   "en": "degrees celsius",
                   "nl": "graden celsius"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "hum_above",
+            "title": {
+              "en": "Humidity !{{is|isn't}} above",
+              "nl": "Vochtigheid !{{is|is niet}} hoger dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "Percentage",
+                  "nl": "Percentage"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "hum_below",
+            "title": {
+              "en": "Humidity !{{is|isn't}} below",
+              "nl": "Vochtigheid !{{is|is niet}} lager dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "Percentage",
+                  "nl": "Percentage"
                 }
               }
             ]
