@@ -188,7 +188,6 @@ var self = {
                         temp_c: parseFloat(response.current_observation.temp_c),
                         relative_humidity: hum_float,
                         observation_epoch: response.current_observation.observation_epoch,
-                        pressure_mb: parseInt(response.current_observation.pressure_mb),
                         feelslike_c: parseFloat(response.current_observation.feelslike_c),
                         dewpoint_c: parseFloat(response.current_observation.dewpoint_c),
                         pressure_mb: parseFloat(response.current_observation.pressure_mb),
