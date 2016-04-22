@@ -34,7 +34,7 @@ var self = {
         // Set default
         var update = 10;
 	
-        Homey.log("Initializing Weather Underground");
+        Homey.log("-- Initializing Weather Underground");
         Homey.log("");
         Homey.log("Locale: " + locale);
 
@@ -69,7 +69,7 @@ var self = {
 
     tempAbove: function(callback, args) {
         Homey.log("");
-        Homey.log("function temp above");
+        Homey.log("-- Function temp above");
         Homey.log("Current temp: " + temp_c_global);
         Homey.log("args.variable: " + args.variable);
         if (temp_c_global > args.variable) {
@@ -83,7 +83,7 @@ var self = {
 
     tempBelow: function(callback, args) {
         Homey.log("");
-        Homey.log("function temp below");
+        Homey.log("-- Function temp below");
         Homey.log("Current temp: " + temp_c_global);
         Homey.log("args.variable: " + args.variable);
         if (temp_c_global < args.variable) {
@@ -97,7 +97,7 @@ var self = {
 
     humAbove: function(callback, args) {
         Homey.log("");
-        Homey.log("function hum above");
+        Homey.log("-- Function hum above");
         Homey.log("Current hum: " + hum_global);
         Homey.log("args.variable: " + args.variable);
         if (hum_global > args.variable) {
@@ -111,7 +111,7 @@ var self = {
 
     humBelow: function(callback, args) {
         Homey.log("");
-        Homey.log("function hum below");
+        Homey.log("-- Function hum below");
         Homey.log("Current hum: " + hum_global);
         Homey.log("args.variable: " + args.variable);
         if (hum_global < args.variable) {
@@ -125,7 +125,8 @@ var self = {
 
     //get location
     getLocation: function(callback) {
-        Homey.log("Get geolocation");
+        Homey.log("");
+        Homey.log("-- Get geolocation");
 
         Homey.manager('geolocation').on('location', function (location) {
             Homey.log(location);
@@ -149,7 +150,7 @@ var self = {
     // update the weather
     updateWeather: function() {
         Homey.log("");
-        Homey.log("Update Weather");
+        Homey.log("-- Update Weather");
 
         if (lat == undefined) { //if no location, try to get it
             Homey.log("Latitude is undefined, fetching location")
@@ -158,18 +159,24 @@ var self = {
         };
 
         // Set default values
-        var country = 'CA'
-        var city = 'San_Francisco'
-        var address = country + '/' + city;
+        var address;
 
         // Get user settings
-        country = Homey.manager('settings').get('country');
-        city = Homey.manager('settings').get('city');
-
-        // Check user settings
-        if (value_exist(country) && value_exist(city)) address = country + '/' + city;
-        else Homey.log('One of the country/city fields is empty, setting defaults');
-        Homey.log('Requesting for: ' + address);
+        var country = Homey.manager('settings').get('country');
+        var city = Homey.manager('settings').get('city');
+        
+        if (value_exist(country) && value_exist(city) && country != '' && city != '') {
+            // Using user specified data
+            address = country + '/' + city;
+            Homey.log('Using user specified location data: ' + address);
+        } else if (value_exist(lat) && value_exist(lon) && lat != '' && lon != '') {
+            // Using homey location
+            address = lat + ',' + lon;
+            Homey.log('Using Homey\'s location: ' + address);
+        } else {
+            // Setting default location
+            address = "Netherlands/Amsterdam"
+        }
 
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
@@ -195,12 +202,11 @@ var self = {
                         wind_degrees: parseFloat(response.current_observation.wind_degrees),
                         wind_dir: response.current_observation.wind_dir
                     };
-
+                    Homey.log('Weather for ' + weatherData.city);
                     Homey.log("Observation time: " + epochToString(weatherData.observation_epoch));
 
                     // Temperature triggers and conditions
                     if (value_exist(weatherData.temp_c)) {
-                        Homey.log('Temp: ' + weatherData.temp_c);
 
                         // Assign global temp variable
                         temp_c_global = weatherData.temp_c;
@@ -221,7 +227,7 @@ var self = {
                         self.tempAboveBelow(weatherData.temp_c, weatherData.relative_humidity, weatherData.weather_descr);
                     } else {
                         // No temperature data available!
-                        Homey.log('Temperature is undefined!')
+                        Homey.log('Temperature value is undefined!')
                     }
 
                     // Humidity triggers and conditions
@@ -241,7 +247,7 @@ var self = {
                         self.humAboveBelow(weatherData.temp_c, weatherData.relative_humidity, weatherData.weather_descr);
                     } else {
                         // No temperature data available!
-                        Homey.log('Humidity is undefined!')
+                        Homey.log('Humidity value is undefined!')
                     }
 
                     // Add data to insights
@@ -261,7 +267,7 @@ var self = {
         var tokens = {'temp': temp,
                       'hum': hum,
                       'weather_descr': weather_descr};
-        Homey.log('Sending trigger temp_changed with tokens: ' + JSON.stringify(tokens));
+        Homey.log('-- Sending trigger temp_changed with tokens: ' + JSON.stringify(tokens));
         Homey.manager('flow').trigger('temp_changed', tokens);
     },
 
@@ -270,7 +276,7 @@ var self = {
         var tokens = {'temp': temp,
                       'hum': hum,
                       'weather_descr': weather_descr};
-        Homey.log('Sending trigger hum_changed with tokens: ' + JSON.stringify(tokens));
+        Homey.log('-- Sending trigger hum_changed with tokens: ' + JSON.stringify(tokens));
         Homey.manager('flow').trigger('hum_changed', tokens);
     },
 
@@ -279,6 +285,7 @@ var self = {
         var tokens = {'temp': temp,
                       'hum': hum,
                       'weather_descr': weather_descr};
+        Homey.log('-- Sending trigger tempAboveBelow with tokens: ' + JSON.stringify(tokens));
         Homey.manager('flow').trigger('temp_above', tokens);
         Homey.manager('flow').trigger('temp_below', tokens);
     },
@@ -288,16 +295,38 @@ var self = {
         var tokens = {'temp': temp,
                       'hum': hum,
                       'weather_descr': weather_descr};
+        Homey.log('-- Sending trigger humAboveBelow with tokens: ' + JSON.stringify(tokens));
         Homey.manager('flow').trigger('hum_above', tokens);
         Homey.manager('flow').trigger('hum_below', tokens);
     },
+    
+    deleteAllInsightsLogs: function() {
+        Homey.log('-- Delete all Insights logs!');
+        Homey.manager('insights').getLogs(function callback(err, logs){
+           if(err) {
+               Homey.log('Get insights log error:');
+               return Homey.error(err);
+           } else {
+                Homey.log('Insight logs: ' + JSON.stringify(logs));
+                
+                for (var l in logs) {
+                    var name = logs[l].name;
+                    Homey.log('Insights log: ' + name);
+                    Homey.manager('insights').deleteLog(name, function(err, success) {
+                        Homey.log('Deleted Insights log: ' + err + ' ' + success);
+                    });
+                }
+           } 
+        });
+    },
 
     createInsightsLog: function() {
-
+        Homey.log('-- Create Insights logs');
+        
         Homey.manager('insights').createLog('temp', {
             label: {
                 en: 'Temperature',
-                nl: 'Temperature'
+                nl: 'Temperatuur'
             },
             type: 'number',
             units: {
@@ -308,7 +337,7 @@ var self = {
             },
         function callback(err, success){
             if(err) {
-                Homey.log('createLog temp');
+                Homey.log('createLog temp error');
                 return Homey.error(err);
             }
         });
@@ -327,7 +356,7 @@ var self = {
             },
         function callback(err, success){
             if(err) {
-                Homey.log('createLog hum');
+                Homey.log('createLog hum error');
                 return Homey.error(err);
             }
         });
@@ -346,7 +375,7 @@ var self = {
             },
         function callback(err, success){
             if(err) {
-                Homey.log('createLog feelslike_c');
+                Homey.log('createLog feelslike_c error');
                 return Homey.error(err);
             }
         });
@@ -365,7 +394,7 @@ var self = {
             },
         function callback(err, success){
             if(err) {
-                Homey.log('createLog pressure_mb');
+                Homey.log('createLog pressure_mb error');
                 return Homey.error(err);
             }
         });
@@ -384,7 +413,7 @@ var self = {
             },
         function callback(err, success){
             if(err) {
-                Homey.log('createLog wind_kph');
+                Homey.log('createLog wind_kph error');
                 return Homey.error(err);
             }
         });
@@ -403,7 +432,7 @@ var self = {
             },
         function callback(err, success){
             if(err) {
-                Homey.log('createLog dewpoint_c');
+                Homey.log('createLog dewpoint_c error');
                 return Homey.error(err);
             }
         });
@@ -411,6 +440,7 @@ var self = {
     },
 
     addInsightsEntry: function(logName, value) {
+        Homey.log('-- Add Insights entry in ' + logName + ' with value ' + value);
         Homey.manager('insights').createEntry(logName, value, new Date(), function(err, success){
             if (err) return Homey.error(err);
         })
