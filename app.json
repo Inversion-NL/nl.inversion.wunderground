@@ -12,8 +12,8 @@
     "compatibility": "0.x || 1.x",
     "category": "internet",
     "author": {
-        "name": "Robin van Kekem",
-        "email": "roady1979@gmail.com"
+        "name": "Inversion NL",
+        "email": "inversion-nl@gmail.com"
     },
     "permissions": [
         "homey:manager:speech-input",

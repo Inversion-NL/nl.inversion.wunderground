@@ -1,1 +1,21 @@
-{}
+{
+    "settings" : {
+        "app" : {
+            "title" : "Weather Underground instellingen",
+            "description" : "Op deze pagina kun je de instellingen van Weather Underground aanpassen.",
+            
+            "location" : {
+                "location" : "locatie",
+                "autolocation" : "Gebruik Homey's locatie",
+                "manual_location" : "Handmatige location",
+                "city" : "Stad",
+                "country" : "Land",
+                "update_frequenty" : "Bijwerken elke (min)"
+            },
+            
+            "button" : {
+                "save" : "Opslaan"
+            }
+        }
+    }
+}

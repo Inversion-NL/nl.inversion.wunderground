@@ -165,6 +165,9 @@ var self = {
         // Get user settings
         country = Homey.manager('settings').get('country');
         city = Homey.manager('settings').get('city');
+        
+        var autolocation = Homey.manager('settings').get('autolocation');
+        Homey.log('Auto location setting: ' + JSON.stringify(autolocation));
 
         // Check user settings
         if (value_exist(country) && value_exist(city) && country != "" && city != "") 

@@ -1,1 +1,21 @@
-{}
+{
+    "settings" : {
+        "app" : {
+            "title" : "Weather Underground settings",
+            "description" : "On this page, you will be able to adjust the settings of the Weather Underground app.",
+            
+            "location" : {
+                "location" : "location",
+                "autolocation" : "Use Homey's location",
+                "manual_location" : "Manual location",
+                "city" : "City",
+                "country" : "Country",
+                "update_frequenty" : "Update every (min)"
+            },
+            
+            "button" : {
+                "save" : "Save"
+            }
+        }
+    }
+}

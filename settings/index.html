@@ -5,33 +5,46 @@
 </head>
 <body>
 
-<h1>Weather Underground</h1>
-<p>On this page, you will be able to adjust the settings of the Weather Underground app.</p>
+<h1 data-i18n="settings.app.title"></h1>
+<p data-i18n="settings.app.description"></p>
 
-<p id="error" style="color: red;"></p>
-<p id="success" style="color: #5fd225;"></p>
-
-<fieldset>
-    <legend>Settings</legend>
-
+<form id="locationform">
+    <fieldset name="location">
+    <legend>
+      <label data-i18n="settings.app.location.location"></label>
+    </legend>
+    <p>
     <div class="field row">
-        <label for="country">Country</label>
+        <input id="autolocation" type="checkbox" checked="on"
+            onchange="locationform.locationfields.disabled = checked">
+        <label data-i18n="settings.app.location.autolocation"></label>
+    </div>
+    </p>
+       
+    <fieldset name="locationfields" disabled>    
+    <legend>
+      <label data-i18n="manual_location"></label>
+    </legend>
+        
+    <div class="field row">
+        <label data-i18n="settings.app.location.country"></label>
         <input id="country" type="text" value=""/>
     </div>
 
     <div class="field row">
-        <label for="city">City</label>
+        <label data-i18n="settings.app.location.city"></label>
         <input id="city" type="text" value=""/>
     </div>
 
     <div class="field row">
-        <label for="update">Update every (min)</label>
+        <label data-i18n="settings.app.location.update_frequenty"></label>
         <input id="update" type="number" value=""/>
     </div>
+    </fieldset>
+  </fieldset>
+</form>
 
-</fieldset>
-
-<button class="right" id="saver" onclick="save()">Save changes</button>
+<button class="right" id="saver" onclick="save()" data-i18n="settings.app.button.save"></button>
 
 <script type="text/javascript">
     function onHomeyReady(){
@@ -58,6 +71,14 @@
                 document.getElementById('update').value = update
             }
         })
+        
+        Homey.get('autolocation', function(err, update) {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById('autolocation').value = autolocation
+            }
+        })
 
         Homey.ready()
     }
@@ -65,6 +86,7 @@
         Homey.set('country', document.getElementById('country').value);
         Homey.set('city', document.getElementById('city').value);
         Homey.set('update', document.getElementById('update').value);
+        Homey.set('autolocation', document.getElementById('autolocation').value);
     }
 </script>
 
