@@ -167,9 +167,13 @@ var self = {
         city = Homey.manager('settings').get('city');
 
         // Check user settings
-        if (value_exist(country) && value_exist(city)) address = country + '/' + city;
-        else Homey.log('One of the country/city fields is empty, setting defaults');
-        Homey.log('Requesting for: ' + address);
+        if (value_exist(country) && value_exist(city) && country != "" && city != "") 
+            address = country + '/' + city;
+        else if (value_exist(lat) && value_exist(lon) && lat != 0 && lon != 0) {
+            address = lat + ',' + lon;
+        } else Homey.log('One of the country/city fields is empty, setting defaults');
+        
+        Homey.log('Requesting for city: ' + address);
 
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
