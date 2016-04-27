@@ -1,9 +1,11 @@
 "use strict";
 
 var Wunderground = require('wundergroundnode');
-var myKey = 'a7256235ef0a930e';
 var locale = Homey.manager('i18n').getLanguage();
-var wunderground = new Wunderground(myKey);
+var wunderground;
+var defaultUpdateTime = 60;
+var update_frequenty = defaultUpdateTime;
+var interval;
 
 var difMinute;
 var lat = null;
@@ -31,40 +33,102 @@ function diff(a,b) {
 var self = {
     // this `init` function will be run when Homey is done loading
     init: function() {
-        // Set default
-        var update_frequenty = 60;
-	
+        
         Homey.log("Initializing Weather Underground");
         Homey.log("");
         Homey.log("Locale: " + locale);
 
         self.createInsightsLog();
-
-        // Get user settings
-        update_frequenty = Homey.manager('settings').get('updateFrequenty');
-        Homey.log('Update every (user setting): ' + update_frequenty);
-
-        if (update_frequenty < 60 || update_frequenty > 1439 || !value_exist(update_frequenty)) {
-            update_frequenty = 60;                 // in minutes
-            Homey.log('Update value out of bounds, changed to: ' + update_frequenty + ' minutes');
-        }
+        
+        self.checkSettings();
 
         // Listen for triggers and conditions with a value
         Homey.manager('flow').on('trigger.temp_above', self.tempAbove);
         Homey.manager('flow').on('condition.temp_above', self.tempAbove);
         Homey.manager('flow').on('trigger.hum_below', self.humBelow);
         Homey.manager('flow').on('condition.hum_below', self.humBelow);
+        
+        // Listen for changes in settings
+        Homey.manager('settings').on('set', function(settingname) {
+            Homey.log("");
+            Homey.log('Setting has changed: ' + settingname);
+
+			// If key has changed
+			if (settingname == 'updateFrequenty') {
+                // If the frequenty is change we have to cancel the current interval and schedule a new
+                self.checkSettings();
+                Homey.log('Clearing current interval: ' + interval);
+                clearInterval(interval);
+                Homey.log('Scheduling weather update every: ' + update_frequenty);
+                self.scheduleWeather(update_frequenty);
+                Homey.log('Fetching weather right now');
+                self.updateWeather();
+			} else {
+                self.checkSettings();
+            }
+		});
 
         // Get location
         self.getLocation(function (result) {
-            // Update weather right now and every 10 minutes
+            // Update weather right now and schedule every user defined minutes
             self.updateWeather(function(difMinute){});
-
-            setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // in milliseconds
-            function trigger_update() {
-                self.updateWeather(function(difMinute){});
-            };
+            self.scheduleWeather(update_frequenty);
         });
+    },
+    
+    scheduleWeather: function(update_frequenty) {
+      Homey.log("");
+      Homey.log("Schedule weather");
+      interval = setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // To minutes
+          function trigger_update() {
+              self.updateWeather(function(difMinute){});
+          }; 
+    },
+    
+    checkSettings: function() {
+        Homey.log('');
+        Homey.log('Check settings');
+        // Check if user provided a key in settings
+        var myKey = Homey.manager('settings').get('wundergroundKey');
+        Homey.log('User specified personal key: ' + myKey);
+        var usePersonalKey = false;
+        if (!value_exist(myKey) || myKey == "") {
+            Homey.log('No personal key defined by user');
+            var inversionKey = Homey.env.WUNDERGROUND_KEY;
+            self.initWunderground(inversionKey);
+            Homey.log('Weather Underground Inversion key is: ' + inversionKey);
+        } else {
+            Homey.log('Personal key defined by user');
+            usePersonalKey = true;
+            self.initWunderground(myKey);
+            Homey.log('Weather Underground personal key is: ' + myKey);
+        }
+        
+        // Get user settings for update frequenty
+        update_frequenty = Homey.manager('settings').get('updateFrequenty');
+        Homey.log('Update every (user setting): ' + update_frequenty);
+
+        if (!usePersonalKey) {
+            // Using Inversion key, max update frequenty is 60 minutes
+            if (update_frequenty < defaultUpdateTime || update_frequenty > 1439 || !value_exist(update_frequenty)) {
+                Homey.log('Update value out of bounds: ' + update_frequenty + ' minutes');
+                update_frequenty = defaultUpdateTime;                 // in minutes
+                Homey.log('Update value: ' + update_frequenty + ' minutes');
+            }
+        } else {
+            // Using user personal key
+            if (update_frequenty < 1 || update_frequenty > 1439 || !value_exist(update_frequenty)) {
+                // Defaulting back to 60 minutes
+                Homey.log('Update value out of bounds: ' + update_frequenty + ' minutes');
+                update_frequenty = defaultUpdateTime;                 // in minutes
+                Homey.log('Update value: ' + update_frequenty + ' minutes');
+            }
+        }
+    },
+    
+    initWunderground: function(key) {
+        if (wunderground != null) wunderground = null;
+        wunderground = new Wunderground(key);
     },
 
     tempAbove: function(callback, args) {
@@ -125,9 +189,9 @@ var self = {
 
     //get location
     getLocation: function(callback) {
-        Homey.log("Get geolocation");
-
+        Homey.log("");
         Homey.manager('geolocation').on('location', function (location) {
+            Homey.log("Homey location changed");
             Homey.log(location);
             lat = location.latitude;
             lon = location.longitude;
@@ -135,9 +199,10 @@ var self = {
 
         Homey.manager('geolocation').getLocation(function(err, location) {
             if (typeof location.latitude == 'undefined' || location.latitude == 0) {
-                locationCallback(new Error("location is undefined"));
+                callback(new Error("location is undefined"));
                 return;
             } else {
+                Homey.log("Homey location found");
                 Homey.log(location);
                 lat = location.latitude;
                 lon = location.longitude;
@@ -203,7 +268,8 @@ var self = {
                         wind_degrees: parseFloat(response.current_observation.wind_degrees),
                         wind_dir: response.current_observation.wind_dir
                     };
-
+                    
+                    Homey.log("");
                     Homey.log("Observation time: " + epochToString(weatherData.observation_epoch));
 
                     // Temperature triggers and conditions

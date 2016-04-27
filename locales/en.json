@@ -4,6 +4,11 @@
             "title" : "Weather Underground settings",
             "description" : "On this page, you will be able to adjust the settings of the Weather Underground app.",
             
+            "wunderground" : {
+                "wunderground_title" : "Weather Underground settings",
+                "key" : "Personal key"
+            },
+            
             "location" : {
                 "location" : "Location",
                 "autolocation" : "Use Homey's location",

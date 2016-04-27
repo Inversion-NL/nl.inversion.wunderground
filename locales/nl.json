@@ -3,6 +3,11 @@
         "app" : {
             "title" : "Weather Underground instellingen",
             "description" : "Op deze pagina kun je de instellingen van Weather Underground aanpassen.",
+                    
+            "wunderground" : {
+                "wunderground_title" : "Weather Underground instellingen",
+                "key" : "Persoonlijke key"
+            },
             
             "location" : {
                 "location" : "Locatie",
