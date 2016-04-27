@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/tmsns/homey-json-schema/master/schema.json",
     "id": "nl.inversion.wunderground",
     "name": {
         "en": "Weather Underground",

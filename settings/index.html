@@ -13,17 +13,18 @@
     <legend>
       <label data-i18n="settings.app.location.location"></label>
     </legend>
+<!--
     <p>
-    <div class="field row">
-        <input id="autolocation" type="checkbox" checked="on"
+    <div class="field">
+        <input id="autolocation" type="checkbox" checked = true
             onchange="locationform.locationfields.disabled = checked">
         <label data-i18n="settings.app.location.autolocation"></label>
     </div>
     </p>
-       
-    <fieldset name="locationfields" disabled>    
+-->
+    <fieldset name="locationfields">    
     <legend>
-      <label data-i18n="manual_location"></label>
+      <label data-i18n="settings.app.location.manual_location"></label>
     </legend>
         
     <div class="field row">
@@ -38,7 +39,7 @@
 
     <div class="field row">
         <label data-i18n="settings.app.location.update_frequenty"></label>
-        <input id="update" type="number" value=""/>
+        <input id="updateFrequenty" type="number" value="10"/>
     </div>
     </fieldset>
   </fieldset>
@@ -64,15 +65,15 @@
             }
         })
 
-        Homey.get('update', function(err, update) {
+        Homey.get('updateFrequenty', function(err, updateFrequenty) {
             if (err) {
                 console.error(err)
             } else {
-                document.getElementById('update').value = update
+                document.getElementById('updateFrequenty').value = updateFrequenty
             }
         })
         
-        Homey.get('autolocation', function(err, update) {
+        Homey.get('autolocation', function(err, autolocation) {
             if (err) {
                 console.error(err)
             } else {
@@ -85,7 +86,7 @@
     function save() {
         Homey.set('country', document.getElementById('country').value);
         Homey.set('city', document.getElementById('city').value);
-        Homey.set('update', document.getElementById('update').value);
+        Homey.set('updateFrequenty', document.getElementById('updateFrequenty').value);
         Homey.set('autolocation', document.getElementById('autolocation').value);
     }
 </script>

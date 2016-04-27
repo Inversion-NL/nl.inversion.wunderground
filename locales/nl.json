@@ -5,7 +5,7 @@
             "description" : "Op deze pagina kun je de instellingen van Weather Underground aanpassen.",
             
             "location" : {
-                "location" : "locatie",
+                "location" : "Locatie",
                 "autolocation" : "Gebruik Homey's locatie",
                 "manual_location" : "Handmatige location",
                 "city" : "Stad",

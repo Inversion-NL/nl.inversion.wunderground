@@ -5,7 +5,7 @@
             "description" : "On this page, you will be able to adjust the settings of the Weather Underground app.",
             
             "location" : {
-                "location" : "location",
+                "location" : "Location",
                 "autolocation" : "Use Homey's location",
                 "manual_location" : "Manual location",
                 "city" : "City",

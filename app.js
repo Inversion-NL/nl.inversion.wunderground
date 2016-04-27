@@ -32,7 +32,7 @@ var self = {
     // this `init` function will be run when Homey is done loading
     init: function() {
         // Set default
-        var update = 10;
+        var update_frequenty = 60;
 	
         Homey.log("Initializing Weather Underground");
         Homey.log("");
@@ -41,12 +41,12 @@ var self = {
         self.createInsightsLog();
 
         // Get user settings
-        update = Homey.manager('settings').get('update');
-        Homey.log('Update every (user setting): ' + update);
+        update_frequenty = Homey.manager('settings').get('updateFrequenty');
+        Homey.log('Update every (user setting): ' + update_frequenty);
 
-        if (update < 10 || update > 1439 || !value_exist(update)) {
-            update = 10;                 // in minutes
-            Homey.log('Update value out of bounds, changed to: ' + update + ' minutes');
+        if (update_frequenty < 60 || update_frequenty > 1439 || !value_exist(update_frequenty)) {
+            update_frequenty = 60;                 // in minutes
+            Homey.log('Update value out of bounds, changed to: ' + update_frequenty + ' minutes');
         }
 
         // Listen for triggers and conditions with a value
@@ -60,7 +60,7 @@ var self = {
             // Update weather right now and every 10 minutes
             self.updateWeather(function(difMinute){});
 
-            setInterval(trigger_update.bind(this), update * 60 * 1000); // in milliseconds
+            setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // in milliseconds
             function trigger_update() {
                 self.updateWeather(function(difMinute){});
             };
@@ -167,7 +167,8 @@ var self = {
         city = Homey.manager('settings').get('city');
         
         var autolocation = Homey.manager('settings').get('autolocation');
-        Homey.log('Auto location setting: ' + JSON.stringify(autolocation));
+        if (autolocation) Homey.log('Auto location setting true: ' + JSON.stringify(autolocation));
+        else Homey.log('Auto location setting false: ' + JSON.stringify(autolocation));
 
         // Check user settings
         if (value_exist(country) && value_exist(city) && country != "" && city != "") 
