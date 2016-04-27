@@ -9,35 +9,37 @@
 <p data-i18n="settings.app.description"></p>
 
 <form id="locationform">
-    <fieldset name="wundergroundSet">
+    <fieldset id="wundergroundSet">
         <legend>
         <label data-i18n="settings.app.wunderground.wunderground_title"></label>
         </legend>
         <div class="field row">
-            <label class="form_label" for="wundergroundKey"  data-i18n="settings.app.wunderground.key"></label>
+            <label class="form_label" for="wundergroundKey" data-i18n="settings.app.wunderground.key"></label>
             <br>
             <input class="form_input" id="wundergroundKey" type="text" value="123456abcdef"/>
         </div>
     </fieldset>
     
-    <fieldset name="location">
+    <fieldset id="location">
         <legend>
         <label data-i18n="settings.app.location.location"></label>
         </legend>
-    <!--
+
         <p>
         <div class="field">
-            <input id="autolocation" type="checkbox" value="1"
+            <input class="checkbox" id="autolocation" type="checkbox" checked="true"
                 onchange="locationform.locationfields.disabled = checked">
-            <label data-i18n="settings.app.location.autolocation"></label>
+            <label class="form_label" for="autolocation" data-i18n="settings.app.location.autolocation"></label>
         </div>
         </p>
-    -->
-        <fieldset name="locationfields">    
+
+        <fieldset id="locationfields">    
             <legend>
-            <label data-i18n="settings.app.location.manual_location"></label>
-            </legend>`
-                
+            <label data-i18n="settings.app.location.manualLocation_label"></label>
+            </legend>
+            
+            <p data-i18n="settings.app.location.manualLocation_explanation"></p>
+            
             <div class="field row">
                 <label class="form_label" for="country" data-i18n="settings.app.location.country"></label>
                 <br>
@@ -49,6 +51,8 @@
                 <br>
                 <input class="form_input" input id="city" type="text" value="Amsterdam"/><br><br>
             </div>
+            
+            <p data-i18n="settings.app.location.updateFrequenty_explanation"></p>
 
             <div class="field row">
                 <label  class="form_label" for="updateFrequenty" data-i18n="settings.app.location.update_frequenty"></label>
@@ -62,6 +66,7 @@
 <button class="right" id="saver" onclick="save()" data-i18n="settings.app.button.save"></button>
 
 <script type="text/javascript">
+
     function onHomeyReady(){
         Homey.get('country', function(err, country) {
             if (err) {
@@ -86,15 +91,15 @@
                 document.getElementById('updateFrequenty').value = updateFrequenty
             }
         })
-        /*
+
         Homey.get('autolocation', function(err, autolocation) {
             if (err) {
                 console.error(err)
             } else {
-                document.getElementById('autolocation').value = autolocation
+                document.getElementById('autolocation').checked = autolocation
+                document.getElementById('locationfields').disabled = autolocation
             }
         })
-        */
         
         Homey.get('wundergroundKey', function(err, wundergroundKey) {
             if (err) {
@@ -106,11 +111,12 @@
 
         Homey.ready()
     }
+    
     function save() {
         Homey.set('country', document.getElementById('country').value);
         Homey.set('city', document.getElementById('city').value);
         Homey.set('updateFrequenty', document.getElementById('updateFrequenty').value);
-        //Homey.set('autolocation', document.getElementById('autolocation').value);
+        Homey.set('autolocation', document.getElementById('autolocation').checked);
         Homey.set('wundergroundKey', document.getElementById('wundergroundKey').value);
     }
 </script>

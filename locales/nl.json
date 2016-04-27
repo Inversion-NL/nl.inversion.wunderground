@@ -12,10 +12,12 @@
             "location" : {
                 "location" : "Locatie",
                 "autolocation" : "Gebruik Homey's locatie",
-                "manual_location" : "Handmatige location",
+                "manualLocation_label" : "Handmatige location",
+                "manualLocation_explanation" : "Als er geen stad en land ingegeven zijn wordt de locatie van Homey gebruikt voor de weergegevens.",
                 "city" : "Stad",
                 "country" : "Land",
-                "update_frequenty" : "Bijwerken elke (min)"
+                "update_frequenty" : "Bijwerken elke (min)",
+                "updateFrequenty_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 60 minuten."
             },
             
             "button" : {

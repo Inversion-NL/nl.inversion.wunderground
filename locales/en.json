@@ -12,10 +12,12 @@
             "location" : {
                 "location" : "Location",
                 "autolocation" : "Use Homey's location",
-                "manual_location" : "Manual location",
+                "manualLocation_label" : "Manual location",
+                "manualLocation_explanation" : "If there is no city and country specified, Homey's location is used.",
                 "city" : "City",
                 "country" : "Country",
-                "update_frequenty" : "Update every (min)"
+                "update_frequenty" : "Update every (min)",
+                "updateFrequenty_explanation" : "When no personal Weather Underground API key is specified, the update frequenty is 60 minutes minimal."
             },
             
             "button" : {

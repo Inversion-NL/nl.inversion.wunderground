@@ -6,6 +6,8 @@ var wunderground;
 var defaultUpdateTime = 60;
 var update_frequenty = defaultUpdateTime;
 var interval;
+var locationGetCounter = 1;
+var insightsLogs = ["temp", "hum", "feelslike_c", "pressure_mb", "wind_kph", "dewpoint_c"];
 
 var difMinute;
 var lat = null;
@@ -14,6 +16,7 @@ var temp_c_global;
 var hum_global;
 var oldTemp;
 var oldHum;
+var address;
 
 function value_exist(string) {
     if (typeof string != 'undefined') return true;
@@ -38,8 +41,7 @@ var self = {
         Homey.log("");
         Homey.log("Locale: " + locale);
 
-        self.createInsightsLog();
-        
+        self.checkInsightsLogs();
         self.checkSettings();
 
         // Listen for triggers and conditions with a value
@@ -78,7 +80,7 @@ var self = {
     
     scheduleWeather: function(update_frequenty) {
       Homey.log("");
-      Homey.log("Schedule weather");
+      Homey.log("Schedule weather every " + update_frequenty + " minutes");
       interval = setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // To minutes
           function trigger_update() {
               self.updateWeather(function(difMinute){});
@@ -88,9 +90,9 @@ var self = {
     checkSettings: function() {
         Homey.log('');
         Homey.log('Check settings');
+        
         // Check if user provided a key in settings
         var myKey = Homey.manager('settings').get('wundergroundKey');
-        Homey.log('User specified personal key: ' + myKey);
         var usePersonalKey = false;
         if (!value_exist(myKey) || myKey == "") {
             Homey.log('No personal key defined by user');
@@ -124,10 +126,62 @@ var self = {
                 Homey.log('Update value: ' + update_frequenty + ' minutes');
             }
         }
+        
+        // Set default values
+        var country = 'Netherlands'
+        var city = 'Amsterdam'
+        address = country + '/' + city;
+        var autolocation = true;
+
+        // Get user settings
+        country = Homey.manager('settings').get('country');
+        city = Homey.manager('settings').get('city');
+        autolocation = Homey.manager('settings').get('autolocation');
+
+        // Check user settings
+        if (autolocation) {
+            Homey.log('Use Homey\'s location');
+            if (value_exist(lat) && value_exist(lon) && lat != 0 && lon != 0 && lat != null && lon != null) {
+                Homey.log('Using lat lon for location');
+                Homey.log('lat: ' + lat + " lon: " + lon);
+                address = lat + ',' + lon;
+            } else {
+                Homey.log('Lat lon data invalid'); 
+                if (locationGetCounter <= 3) {
+                    Homey.log("Fetching location, try " + locationGetCounter + " of 3")
+                    locationGetCounter++;
+                    self.getLocation(function(lat, lon) {
+                        Homey.log('Location found, start checking settings'); 
+                        self.checkSettings();
+                        return;
+                    });
+                    return;
+                } else if (value_exist(country) && value_exist(city) && country != "" && city != "") {
+                    Homey.log('Using country and city for location');
+                    address = country + '/' + city;
+                } else { 
+                    Homey.log('One of the country/city fields is empty, using defaults');
+                    address = "Netherlands/Amsterdam";
+                }
+                Homey.log('Resetting locationGetCounter'); 
+                locationGetCounter = 0;
+            }
+        } else if (value_exist(country) && value_exist(city) && country != "" && city != "") {
+            Homey.log('Using country and city for location');
+            address = country + '/' + city;
+        } else { 
+            Homey.log('One of the country/city fields is empty, using defaults');
+            address = "Netherlands/Amsterdam";
+        }
     },
     
     initWunderground: function(key) {
-        if (wunderground != null) wunderground = null;
+        Homey.log("");
+        Homey.log("initWunderground");
+        if (wunderground != null) {
+            Homey.log("wunderground != null");
+            //wunderground = null;
+        }
         wunderground = new Wunderground(key);
     },
 
@@ -202,8 +256,6 @@ var self = {
                 callback(new Error("location is undefined"));
                 return;
             } else {
-                Homey.log("Homey location found");
-                Homey.log(location);
                 lat = location.latitude;
                 lon = location.longitude;
                 callback(lat, lon);
@@ -215,41 +267,14 @@ var self = {
     updateWeather: function() {
         Homey.log("");
         Homey.log("Update Weather");
-
-        if (lat == undefined) { //if no location, try to get it
-            Homey.log("Latitude is undefined, fetching location")
-            self.getLocation(function(lat, lon) {  //Get the location, could be that location is not available yet after reboot
-            })
-        };
-
-        // Set default values
-        var country = 'CA'
-        var city = 'San_Francisco'
-        var address = country + '/' + city;
-
-        // Get user settings
-        country = Homey.manager('settings').get('country');
-        city = Homey.manager('settings').get('city');
-        
-        var autolocation = Homey.manager('settings').get('autolocation');
-        if (autolocation) Homey.log('Auto location setting true: ' + JSON.stringify(autolocation));
-        else Homey.log('Auto location setting false: ' + JSON.stringify(autolocation));
-
-        // Check user settings
-        if (value_exist(country) && value_exist(city) && country != "" && city != "") 
-            address = country + '/' + city;
-        else if (value_exist(lat) && value_exist(lon) && lat != 0 && lon != 0) {
-            address = lat + ',' + lon;
-        } else Homey.log('One of the country/city fields is empty, setting defaults');
-        
-        Homey.log('Requesting for city: ' + address);
+        Homey.log('Requesting for address: ' + address);
 
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
                 if (err) {
                     // Catch error
-                    Homey.log("Wunderground request error: " + err);
-                    return Homey.error(err);
+                    Homey.log("Wunderground request error: " + response);
+                    return Homey.error(response);
                 } else {
                     // Cut % sign
                     var hum = response.current_observation.relative_humidity;
@@ -365,9 +390,18 @@ var self = {
         Homey.manager('flow').trigger('hum_above', tokens);
         Homey.manager('flow').trigger('hum_below', tokens);
     },
+    
+    checkInsightsLogs: function() {
+        Homey.log("");
+        Homey.log("checkInsightsLogs");
+        
+        self.createInsightsLogs();
+    },
 
-    createInsightsLog: function() {
-
+    createInsightsLogs: function() {
+        Homey.log("");
+        Homey.log("createInsightsLogs");
+        
         Homey.manager('insights').createLog('temp', {
             label: {
                 en: 'Temperature',
@@ -380,12 +414,12 @@ var self = {
             },
             decimals: 0
             },
-        function callback(err, success){
-            if(err) {
-                Homey.log('createLog temp');
-                return Homey.error(err);
-            }
-        });
+            function callback(err, success){
+                if (err) {
+                    Homey.log('createLog temp error');
+                    return Homey.error(err);
+                }
+            });
 
         Homey.manager('insights').createLog('hum', {
             label: {
@@ -399,12 +433,12 @@ var self = {
             },
             decimals: 0
             },
-        function callback(err, success){
-            if(err) {
-                Homey.log('createLog hum');
-                return Homey.error(err);
-            }
-        });
+            function callback(err, success){
+                if (err) {
+                    Homey.log('createLog hum error');
+                    return Homey.error(err);
+                }
+            });
 
         Homey.manager('insights').createLog('feelslike_c', {
             label: {
@@ -418,12 +452,12 @@ var self = {
             },
             decimals: 0
             },
-        function callback(err, success){
-            if(err) {
-                Homey.log('createLog feelslike_c');
-                return Homey.error(err);
-            }
-        });
+            function callback(err, success){
+                if (err) {
+                    Homey.log('createLog feelslike_c error');
+                    return Homey.error(err);
+                }
+            });
 
         Homey.manager('insights').createLog('pressure_mb', {
             label: {
@@ -437,12 +471,12 @@ var self = {
             },
             decimals: 0
             },
-        function callback(err, success){
-            if(err) {
-                Homey.log('createLog pressure_mb');
-                return Homey.error(err);
-            }
-        });
+            function callback(err, success){
+                if (err) {
+                    Homey.log('createLog pressure_mb error');
+                    return Homey.error(err);
+                }
+            });
 
         Homey.manager('insights').createLog('wind_kph', {
             label: {
@@ -456,12 +490,12 @@ var self = {
             },
             decimals: 0
             },
-        function callback(err, success){
-            if(err) {
-                Homey.log('createLog wind_kph');
-                return Homey.error(err);
-            }
-        });
+            function callback(err, success){
+                if (err) {
+                    Homey.log('createLog wind_kph error');
+                    return Homey.error(err);
+                }
+            });
 
         Homey.manager('insights').createLog('dewpoint_c', {
             label: {
@@ -475,12 +509,12 @@ var self = {
             },
             decimals: 0
             },
-        function callback(err, success){
-            if(err) {
-                Homey.log('createLog dewpoint_c');
-                return Homey.error(err);
-            }
-        });
+            function callback(err, success){
+                if (err) {
+                    Homey.log('createLog dewpoint_c error');
+                    return Homey.error(err);
+                }
+            });
 
     },
 
