@@ -11,6 +11,9 @@
             
             "location" : {
                 "location" : "Location",
+                "units_label" : "Units",
+                "units_metric" : "Metric",
+                "units_imperial" : "Imperial",
                 "autolocation" : "Use Homey's location",
                 "manualLocation_label" : "Manual location",
                 "manualLocation_explanation" : "If there is no city and country specified, Homey's location is used.",

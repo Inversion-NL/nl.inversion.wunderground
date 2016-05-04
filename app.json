@@ -331,6 +331,70 @@
                 }
               }
             ]
+          },
+          
+          {
+            "id": "uv_above",
+            "title": {
+              "en": "UV is above",
+              "nl": "UV is hoger dan"
+            },
+            "tokens": [
+              {
+                "name": "uv",
+                "title": {
+                  "en": "UV",
+                  "nl": "UV"
+                },
+                "example": {
+                  "en": "5",
+                  "nl": "5"
+                }
+              }
+            ],
+            "args": [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                  {
+                    "en": "UV value",
+                    "nl": "UV waarde"
+                  }
+              }
+            ]
+          },
+          
+          {
+            "id": "uv_below",
+            "title": {
+              "en": "UV is below",
+              "nl": "UV is lager dan"
+            },
+            "tokens": [
+              {
+                "name": "uv",
+                "title": {
+                  "en": "UV",
+                  "nl": "UV"
+                },
+                "example": {
+                  "en": "5",
+                  "nl": "5"
+                }
+              }
+            ],
+            "args": [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                  {
+                    "en": "UV value",
+                    "nl": "UV waarde"
+                  }
+              }
+            ]
           }
         ],
 
@@ -410,6 +474,46 @@
                 {
                   "en": "Percentage",
                   "nl": "Percentage"
+                }
+              }
+            ]
+          },
+          
+          {
+            "id": "uv_above",
+            "title": {
+              "en": "UV !{{is|isn't}} above",
+              "nl": "UV !{{is|is niet}} hoger dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "UV value",
+                  "nl": "UV waarde"
+                }
+              }
+            ]
+          },
+          
+          {
+            "id": "uv_below",
+            "title": {
+              "en": "UV !{{is|isn't}} below",
+              "nl": "UV !{{is|is niet}} lager dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "UV value",
+                  "nl": "UV waarde"
                 }
               }
             ]

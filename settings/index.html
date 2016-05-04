@@ -9,14 +9,32 @@
 <p data-i18n="settings.app.description"></p>
 
 <form id="locationform">
+    <li style="padding:0;border:0;">
     <fieldset id="wundergroundSet">
         <legend>
         <label data-i18n="settings.app.wunderground.wunderground_title"></label>
         </legend>
-        <div class="field row">
+        <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" for="wundergroundKey" data-i18n="settings.app.wunderground.key"></label>
             <br>
             <input class="form_input" id="wundergroundKey" type="text" value="123456abcdef"/>
+        </div>
+        <br>
+        <div data-role="fieldcontain" style="margin:0;">
+            <label class="form_label" for="updateFrequenty" data-i18n="settings.app.location.update_frequenty"></label>
+            <br>
+            <input class="form_input" id="updateFrequenty" type="number" value="60"/>
+        </div>
+        <p style="font-size:10px" data-i18n="settings.app.location.updateFrequenty_explanation"></p>
+        <div data-role="fieldcontain" style="margin:0;">
+            <label class="form_label" data-i18n="settings.app.location.units_label"></label>
+            <br>
+            <input class="form_input" name="units" id="units_metric" type="radio" checked="checked"></input>
+            <label for="units_metric" data-i18n="settings.app.location.units_metric"></label>
+            <br>
+            <input class="form_input" name="units" id="units_imperial" type="radio"/>
+            <label for="units_emperial" data-i18n="settings.app.location.units_imperial"></label>
+            <br>
         </div>
     </fieldset>
     
@@ -51,19 +69,12 @@
                 <br>
                 <input class="form_input" input id="city" type="text" value="Amsterdam"/><br><br>
             </div>
-            
-            <p data-i18n="settings.app.location.updateFrequenty_explanation"></p>
-
-            <div class="field row">
-                <label  class="form_label" for="updateFrequenty" data-i18n="settings.app.location.update_frequenty"></label>
-                <br>
-                <input class="form_input"  id="updateFrequenty" type="number" value="60"/><br><br>
-            </div>
         </fieldset>
     </fieldset>
+    </li>
 </form>
 
-<button class="right" id="saver" onclick="save()" data-i18n="settings.app.button.save"></button>
+<button class="right" id="button_save" onclick="save()" data-i18n="settings.app.button.save"></button>
 
 <script type="text/javascript">
 
@@ -108,16 +119,43 @@
                 document.getElementById('wundergroundKey').value = wundergroundKey
             }
         })
+        
+        Homey.get('units_metric', function(err, units_metric) {
+            if (err) {
+                Homey.error(err)
+            } else {
+                document.getElementById('units_metric').checked = units_metric
+            }
+        })
+        
+        Homey.get('units_imperial', function(err, units_imperial) {
+            if (err) {
+                Homey.error(err)
+            } else {
+                document.getElementById('units_imperial').checked = units_imperial
+            }
+        })
 
         Homey.ready()
     }
     
     function save() {
+        
+        var button_save = document.getElementById('button_save');
+        button_save.disabled = true;
+        
         Homey.set('country', document.getElementById('country').value);
         Homey.set('city', document.getElementById('city').value);
         Homey.set('updateFrequenty', document.getElementById('updateFrequenty').value);
         Homey.set('autolocation', document.getElementById('autolocation').checked);
         Homey.set('wundergroundKey', document.getElementById('wundergroundKey').value);
+        Homey.set('units_imperial', document.getElementById('units_imperial').checked);
+        Homey.set('units_metric', document.getElementById('units_metric').checked);
+        
+        setTimeout(function() {
+            button_save.disabled = false;
+        }, 3500);
+       
     }
 </script>
 
