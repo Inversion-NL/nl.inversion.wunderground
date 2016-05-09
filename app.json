@@ -17,10 +17,12 @@
         "email": "inversion-nl@gmail.com"
     },
     "permissions": [
-        "homey:manager:speech-input",
-        "homey:manager:speech-output",
         "homey:manager:geolocation"
     ],
+    "images": {
+        "large": "./assets/images/large.jpg",
+        "small": "./assets/images/small.jpg"
+    },
     "dependencies": {
         "wundernode": "*"
     },

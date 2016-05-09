@@ -230,7 +230,7 @@ var self = {
         Homey.log("Current temp: " + weatherData.temp);
         Homey.log("args.variable: " + args.variable);
         if (weatherData.temp > args.variable) {
-            Homey.log("temp is above!");
+            Homey.log("temp " + weatherData.temp + " is above " + args.variable + ", triggering temp above trigger");
             callback("temp " + weatherData.temp + " is above " + args.variable, true);
         } else {
             Homey.log("temp " + weatherData.temp + " is not above " + args.variable);

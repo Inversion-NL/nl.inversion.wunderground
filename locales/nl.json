@@ -24,7 +24,12 @@
             },
             
             "button" : {
-                "save" : "Opslaan"
+                "save" : "Opslaan",
+                "test" : "Test"
+            },
+            
+            "log" : {
+                "title" : "Test log:"
             }
         }
     }
