@@ -73,10 +73,10 @@
     </fieldset>
     </li>
 </form>
-<!--<p data-i18n="settings.app.log.title"></p>
+<p data-i18n="settings.app.log.title"></p>
 <div id="testresult"></div>
 
- <button class="right" id="button_test" onclick="test()" data-i18n="settings.app.button.test">Test</button> -->
+<button class="right" id="button_test" onclick="test()" data-i18n="settings.app.button.test">Test</button>
 <button class="right" id="button_save" onclick="save()" data-i18n="settings.app.button.save">Save</button>
 
 <script type="text/javascript">
@@ -84,8 +84,8 @@
     function onHomeyReady(){
         
         // Disable save button until settings have been saved
-        // var button_save = document.getElementById('button_save');
-        // button_save.disabled = true;
+        var button_save = document.getElementById('button_save');
+        button_save.disabled = true;
         
         Homey.get('country', function(err, country) {
             if (err) {
@@ -168,10 +168,10 @@
     function test() {
         document.getElementById('testresult').innerHTML = "Testing...";
 
-        // var button_test = document.getElementById('button_test');
-        // var button_save = document.getElementById('button_save');
-        // button_test.disabled = true;
-        // button_save.disabled = true;
+        var button_test = document.getElementById('button_test');
+        var button_save = document.getElementById('button_save');
+        button_test.disabled = true;
+        button_save.disabled = true;
 
         console.log("Settings: testing settings");
 
@@ -182,17 +182,17 @@
         }, function(data, result) {
             
             console.log("Settings: response received");
-            console.log(data);
-            console.log(result);
+            console.log('Settings: data', data);
+            console.log('Settings: result', result);
             
-            // button_test.disabled = false;
-            // button_save.disabled = false;
+            button_test.disabled = false;
+            button_save.disabled = false;
             
             var temp = data.temp;
             var city = data.city;
             var country = data.country;            
             var weather_string = "It's " + temp + "degrees Celsius in " + city + ", " + country;
-            console.log(weather_string) 
+            console.log('Settings: ', weather_string) 
             document.getElementById('testresult').innerHTML = weather_string;
         });
     }

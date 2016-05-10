@@ -26,8 +26,8 @@ module.exports = [
                     return Homey.log("API: Wunderground request error: " + response);
                 } else {
                     Homey.log("API: Weather response received");
+                    
                     // Return weather request
-                    Homey.log("temp: " + response.current_observation.temp_c)
                     var temp = response.current_observation.temp_c;
                     var city = response.current_observation.display_location.city;
                     var country = response.current_observation.display_location.country;
