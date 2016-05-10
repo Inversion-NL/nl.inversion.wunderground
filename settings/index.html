@@ -166,7 +166,7 @@
     }
     
     function test() {
-        document.getElementById('testresult').innerHTML = "Testing...";
+        document.getElementById('testresult').innerHTML = "Testing, please wait...";
 
         var button_test = document.getElementById('button_test');
         var button_save = document.getElementById('button_save');
@@ -179,21 +179,25 @@
             
             "wundergroundKey": document.getElementById('wundergroundKey').value
             
-        }, function(data, result) {
+        }, function(err, result) {
             
             console.log("Settings: response received");
-            console.log('Settings: data', data);
-            console.log('Settings: result', result);
             
             button_test.disabled = false;
-            button_save.disabled = false;
             
-            var temp = data.temp;
-            var city = data.city;
-            var country = data.country;            
-            var weather_string = "It's " + temp + "degrees Celsius in " + city + ", " + country;
-            console.log('Settings: ', weather_string) 
-            document.getElementById('testresult').innerHTML = weather_string;
+            if (!err) {
+                button_save.disabled = false;
+                
+                var temp = result.temp;
+                var city = result.city;
+                var country = result.country;            
+                var weather_string = "It's " + temp + " degrees Celsius in " + city + ", " + country;
+
+                document.getElementById('testresult').innerHTML = weather_string;
+            } else {
+                document.getElementById('testresult').innerHTML = "Error fetching weather data with the provided API key.";
+                return Homey.alert('Error fetching weather data with the provided API key.');
+            }
         });
     }
 </script>

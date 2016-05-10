@@ -942,8 +942,7 @@ var self = {
 function testWU(callback, args) {
     
     Homey.log("");
-    Homey.log("TestWU");
-    Homey.log("args:", args);
+    Homey.log("TestWU API call");
     
     var Wunderground = require('wundergroundnode');
     var wundergroundKey = args.body.wundergroundKey;
@@ -957,23 +956,36 @@ function testWU(callback, args) {
     
     // Get weather data
     wunderground.conditions().request(address, function(err, response) {
+        
+        var error = false;
+        var err_msg = '';
+        
+        try {
+            err_msg = response.response.error.description;
+            error = true;
+        } catch(err) {
+            error = false;
+        }
 
-        if (err) {
-            // Catch error
-            callback (response, false);
-            return Homey.log("Wunderground request error: " + response);
-        } else {
+        if (!err && !error) {
             Homey.log("Weather response received");
             
             // Return weather request
             var temp = response.current_observation.temp_c;
             var city = response.current_observation.display_location.city;
             var country = response.current_observation.display_location.country;
-            
             var data = {'temp' : temp, 'city' : city, 'country' : country};
-            Homey.log(data);
+            callback (null, data);
+
+        } else {
+            // Catch error
+            Homey.log("Wunderground request error:", response);
             
-            callback (data, true);
+            if (value_exist(response.response.error.description)) {
+                callback (true, response.response.error.description);
+            } else {
+                callback (true, response);
+            }
         }
     });
     
