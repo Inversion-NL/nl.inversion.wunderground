@@ -404,11 +404,9 @@ var self = {
 
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
-                if (err) {
-                    // Catch error
-                    Homey.log("Wunderground request error: " + response);
-                    return Homey.error(response);
-                } else {
+            
+                if (!err && response) {
+                    
                     // Cut % sign
                     var hum = response.current_observation.relative_humidity;
                     var hum_float = parseFloat(hum.substr(0, (hum.length -1)));
@@ -549,6 +547,11 @@ var self = {
                     self.addInsightsEntry("precip_1hr", weatherData.precip_1hr);
                     self.addInsightsEntry("uv", weatherData.uv);
                     self.addInsightsEntry("visibility", weatherData.visibility);
+
+                } else {
+                    // Catch error
+                    Homey.log("Wunderground request error: " + response);
+                    return Homey.error(response);
                 }
             }
       )
