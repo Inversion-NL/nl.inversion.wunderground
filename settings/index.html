@@ -37,7 +37,7 @@
             <br>
         </div>
     </fieldset>
-
+    
     <fieldset id="location">
         <legend>
         <label data-i18n="settings.app.location.location"></label>
@@ -51,13 +51,13 @@
         </div>
         </p>
 
-        <fieldset id="locationfields">
+        <fieldset id="locationfields">    
             <legend>
             <label data-i18n="settings.app.location.manualLocation_label"></label>
             </legend>
-
+            
             <p data-i18n="settings.app.location.manualLocation_explanation"></p>
-
+            
             <div class="field row">
                 <label class="form_label" for="country" data-i18n="settings.app.location.country"></label>
                 <br>
@@ -75,18 +75,18 @@
 </form>
 <!--<p data-i18n="settings.app.log.title"></p>
 <div id="testresult"></div>
--->
- <button class="right" id="button_test" onclick="test()" data-i18n="settings.app.button.test">Test</button>
+
+ <button class="right" id="button_test" onclick="test()" data-i18n="settings.app.button.test">Test</button> -->
 <button class="right" id="button_save" onclick="save()" data-i18n="settings.app.button.save">Save</button>
 
 <script type="text/javascript">
 
     function onHomeyReady(){
-
+        
         // Disable save button until settings have been saved
         // var button_save = document.getElementById('button_save');
         // button_save.disabled = true;
-
+        
         Homey.get('country', function(err, country) {
             if (err) {
                 console.error(err)
@@ -119,7 +119,7 @@
                 document.getElementById('locationfields').disabled = autolocation
             }
         })
-
+        
         Homey.get('wundergroundKey', function(err, wundergroundKey) {
             if (err) {
                 Homey.error(err)
@@ -127,7 +127,7 @@
                 document.getElementById('wundergroundKey').value = wundergroundKey
             }
         })
-
+        
         Homey.get('units_metric', function(err, units_metric) {
             if (err) {
                 Homey.error(err)
@@ -135,7 +135,7 @@
                 document.getElementById('units_metric').checked = units_metric
             }
         })
-
+        
         Homey.get('units_imperial', function(err, units_imperial) {
             if (err) {
                 Homey.error(err)
@@ -146,12 +146,12 @@
 
         Homey.ready()
     }
-
+    
     function save() {
-
+        
         var button_save = document.getElementById('button_save');
         button_save.disabled = true;
-
+        
         Homey.set('country', document.getElementById('country').value);
         Homey.set('city', document.getElementById('city').value);
         Homey.set('updateFrequenty', document.getElementById('updateFrequenty').value);
@@ -159,14 +159,14 @@
         Homey.set('wundergroundKey', document.getElementById('wundergroundKey').value);
         Homey.set('units_imperial', document.getElementById('units_imperial').checked);
         Homey.set('units_metric', document.getElementById('units_metric').checked);
-
+        
         setTimeout(function() {
             button_save.disabled = false;
         }, 3500);
     }
-
+    
     function test() {
-        // document.getElementById('testresult').innerHTML = "Testing...";
+        document.getElementById('testresult').innerHTML = "Testing...";
 
         // var button_test = document.getElementById('button_test');
         // var button_save = document.getElementById('button_save');
@@ -176,27 +176,24 @@
         console.log("Settings: testing settings");
 
         Homey.api( 'POST', '/test/connection/', {
-
+            
             "wundergroundKey": document.getElementById('wundergroundKey').value
-
-        }, function(err, result) {
-            if(!err && result) {
-                console.log("Settings: response received");
-                console.log(err);
-                console.log(result);
-
-                // button_test.disabled = false;
-                // button_save.disabled = false;
-
-                var temp = result.temp;
-                var city = result.city;
-                var country = result.country;
-                var weather_string = "It's " + temp + "degrees Celsius in " + city + ", " + country;
-                console.log(weather_string)
-                document.getElementById('testresult').innerHTML = weather_string;
-            } else {
-                //TODO process failed connection test
-            }
+            
+        }, function(data, result) {
+            
+            console.log("Settings: response received");
+            console.log(data);
+            console.log(result);
+            
+            // button_test.disabled = false;
+            // button_save.disabled = false;
+            
+            var temp = data.temp;
+            var city = data.city;
+            var country = data.country;            
+            var weather_string = "It's " + temp + "degrees Celsius in " + city + ", " + country;
+            console.log(weather_string) 
+            document.getElementById('testresult').innerHTML = weather_string;
         });
     }
 </script>
