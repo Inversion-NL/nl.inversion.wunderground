@@ -31,11 +31,12 @@ module.exports = [
                     var temp = response.current_observation.temp_c;
                     var city = response.current_observation.display_location.city;
                     var country = response.current_observation.display_location.country;
-                    
+
                     var data = {'temp' : temp, 'city' : city, 'country' : country};
                     Homey.log(data);
-                    
-                    callback (data, true);
+
+                    // Callback follows (err, result)
+                    callback (null, data);
                 }
             });
         }
