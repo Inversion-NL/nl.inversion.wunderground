@@ -63,7 +63,7 @@ var self = {
         self.checkInsightsLogs();
         self.checkSettings();
 
-        // Listen for triggers and conditions with a value
+        // Listen for triggers and conditions
         Homey.manager('flow').on('trigger.temp_above', self.tempAbove);
         Homey.manager('flow').on('condition.temp_above', self.tempAbove);
         Homey.manager('flow').on('trigger.temp_below', self.tempBelow);
@@ -78,6 +78,16 @@ var self = {
         Homey.manager('flow').on('condition.uv_above', self.uvAbove);
         Homey.manager('flow').on('trigger.uv_below', self.uvBelow);
         Homey.manager('flow').on('condition.uv_below', self.uvBelow);
+        
+        Homey.manager('flow').on('trigger.wind_above', self.windAbove);
+        Homey.manager('flow').on('condition.wind_above', self.windAbove);
+        Homey.manager('flow').on('trigger.wind_below', self.windBelow);
+        Homey.manager('flow').on('condition.wind_below', self.windBelow);
+        
+        Homey.manager('flow').on('trigger.windgust_above', self.windgustAbove);
+        Homey.manager('flow').on('condition.windgust_above', self.windgustAbove);
+        Homey.manager('flow').on('trigger.windgust_below', self.windgustBelow);
+        Homey.manager('flow').on('condition.windgust_below', self.windgustBelow);
         
         // Listen for changes in settings
         Homey.manager('settings').on('set', self.settingsChanged);
@@ -307,6 +317,62 @@ var self = {
             callback(null, false);
         }
     },
+    
+    windAbove: function(callback, args) {
+        Homey.log("");
+        Homey.log("function wind above");
+        Homey.log("Current wind speed: " + weatherData.wind);
+        Homey.log("args.variable: " + args.variable);
+        if (weatherData.wind > args.variable) {
+            Homey.log("wind speed is above!");
+            callback(null, true);
+        } else {
+            Homey.log("wind speed is not above");
+            callback(null, false);
+        }
+    },
+    
+    windBelow: function(callback, args) {
+        Homey.log("");
+        Homey.log("function wind below");
+        Homey.log("Current wind: " + weatherData.wind);
+        Homey.log("args.variable: " + args.variable);
+        if (weatherData.wind < args.variable) {
+            Homey.log("wind is below!");
+            callback(null, true);
+        } else {
+            Homey.log("wind is not below");
+            callback(null, false);
+        }
+    },
+    
+    windgustAbove: function(callback, args) {
+        Homey.log("");
+        Homey.log("function windgust above");
+        Homey.log("Current wind gust: " + weatherData.wind_gust);
+        Homey.log("args.variable: " + args.variable);
+        if (weatherData.wind_gust > args.variable) {
+            Homey.log("wind speed is above!");
+            callback(null, true);
+        } else {
+            Homey.log("wind speed is not above");
+            callback(null, false);
+        }
+    },
+    
+    windgustBelow: function(callback, args) {
+        Homey.log("");
+        Homey.log("function windgust below");
+        Homey.log("Current wind gust: " + weatherData.wind_gust);
+        Homey.log("args.variable: " + args.variable);
+        if (weatherData.wind_gust < args.variable) {
+            Homey.log("windgust is below!");
+            callback(null, true);
+        } else {
+            Homey.log("windgust is not below");
+            callback(null, false);
+        }
+    },
 
     //get location
     getLocation: function(callback) {
@@ -370,9 +436,11 @@ var self = {
                         var precip_today = parseFloat(response.current_observation.precip_today_in);
                     }
                     
-                    // Reset values they where not a number
+                    // Reset values they where not a number or below zero
                     if (precip_1hr == "NaN") precip_1hr = 0;
                     if (precip_today == "NaN") precip_today = 0;
+                    var uv = parseFloat(response.current_observation.UV);
+                    if (uv < 0) uv = 0;
 
                     weatherData = {
                         city: response.current_observation.display_location.city,
@@ -382,7 +450,7 @@ var self = {
                         observation_epoch: response.current_observation.observation_epoch,
                         wind_degrees: parseFloat(response.current_observation.wind_degrees),
                         wind_dir: response.current_observation.wind_dir,
-                        uv: parseFloat(response.current_observation.UV),
+                        uv: uv,
                         temp: temp,
                         feelslike: feelslike,
                         dewpoint: dewpoint,
@@ -449,6 +517,24 @@ var self = {
                         // No temperature data available!
                         Homey.log("UV is undefined!")
                     }
+                    
+                    // Wind triggers and conditions
+                    if (value_exist(weatherData.wind)) {
+                        // Start trigger
+                        self.windAboveBelow(weatherData.wind);
+                    } else {
+                        // No temperature data available!
+                        Homey.log("Wind is undefined!")
+                    }
+                             
+                    // Wind gust triggers and conditions
+                    if (value_exist(weatherData.wind_gust)) {
+                        // Start trigger
+                        self.windgustAboveBelow(weatherData.wind_gust);
+                    } else {
+                        // No temperature data available!
+                        Homey.log("Wind_gust is undefined!")
+                    }
 
                     // Add data to insights
                     self.addInsightsEntry("temp", weatherData.temp);
@@ -509,6 +595,20 @@ var self = {
         var tokens = {'uv': uv};
         Homey.manager('flow').trigger('uv_above', tokens);
         Homey.manager('flow').trigger('uv_below', tokens);
+    },
+    
+    // Handler for wind triggers and conditions
+    windAboveBelow: function(wind) {
+        var tokens = {'wind': wind};
+        Homey.manager('flow').trigger('wind_above', tokens);
+        Homey.manager('flow').trigger('wind_below', tokens);
+    },
+    
+    // Handler for wind triggers and conditions
+    windgustAboveBelow: function(windgust) {
+        var tokens = {'wind_gust': windgust};
+        Homey.manager('flow').trigger('windgust_above', tokens);
+        Homey.manager('flow').trigger('windgust_below', tokens);
     },
     
     deleteInsightsLog: function(log) {
@@ -839,4 +939,45 @@ var self = {
     }
 }
 
+function testWU(callback, args) {
+    
+    Homey.log("");
+    Homey.log("TestWU");
+    Homey.log("args:", args);
+    
+    var Wunderground = require('wundergroundnode');
+    var wundergroundKey = args.body.wundergroundKey;
+    var wunderground = new Wunderground(wundergroundKey);
+    var address = "Netherlands/Amsterdam";
+
+    if (wundergroundKey == "" || wundergroundKey == null) {
+        Homey.log("Weather underground key is empty, using Inversion key");
+        wundergroundKey = Homey.env.WUNDERGROUND_KEY;     
+    }
+    
+    // Get weather data
+    wunderground.conditions().request(address, function(err, response) {
+
+        if (err) {
+            // Catch error
+            callback (response, false);
+            return Homey.log("Wunderground request error: " + response);
+        } else {
+            Homey.log("Weather response received");
+            
+            // Return weather request
+            var temp = response.current_observation.temp_c;
+            var city = response.current_observation.display_location.city;
+            var country = response.current_observation.display_location.country;
+            
+            var data = {'temp' : temp, 'city' : city, 'country' : country};
+            Homey.log(data);
+            
+            callback (data, true);
+        }
+    });
+    
+}
+
 module.exports = self;
+module.exports.testWU = testWU;
