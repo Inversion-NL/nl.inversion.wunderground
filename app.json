@@ -9,7 +9,7 @@
         "en": "Informs you about the weather",
         "nl": "Geeft je informatie over het weer"
     },
-    "version": "0.0.1",
+    "version": "0.0.3",
     "compatibility": "0.x || 1.x",
     "category": "internet",
     "author": {
