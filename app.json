@@ -328,8 +328,8 @@
                 "type": "number",
                 "placeholder" :
                 {
-                  "en": "degrees celsius",
-                  "nl": "graden celsius"
+                  "en": "humidity (%)",
+                  "nl": "Luchtvochtigheid (%)"
                 }
               }
             ]
