@@ -407,7 +407,7 @@ var self = {
         wunderground.conditions().request(address, function(err, response) {
             
             Homey.log('err:', err);
-            Homey.log('response:'. response);
+            Homey.log('response:', response);
             
             if (!err && response) {
                 
