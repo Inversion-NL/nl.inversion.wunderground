@@ -1,13 +1,12 @@
 "use strict";
 
 var Wunderground = require('wundergroundnode');
-var locale = Homey.manager('i18n').getLanguage();
 var wunderground;
 
 var defaultUpdateTime = 60;
 var maxLocationGetTries = 3;
-var insightsLogs = 
-    [
+var insightsLogs =     
+[
         "temp", 
         "hum", 
         "feelslike", 
@@ -22,8 +21,8 @@ var insightsLogs =
         "visibility"
     ];
 
-var units_imperial = false;
-var units_metric = true;
+
+
 var interval;
 var update_frequenty = defaultUpdateTime;
 var locationGetCounter = 1;
@@ -58,7 +57,6 @@ var self = {
         
         Homey.log("Initializing Weather Underground");
         Homey.log("");
-        Homey.log("Locale: " + locale);
 
         self.checkInsightsLogs();
         self.checkSettings();
@@ -115,13 +113,15 @@ var self = {
         
         // Check if user provided a key in settings
         var myKey = Homey.manager('settings').get('wundergroundKey');
-        units_imperial = Homey.manager('settings').get('units_imperial');
-        units_metric = Homey.manager('settings').get('units_metric');
-        Homey.log("units_imperial: " + units_imperial);
-        Homey.log("units_metric: " + units_metric);
+        var units_metric = Homey.manager('settings').get('units_metric');
+        var units_imperial = Homey.manager('settings').get('units_imperial');
+        var units_auto = Homey.manager('settings').get('units_auto');
+        var homey_units = Homey.manager('i18n').getUnits();
         
-        if (!value_exist(units_imperial)) units_imperial = false;
-        if (!value_exist(units_metric)) units_metric = true;
+        if (units_auto && !value_exist(homey_units) && homey_units != "") {
+            if (homey_units == 'metric') units_metric = true;
+            else units_metric = false;
+        } else units_metric = true;
 
         var usePersonalKey = false;
         if (!value_exist(myKey) || myKey == "") {
@@ -158,14 +158,11 @@ var self = {
         }
         
         // Set default values
-        var country = 'Netherlands'
-        var city = 'Amsterdam'
-        address = country + '/' + city;
         var autolocation = true;
 
         // Get user settings
-        country = Homey.manager('settings').get('country');
-        city = Homey.manager('settings').get('city');
+        var country = Homey.manager('settings').get('country');
+        var city = Homey.manager('settings').get('city');
         autolocation = Homey.manager('settings').get('autolocation');
 
         // Check user settings
@@ -197,6 +194,7 @@ var self = {
                 locationGetCounter = 0;
             }
         } else if (value_exist(country) && value_exist(city) && country != "" && city != "") {
+            address = "Netherlands/Amsterdam"
             Homey.log("Using country and city for location");
             address = country + '/' + city;
         } else { 
@@ -949,13 +947,16 @@ function testWU(callback, args) {
     
     var Wunderground = require('wundergroundnode');
     var wundergroundKey = args.body.wundergroundKey;
-    var wunderground = new Wunderground(wundergroundKey);
     var address = "Netherlands/Amsterdam";
 
     if (wundergroundKey == "" || wundergroundKey == null) {
         Homey.log("Weather underground key is empty, using Inversion key");
         wundergroundKey = Homey.env.WUNDERGROUND_KEY;     
+    } else {
+        Homey.log('Using user Weather Underground key');    
     }
+    
+    var wunderground = new Wunderground(wundergroundKey);
     
     // Get weather data
     wunderground.conditions().request(address, function(err, response) {

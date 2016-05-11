@@ -11,6 +11,7 @@
             
             "location" : {
                 "location" : "Location",
+                "units_auto" : "Automatic",
                 "units_label" : "Units",
                 "units_metric" : "Metric",
                 "units_imperial" : "Imperial",

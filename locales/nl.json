@@ -11,6 +11,7 @@
             
             "location" : {
                 "location" : "Locatie",
+                "units_auto" : "Automatisch",
                 "units_label" : "Eenheden",
                 "units_metric" : "Metrisch",
                 "units_imperial" : "Imperiaal",

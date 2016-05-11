@@ -29,7 +29,10 @@
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" data-i18n="settings.app.location.units_label"></label>
             <br>
-            <input class="form_input" name="units" id="units_metric" type="radio" checked="checked"></input>
+            <input class="form_input" name="units" id="units_auto" type="radio" checked="checked"></input>
+            <label for="units_auto" data-i18n="settings.app.location.units_auto"></label>
+            <br>
+            <input class="form_input" name="units" id="units_metric" type="radio"></input>
             <label for="units_metric" data-i18n="settings.app.location.units_metric"></label>
             <br>
             <input class="form_input" name="units" id="units_imperial" type="radio"/>
@@ -128,6 +131,14 @@
             }
         })
         
+        Homey.get('units_auto', function(err, units_auto) {
+            if (err) {
+                Homey.error(err)
+            } else {
+                document.getElementById('units_auto').checked = units_auto
+            }
+        })
+        
         Homey.get('units_metric', function(err, units_metric) {
             if (err) {
                 Homey.error(err)
@@ -159,6 +170,7 @@
         Homey.set('wundergroundKey', document.getElementById('wundergroundKey').value);
         Homey.set('units_imperial', document.getElementById('units_imperial').checked);
         Homey.set('units_metric', document.getElementById('units_metric').checked);
+        Homey.set('units_auto', document.getElementById('units_auto').checked);
         
         setTimeout(function() {
             button_save.disabled = false;
@@ -194,6 +206,7 @@
                 var weather_string = "It's " + temp + " degrees Celsius in " + city + ", " + country;
 
                 document.getElementById('testresult').innerHTML = weather_string;
+                Homey.alert('Settings successfully tested. Please use the save button to save your settings.')
             } else {
                 document.getElementById('testresult').innerHTML = "Error fetching weather data with the provided API key.";
                 return Homey.alert('Error fetching weather data with the provided API key.');
