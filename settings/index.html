@@ -6,13 +6,11 @@
 <body>
 
 <h1 data-i18n="settings.app.title"></h1>
-<p data-i18n="settings.app.description"></p>
 
 <form id="locationform">
-    <li style="padding:0;border:0;">
     <fieldset id="wundergroundSet">
         <legend>
-        <label data-i18n="settings.app.wunderground.wunderground_title"></label>
+            <label data-i18n="settings.app.wunderground.wunderground_title"></label>
         </legend>
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" for="wundergroundKey" data-i18n="settings.app.wunderground.key"></label>
@@ -21,38 +19,42 @@
         </div>
         <br>
         <div data-role="fieldcontain" style="margin:0;">
-            <label class="form_label" for="updateFrequenty" data-i18n="settings.app.location.update_frequenty"></label>
+            <label class="form_label" for="updateFrequenty" data-i18n="settings.app.wunderground.update_frequenty"></label>
             <br>
             <input class="form_input" id="updateFrequenty" type="number" value="60"/>
         </div>
-        <p style="font-size:10px" data-i18n="settings.app.location.updateFrequenty_explanation"></p>
+        <p style="font-size:10px" data-i18n="settings.app.wunderground.updateFrequenty_explanation"></p>
+    </fieldset>
+    
+    <fieldset id="units">  
+        <legend>
+            <label data-i18n="settings.app.generic.units_title"></label>
+        </legend>  
         <div data-role="fieldcontain" style="margin:0;">
-            <label class="form_label" data-i18n="settings.app.location.units_label"></label>
+            <label class="form_label" data-i18n="settings.app.generic.units_label"></label>
             <br>
             <input class="form_input" name="units" id="units_auto" type="radio" checked="checked"></input>
-            <label for="units_auto" data-i18n="settings.app.location.units_auto"></label>
+            <label for="units_auto" data-i18n="settings.app.generic.units_auto"></label>
             <br>
             <input class="form_input" name="units" id="units_metric" type="radio"></input>
-            <label for="units_metric" data-i18n="settings.app.location.units_metric"></label>
+            <label for="units_metric" data-i18n="settings.app.generic.units_metric"></label>
             <br>
             <input class="form_input" name="units" id="units_imperial" type="radio"/>
-            <label for="units_emperial" data-i18n="settings.app.location.units_imperial"></label>
-            <br>
+            <label for="units_emperial" data-i18n="settings.app.generic.units_imperial"></label>
+            <p style="font-size:10px" data-i18n="settings.app.generic.unitChange_explanation"></p>
         </div>
     </fieldset>
     
     <fieldset id="location">
         <legend>
-        <label data-i18n="settings.app.location.location"></label>
+            <label data-i18n="settings.app.location.location"></label>
         </legend>
 
-        <p>
         <div class="field">
             <input class="checkbox" id="autolocation" type="checkbox" checked="true"
                 onchange="locationform.locationfields.disabled = checked">
             <label class="form_label" for="autolocation" data-i18n="settings.app.location.autolocation"></label>
         </div>
-        </p>
 
         <fieldset id="locationfields">    
             <legend>
@@ -74,7 +76,7 @@
             </div>
         </fieldset>
     </fieldset>
-    </li>
+
 </form>
 <p data-i18n="settings.app.log.title"></p>
 <div id="testresult"></div>
@@ -172,6 +174,8 @@
         Homey.set('units_metric', document.getElementById('units_metric').checked);
         Homey.set('units_auto', document.getElementById('units_auto').checked);
         
+        Homey.alert('Settings saved')
+        
         setTimeout(function() {
             button_save.disabled = false;
         }, 3500);
@@ -184,20 +188,64 @@
         var button_save = document.getElementById('button_save');
         button_test.disabled = true;
         button_save.disabled = true;
+        
+        var autolocation = document.getElementById('autolocation').checked;
+        var wundergroundkey = document.getElementById('wundergroundKey').value
 
-        console.log("Settings: testing settings");
-
-        Homey.api( 'POST', '/test/connection/', {
+        console.log("Testing settings");
+        
+        if (autolocation) {
+            console.log("Auto location is enabled, fetching location");
+            Homey.api('POST', '/get/location/', {        
+            }, function(err, location) {
+                if (!err) {
+                    console.log("Location response received:", location);
+                    var address = location.latitude + "," + location.longitude;
+                    getWeather(wundergroundkey, address);
+                } else {
+                    // Oeps, something went wrong here
+                    Homey.alert('Unable to get Homey\'s location, please try again or specify a location manually.')
+                }
+                
+            });
+        } else {
+            var city = document.getElementById('city').value;
+            var country = document.getElementById('country').value;
             
-            "wundergroundKey": document.getElementById('wundergroundKey').value
+            var address = country + "/" + city
+            getWeather(wundergroundkey, address);
+        }
+    }
+
+    function getWeather(wundergroundkey, address) {
+        
+        console.log("getWeather");
+        Homey.api('POST', '/get/weather/', {
+            
+            "wundergroundkey": wundergroundkey,
+            "address" : address
             
         }, function(err, result) {
             
-            console.log("Settings: response received");
+            console.log("Weather response received");
             
             button_test.disabled = false;
             
-            if (!err) {
+            var error = false;
+            var err_msg;
+            try {
+                // If error is in the response, something must have gone wrong
+                err_msg = result.response.error.description;
+                console.log('Error:', err_msg);
+                error = true;
+            } catch(err) {
+                // No error message found so this looks good
+                console.log('No error message found');
+                error = false;
+            }
+            
+            if (!err && !error) {
+                // Alright, no errors, let's rock!
                 button_save.disabled = false;
                 
                 var temp = result.temp;
@@ -208,8 +256,9 @@
                 document.getElementById('testresult').innerHTML = weather_string;
                 Homey.alert('Settings successfully tested. Please use the save button to save your settings.')
             } else {
-                document.getElementById('testresult').innerHTML = "Error fetching weather data with the provided API key.";
-                return Homey.alert('Error fetching weather data with the provided API key.');
+                // Let's display the error message in a alert dialog
+                document.getElementById('testresult').innerHTML = err_msg;
+                return Homey.alert(err_msg);
             }
         });
     }

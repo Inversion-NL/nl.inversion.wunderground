@@ -94,9 +94,9 @@ var self = {
         Homey.manager('settings').on('set', self.settingsChanged);
 
         // Get location
-        self.getLocation(function (result) {
+        self.getLocation(function(err, location) {
             // Update weather right now and schedule every user defined minutes
-            self.updateWeather(function(difMinute){});
+            self.updateWeather();
             self.scheduleWeather(update_frequenty);
         });
     },
@@ -106,7 +106,7 @@ var self = {
       Homey.log("Schedule weather every " + update_frequenty + " minutes");
       interval = setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // To minutes
           function trigger_update() {
-              self.updateWeather(function(difMinute){});
+              self.updateWeather();
           }; 
     },
     
@@ -180,8 +180,8 @@ var self = {
                 if (locationGetCounter <= maxLocationGetTries) {
                     Homey.log("Fetching location, try " + locationGetCounter + " of " + maxLocationGetTries)
                     locationGetCounter++;
-                    self.getLocation(function(lat, lon) {
-                        Homey.log("Location found, start checking settings"); 
+                    self.getLocation(function(err, location) {
+                        Homey.log("Location found, check settings"); 
                         self.checkSettings();
                         return;
                     });
@@ -222,7 +222,7 @@ var self = {
 
         // If key has changed
         if (settingname == 'updateFrequenty') {
-            // If the frequenty is change we have to cancel the current interval and schedule a new
+            // If the frequenty is changed we have to cancel the current interval and schedule a new
             self.checkSettings();
             Homey.log("Clearing current interval: " + interval);
             clearInterval(interval);
@@ -378,21 +378,25 @@ var self = {
     //get location
     getLocation: function(callback) {
         Homey.log("");
+        Homey.log("getLocation");
         Homey.manager('geolocation').on('location', function (location) {
             Homey.log("Homey location changed");
             Homey.log(location);
             lat = location.latitude;
             lon = location.longitude;
+            callback(null, location);
         });
 
         Homey.manager('geolocation').getLocation(function(err, location) {
             if (typeof location.latitude == 'undefined' || location.latitude == 0) {
+                Homey.log("Location is undefined");
                 callback(new Error("location is undefined"));
                 return;
             } else {
+                Homey.log("location found:", location);
                 lat = location.latitude;
                 lon = location.longitude;
-                callback(lat, lon);
+                callback(null, location);
             }
         });
     },
@@ -952,10 +956,13 @@ function testWU(callback, args) {
     Homey.log("TestWU API call");
     
     var Wunderground = require('wundergroundnode');
-    var wundergroundKey = args.body.wundergroundKey;
-    var address = "Netherlands/Amsterdam";
+    var wundergroundKey = args.body.wundergroundkey;
+    var address = args.body.address;
 
+    Homey.log('Testing for location:', address);
+    
     if (wundergroundKey == "" || wundergroundKey == null) {
+        Homey.log("wundergroundkey:", wundergroundkey);
         Homey.log("Weather underground key is empty, using Inversion key");
         wundergroundKey = Homey.env.WUNDERGROUND_KEY;     
     } else {
@@ -970,17 +977,36 @@ function testWU(callback, args) {
         var error = false;
         var err_msg = '';
         
+        Homey.log('response', response);
+        
         try {
+            // If error is in the response, something must have gone wrong
             err_msg = response.response.error.description;
             error = true;
         } catch(err) {
+            // No error message found so this looks good
             error = false;
+        }
+        
+        if (!error) {
+            // If still okay, let's test something else
+            try {
+                // Let's test for another possible error
+                var temp = response.current_observation.temp_c;
+                error = false;
+            } catch(err) {
+                // That's gone wrong, let's create our own error message
+                response = { response:
+                    { error:
+                        { description: 'Undefined error, please try city and country without spaces' } } }
+                error = true;
+            }
         }
 
         if (!err && !error) {
             Homey.log("Weather response received");
             
-            // Return weather request
+            // Return specific data
             var temp = response.current_observation.temp_c;
             var city = response.current_observation.display_location.city;
             var country = response.current_observation.display_location.country;
@@ -989,13 +1015,8 @@ function testWU(callback, args) {
 
         } else {
             // Catch error
-            Homey.log("Wunderground request error:", response);
-            
-            if (value_exist(response.response.error.description)) {
-                callback (true, response.response.error.description);
-            } else {
-                callback (true, response);
-            }
+            Homey.log("Wunderground request error");
+            callback (null, response);
         }
     });
     
@@ -1003,3 +1024,4 @@ function testWU(callback, args) {
 
 module.exports = self;
 module.exports.testWU = testWU;
+module.exports.getlocation = self.getLocation;

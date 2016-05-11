@@ -2,26 +2,30 @@
     "settings" : {
         "app" : {
             "title" : "Weather Underground settings",
-            "description" : "On this page, you will be able to adjust the settings of the Weather Underground app.",
             
             "wunderground" : {
                 "wunderground_title" : "Weather Underground settings",
-                "key" : "Personal key"
+                "key" : "Personal key",
+                "update_frequenty" : "Update every (min)",
+                "updateFrequenty_explanation" : "When no personal Weather Underground API key is specified, the update frequenty is 60 minutes minimal."
             },
             
-            "location" : {
-                "location" : "Location",
+            "generic" : {
+                "units_title" : "Generic",
                 "units_auto" : "Automatic",
                 "units_label" : "Units",
                 "units_metric" : "Metric",
                 "units_imperial" : "Imperial",
+                "unitChange_explanation": "If the units are changed, all current Insights logs will be deleted!"
+            },
+            
+            "location" : {
+                "location" : "Location",
                 "autolocation" : "Use Homey's location",
                 "manualLocation_label" : "Manual location",
-                "manualLocation_explanation" : "If there is no city and country specified, Homey's location is used.",
+                "manualLocation_explanation" : "Use the fields below to specify an location for the weather data.",
                 "city" : "City",
-                "country" : "Country",
-                "update_frequenty" : "Update every (min)",
-                "updateFrequenty_explanation" : "When no personal Weather Underground API key is specified, the update frequenty is 60 minutes minimal."
+                "country" : "Country"
             },
             
             "button" : {

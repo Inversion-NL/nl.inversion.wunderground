@@ -2,26 +2,30 @@
     "settings" : {
         "app" : {
             "title" : "Weather Underground instellingen",
-            "description" : "Op deze pagina kun je de instellingen van Weather Underground aanpassen.",
                     
             "wunderground" : {
                 "wunderground_title" : "Weather Underground instellingen",
-                "key" : "Persoonlijke key"
+                "key" : "Persoonlijke key",
+                "update_frequenty" : "Bijwerken elke (min)",
+                "updateFrequenty_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 60 minuten."
             },
             
-            "location" : {
-                "location" : "Locatie",
+            "generic" : {
+                "units_title" : "Algemeen",
                 "units_auto" : "Automatisch",
                 "units_label" : "Eenheden",
                 "units_metric" : "Metrisch",
                 "units_imperial" : "Imperiaal",
+                "unitChange_explanation": "Als eenheden aangepast wordt zullen alle bestaande Insights logs verwijderd worden!" 
+            },
+            
+            "location" : {
+                "location" : "Locatie",
                 "autolocation" : "Gebruik Homey's locatie",
-                "manualLocation_label" : "Handmatige location",
-                "manualLocation_explanation" : "Als er geen stad en land ingegeven zijn wordt de locatie van Homey gebruikt voor de weergegevens.",
+                "manualLocation_label" : "Handmatige locatie",
+                "manualLocation_explanation" : "Gebruik onderstaande velden om handmatig een locatie op te geven voor de weersinformatie.",
                 "city" : "Stad",
-                "country" : "Land",
-                "update_frequenty" : "Bijwerken elke (min)",
-                "updateFrequenty_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 60 minuten."
+                "country" : "Land"
             },
             
             "button" : {
