@@ -10,7 +10,7 @@
         "nl": "Geeft je informatie over het weer"
     },
     "version": "0.0.3",
-    "compatibility": "0.x || 1.x",
+    "compatibility": ">=0.8.29",
     "category": "internet",
     "author": {
         "name": "Inversion NL",
