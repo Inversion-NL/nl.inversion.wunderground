@@ -24,8 +24,8 @@
                 "autolocation" : "Gebruik Homey's locatie",
                 "manualLocation_label" : "Handmatige locatie",
                 "manualLocation_explanation" : "Gebruik onderstaande velden om handmatig een locatie op te geven voor de weersinformatie.",
-                "city" : "Stad",
-                "country" : "Land"
+                "city" : "Stad (of leeg als station ID gebruikt wordt)",
+                "country" : "Land (of station ID)"
             },
             
             "button" : {
@@ -35,7 +35,13 @@
             
             "log" : {
                 "title" : "Test log:"
-            }
+            },
+            
+             "messages" : {
+                 "testing" : "Bezig met testen, moment geduld aub...",
+                 "unable_get_location " : "Niet gelukt om Homey's locatie te krijgen, probeer het opnieuw of geef een handmatige locatie op.",
+                 "settings_success_tested" : "Instellingen succesvol getest. Gebruik de opslaan-knop om je instellingen op te slaan."
+             }
         }
     }
 }

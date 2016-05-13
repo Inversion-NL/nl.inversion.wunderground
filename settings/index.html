@@ -66,7 +66,7 @@
             <div class="field row">
                 <label class="form_label" for="country" data-i18n="settings.app.location.country"></label>
                 <br>
-                <input class="form_input" id="country" type="text" value="Netherlands"/><br><br>
+                <input class="form_input" id="country" type="text" value="Netherlands"/><br>
             </div>
 
             <div class="field row">
@@ -182,7 +182,7 @@
     }
     
     function test() {
-        document.getElementById('testresult').innerHTML = "Testing, please wait...";
+        document.getElementById('testresult').innerHTML = __('settings.app.messages.testing');
 
         var button_test = document.getElementById('button_test');
         var button_save = document.getElementById('button_save');
@@ -204,7 +204,7 @@
                     getWeather(wundergroundkey, address);
                 } else {
                     // Oeps, something went wrong here
-                    Homey.alert('Unable to get Homey\'s location, please try again or specify a location manually.')
+                    Homey.alert(__('settings.app.messages.unable_get_location'))
                 }
                 
             });
@@ -254,7 +254,7 @@
                 var weather_string = "It's " + temp + " degrees Celsius in " + city + ", " + country;
 
                 document.getElementById('testresult').innerHTML = weather_string;
-                Homey.alert('Settings successfully tested. Please use the save button to save your settings.')
+                Homey.alert(__('settings.app.messages.settings_success_tested'))
             } else {
                 // Let's display the error message in a alert dialog
                 document.getElementById('testresult').innerHTML = err_msg;

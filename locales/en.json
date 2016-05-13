@@ -24,8 +24,8 @@
                 "autolocation" : "Use Homey's location",
                 "manualLocation_label" : "Manual location",
                 "manualLocation_explanation" : "Use the fields below to specify an location for the weather data.",
-                "city" : "City",
-                "country" : "Country"
+                "city" : "City (or empty when using station ID)",
+                "country" : "Country (or station ID)"
             },
             
             "button" : {
@@ -35,7 +35,13 @@
             
              "log" : {
                 "title" : "Test log:"
-            }
+            },
+            
+             "messages" : {
+                 "testing" : "Testing, please wait...",
+                 "unable_get_location " : "Unable to get Homey's location, please try again or specify a location manually.",
+                 "settings_saved" : "Settings successfully tested. Please use the save button to save your settings."
+             }
         }
     }
 }
