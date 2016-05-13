@@ -9,8 +9,8 @@
         "en": "Informs you about the weather",
         "nl": "Geeft je informatie over het weer"
     },
-    "version": "0.0.1",
-    "compatibility": "0.x || 1.x",
+    "version": "0.0.3",
+    "compatibility": ">=0.8.29",
     "category": "internet",
     "author": {
         "name": "Inversion NL",
@@ -328,8 +328,8 @@
                 "type": "number",
                 "placeholder" :
                 {
-                  "en": "degrees celsius",
-                  "nl": "graden celsius"
+                  "en": "humidity (%)",
+                  "nl": "Luchtvochtigheid (%)"
                 }
               }
             ]
@@ -397,7 +397,140 @@
                   }
               }
             ]
+          },
+          
+          {
+            "id": "wind_above",
+            "title": {
+              "en": "Wind speed is above",
+              "nl": "windsnelheid is hoger dan"
+            },
+            "tokens": [
+              {
+                "name": "wind",
+                "title": {
+                  "en": "wind",
+                  "nl": "wind"
+                },
+                "example": {
+                  "en": "15",
+                  "nl": "15"
+                }
+              }
+            ],
+            "args":
+                [
+                  {
+                    "name": "variable",
+                    "type": "number",
+                    "placeholder" :
+                      {
+                        "en": "wind speed",
+                        "nl": "windsnelheid"
+                      }
+                  }
+                ]
+          },
+
+          {
+            "id": "wind_below",
+            "title": {
+              "en": "Wind speed is below",
+              "nl": "windsnelheid is lager dan"
+            },
+            "tokens": [
+              {
+                "name": "wind",
+                "title": {
+                  "en": "wind",
+                  "nl": "wind"
+                },
+                "example": {
+                  "en": "15",
+                  "nl": "15"
+                }
+              }
+            ],
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "wind speed",
+                  "nl": "windsnelheid"
+                }
+              }
+            ]
+          },
+          
+            {
+            "id": "windgust_above",
+            "title": {
+              "en": "Wind gust is above",
+              "nl": "Windstoten hoger dan"
+            },
+            "tokens": [
+              {
+                "name": "wind_gust",
+                "title": {
+                  "en": "wind_gust",
+                  "nl": "windstoten"
+                },
+                "example": {
+                  "en": "50",
+                  "nl": "50"
+                }
+              }
+            ],
+            "args":
+                [
+                  {
+                    "name": "variable",
+                    "type": "number",
+                    "placeholder" :
+                      {
+                        "en": "wind gust",
+                        "nl": "windstoten"
+                      }
+                  }
+                ]
+          },
+
+          {
+            "id": "windgust_below",
+            "title": {
+              "en": "Wind gust is below",
+              "nl": "Windstoten lager dan"
+            },
+            "tokens": [
+              {
+                "name": "wind_gust",
+                "title": {
+                  "en": "wind gust",
+                  "nl": "windstoten"
+                },
+                "example": {
+                  "en": "50",
+                  "nl": "50"
+                }
+              }
+            ],
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "wind gust",
+                  "nl": "windstoten"
+                }
+              }
+            ]
           }
+          
         ],
 
         "conditions": [
@@ -516,6 +649,86 @@
                 {
                   "en": "UV value",
                   "nl": "UV waarde"
+                }
+              }
+            ]
+          },
+          
+          {
+            "id": "wind_above",
+            "title": {
+              "en": "Wind speed !{{is|isn't}} above",
+              "nl": "windsnelheid !{{is|is niet}} hoger dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "wind speed",
+                  "nl": "windsnelheid"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "wind_below",
+            "title": {
+              "en": "Wind speed !{{is|isn't}} below",
+              "nl": "windsnelheid !{{is|is niet}} lager dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "wind speed",
+                  "nl": "windsnelheid"
+                }
+              }
+            ]
+          },
+          
+          {
+            "id": "windgust_above",
+            "title": {
+              "en": "Wind gust !{{is|isn't}} above",
+              "nl": "windstoten !{{zijn|zijn niet}} hoger dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "wind speed",
+                  "nl": "windsnelheid"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "windgust_below",
+            "title": {
+              "en": "Wind gust !{{is|isn't}} below",
+              "nl": "windstoten !{{zijn|zijn niet}} lager dan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "number",
+                "placeholder" :
+                {
+                  "en": "wind speed",
+                  "nl": "windsnelheid"
                 }
               }
             ]
