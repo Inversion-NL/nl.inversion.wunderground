@@ -338,153 +338,133 @@ var self = {
 
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
-            
-            var error = false;
-            var err_msg = '';
-            
-            try {
-                var observation = response.current_observation;
-            } catch(err) {
-                Homey.log("Error occured:", err);
-                Homey.log(response);
-                error = true;
-                try {
-                    err_msg = response.response.error.description;
-                    Homey.log(err_msg);
-                } catch(err) {
-                    Homey.error(response);
-                }
-            }
-            
-            if (!err && !error) {
-                
-                // Cut % sign
-                var hum = response.current_observation.relative_humidity;
-                var hum_float = parseFloat(hum.substr(0, (hum.length -1)));
-                
-                // Use correct user units
-                if (units_metric) {
-                    var temp = parseFloat(response.current_observation.temp_c);
-                    var feelslike = parseFloat(response.current_observation.feelslike_c);
-                    var dewpoint = parseFloat(response.current_observation.dewpoint_c);
-                    var pressure = parseFloat(response.current_observation.pressure_mb);
-                    var wind = parseFloat(response.current_observation.wind_kph);
-                    var wind_gust = parseFloat(response.current_observation.wind_gust_kph);
-                    var visibility = parseFloat(response.current_observation.visibility_km);
-                    var precip_1hr = parseFloat(response.current_observation.precip_1hr_metric);
-                    var precip_today = parseFloat(response.current_observation.precip_today_metric);
+                if (err) {
+                    // Catch error
+                    Homey.log("Wunderground request error: " + response);
+                    return Homey.error(response);
                 } else {
-                    var temp = parseFloat(response.current_observation.temp_f);
-                    var feelslike = parseFloat(response.current_observation.feelslike_f);
-                    var dewpoint = parseFloat(response.current_observation.dewpoint_f);
-                    var pressure = parseFloat(response.current_observation.pressure_in);
-                    var wind = parseFloat(response.current_observation.wind_mph);
-                    var wind_gust = parseFloat(response.current_observation.wind_gust_mph);
-                    var visibility = parseFloat(response.current_observation.visibility_mi);
-                    var precip_1hr = parseFloat(response.current_observation.precip_1hr_in);
-                    var precip_today = parseFloat(response.current_observation.precip_today_in);
-                }
-                
-                // Reset values they where not a number
-                if (precip_1hr == "NaN") precip_1hr = 0;
-                if (precip_today == "NaN") precip_today = 0;
+                    // Cut % sign
+                    var hum = response.current_observation.relative_humidity;
+                    var hum_float = parseFloat(hum.substr(0, (hum.length -1)));
+                    
+                    // Use correct user units
+                    if (units_metric) {
+                        var temp = parseFloat(response.current_observation.temp_c);
+                        var feelslike = parseFloat(response.current_observation.feelslike_c);
+                        var dewpoint = parseFloat(response.current_observation.dewpoint_c);
+                        var pressure = parseFloat(response.current_observation.pressure_mb);
+                        var wind = parseFloat(response.current_observation.wind_kph);
+                        var wind_gust = parseFloat(response.current_observation.wind_gust_kph);
+                        var visibility = parseFloat(response.current_observation.visibility_km);
+                        var precip_1hr = parseFloat(response.current_observation.precip_1hr_metric);
+                        var precip_today = parseFloat(response.current_observation.precip_today_metric);
+                    } else {
+                        var temp = parseFloat(response.current_observation.temp_f);
+                        var feelslike = parseFloat(response.current_observation.feelslike_f);
+                        var dewpoint = parseFloat(response.current_observation.dewpoint_f);
+                        var pressure = parseFloat(response.current_observation.pressure_in);
+                        var wind = parseFloat(response.current_observation.wind_mph);
+                        var wind_gust = parseFloat(response.current_observation.wind_gust_mph);
+                        var visibility = parseFloat(response.current_observation.visibility_mi);
+                        var precip_1hr = parseFloat(response.current_observation.precip_1hr_in);
+                        var precip_today = parseFloat(response.current_observation.precip_today_in);
+                    }
+                    
+                    // Reset values they where not a number
+                    if (precip_1hr == "NaN") precip_1hr = 0;
+                    if (precip_today == "NaN") precip_today = 0;
 
-                weatherData = {
-                    city: response.current_observation.display_location.city,
-                    country: response.current_observation.display_location.country,
-                    weather_descr: response.current_observation.weather,
-                    relative_humidity: hum_float,
-                    observation_epoch: response.current_observation.observation_epoch,
-                    wind_degrees: parseFloat(response.current_observation.wind_degrees),
-                    wind_dir: response.current_observation.wind_dir,
-                    uv: parseFloat(response.current_observation.UV),
-                    temp: temp,
-                    feelslike: feelslike,
-                    dewpoint: dewpoint,
-                    pressure: pressure,
-                    wind: wind,
-                    wind_gust: wind_gust,
-                    visibility: visibility,
-                    precip_1hr: precip_1hr,
-                    precip_today: precip_today
-                };
-                
-                Homey.log("Current time: " + new Date());
-                Homey.log("Observation time: " + epochToString(weatherData.observation_epoch));
-                Homey.log("Weather data:");
-                Homey.log(weatherData);
+                    weatherData = {
+                        city: response.current_observation.display_location.city,
+                        country: response.current_observation.display_location.country,
+                        weather_descr: response.current_observation.weather,
+                        relative_humidity: hum_float,
+                        observation_epoch: response.current_observation.observation_epoch,
+                        wind_degrees: parseFloat(response.current_observation.wind_degrees),
+                        wind_dir: response.current_observation.wind_dir,
+                        uv: parseFloat(response.current_observation.UV),
+                        temp: temp,
+                        feelslike: feelslike,
+                        dewpoint: dewpoint,
+                        pressure: pressure,
+                        wind: wind,
+                        wind_gust: wind_gust,
+                        visibility: visibility,
+                        precip_1hr: precip_1hr,
+                        precip_today: precip_today
+                    };
+                    
+                    Homey.log("Current time: " + new Date());
+                    Homey.log("Observation time: " + epochToString(weatherData.observation_epoch));
+                    Homey.log("Weather data:");
+                    Homey.log(weatherData);
 
-                // Temperature triggers and conditions
-                if (value_exist(weatherData.temp)) {
+                    // Temperature triggers and conditions
+                    if (value_exist(weatherData.temp)) {
 
-                    // Determine if the temp has changed
-                    if (!value_exist(oldTemp)){
-                        Homey.log("No oldTemp value exists, maybe it's the first start of app");
-                        // First time update after reboot/install
-                        oldTemp = weatherData.temp;
-                    } else if (diff(oldTemp, weatherData.temp) >= 1) {
-                        // Only trigger when difference is equal or more then 1 degree
-                        Homey.log("oldTemp: " + oldTemp + " temp: " + weatherData.temp);
-                        oldTemp = weatherData.temp;
-                        self.tempChanged(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
+                        // Determine if the temp has changed
+                        if (!value_exist(oldTemp)){
+                            Homey.log("No oldTemp value exists, maybe it's the first start of app");
+                            // First time update after reboot/install
+                            oldTemp = weatherData.temp;
+                        } else if (diff(oldTemp, weatherData.temp) >= 1) {
+                            // Only trigger when difference is equal or more then 1 degree
+                            Homey.log("oldTemp: " + oldTemp + " temp: " + weatherData.temp);
+                            oldTemp = weatherData.temp;
+                            self.tempChanged(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
+                        }
+
+                        // Start trigger
+                        self.tempAboveBelow(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
+                    } else {
+                        // No temperature data available!
+                        Homey.log("Temperature is undefined!")
                     }
 
-                    // Start trigger
-                    self.tempAboveBelow(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
-                } else {
-                    // No temperature data available!
-                    Homey.log("Temperature is undefined!")
-                }
+                    // Humidity triggers and conditions
+                    if (value_exist(weatherData.relative_humidity)) {
+                        // Determine if the hum has changed
+                        if (!value_exist(oldHum)){
+                            // First time update after reboot/install
+                            oldHum = weatherData.relative_humidity;
+                        } else if (diff(oldHum, weatherData.relative_humidity) >= 1) {
+                            // Only trigger when difference is equal or more then 1 percent
+                            Homey.log("oldHum: " + oldHum + " hum: " + weatherData.relative_humidity);
+                            oldHum = weatherData.relative_humidity;
+                            self.humChanged(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
+                        }
 
-                // Humidity triggers and conditions
-                if (value_exist(weatherData.relative_humidity)) {
-                    // Determine if the hum has changed
-                    if (!value_exist(oldHum)){
-                        // First time update after reboot/install
-                        oldHum = weatherData.relative_humidity;
-                    } else if (diff(oldHum, weatherData.relative_humidity) >= 1) {
-                        // Only trigger when difference is equal or more then 1 percent
-                        Homey.log("oldHum: " + oldHum + " hum: " + weatherData.relative_humidity);
-                        oldHum = weatherData.relative_humidity;
-                        self.humChanged(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
+                        // Start trigger
+                        self.humAboveBelow(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
+                    } else {
+                        // No temperature data available!
+                        Homey.log("Humidity is undefined!")
+                    }
+                    
+                    // UV triggers and conditions
+                    if (value_exist(weatherData.uv)) {
+                        // Start trigger
+                        self.uvAboveBelow(weatherData.uv);
+                    } else {
+                        // No temperature data available!
+                        Homey.log("UV is undefined!")
                     }
 
-                    // Start trigger
-                    self.humAboveBelow(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
-                } else {
-                    // No temperature data available!
-                    Homey.log("Humidity is undefined!")
+                    // Add data to insights
+                    self.addInsightsEntry("temp", weatherData.temp);
+                    self.addInsightsEntry("hum", hum_float);
+                    self.addInsightsEntry("feelslike", weatherData.feelslike);
+                    self.addInsightsEntry("pressure", weatherData.pressure);
+                    self.addInsightsEntry("wind", weatherData.wind);
+                    self.addInsightsEntry("wind_gust", weatherData.wind_gust);
+                    self.addInsightsEntry("wind_degrees", weatherData.wind_degrees);
+                    self.addInsightsEntry("dewpoint", weatherData.dewpoint);
+                    self.addInsightsEntry("precip_today", weatherData.precip_today);
+                    self.addInsightsEntry("precip_1hr", weatherData.precip_1hr);
+                    self.addInsightsEntry("uv", weatherData.uv);
+                    self.addInsightsEntry("visibility", weatherData.visibility);
                 }
-                
-                // UV triggers and conditions
-                if (value_exist(weatherData.uv)) {
-                    // Start trigger
-                    self.uvAboveBelow(weatherData.uv);
-                } else {
-                    // No temperature data available!
-                    Homey.log("UV is undefined!")
-                }
-
-                // Add data to insights
-                self.addInsightsEntry("temp", weatherData.temp);
-                self.addInsightsEntry("hum", hum_float);
-                self.addInsightsEntry("feelslike", weatherData.feelslike);
-                self.addInsightsEntry("pressure", weatherData.pressure);
-                self.addInsightsEntry("wind", weatherData.wind);
-                self.addInsightsEntry("wind_gust", weatherData.wind_gust);
-                self.addInsightsEntry("wind_degrees", weatherData.wind_degrees);
-                self.addInsightsEntry("dewpoint", weatherData.dewpoint);
-                self.addInsightsEntry("precip_today", weatherData.precip_today);
-                self.addInsightsEntry("precip_1hr", weatherData.precip_1hr);
-                self.addInsightsEntry("uv", weatherData.uv);
-                self.addInsightsEntry("visibility", weatherData.visibility);
-
-            } else {
-                // Catch error
-                Homey.log("Wunderground request error:", response);
-                return Homey.error(response);
             }
-        }
       )
     },
 
