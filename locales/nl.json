@@ -40,7 +40,8 @@
              "messages" : {
                  "testing" : "Bezig met testen, moment geduld aub...",
                  "unable_get_location " : "Niet gelukt om Homey's locatie te krijgen, probeer het opnieuw of geef een handmatige locatie op.",
-                 "settings_success_tested" : "Instellingen succesvol getest. Gebruik de opslaan-knop om je instellingen op te slaan."
+                 "settings_success_tested" : "Instellingen succesvol getest. Gebruik de opslaan-knop om je instellingen op te slaan.",
+                 "settings_saved" : "Instellingen opgeslagen"
              }
         }
     }

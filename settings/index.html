@@ -174,7 +174,7 @@
         Homey.set('units_metric', document.getElementById('units_metric').checked);
         Homey.set('units_auto', document.getElementById('units_auto').checked);
         
-        Homey.alert('Settings saved')
+        Homey.alert(__('settings_saved'))
         
         setTimeout(function() {
             button_save.disabled = false;
