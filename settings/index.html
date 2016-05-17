@@ -86,6 +86,8 @@
 
 <script type="text/javascript">
 
+    var currentValues = {};
+
     function onHomeyReady(){
         
         // Disable save button until settings have been saved
@@ -96,7 +98,8 @@
             if (err) {
                 console.error(err)
             } else {
-                document.getElementById('country').value = country
+                document.getElementById('country').value = country;
+                currentValues.country = country;
             }
         })
 
@@ -104,7 +107,8 @@
             if (err) {
                 console.error(err)
             } else {
-                document.getElementById('city').value = city
+                document.getElementById('city').value = city;
+                currentValues.city = city;
             }
         })
 
@@ -112,7 +116,8 @@
             if (err) {
                 console.error(err)
             } else {
-                document.getElementById('updateFrequenty').value = updateFrequenty
+                document.getElementById('updateFrequenty').value = updateFrequenty;
+                currentValues.updateFrequenty = updateFrequenty;
             }
         })
 
@@ -120,8 +125,9 @@
             if (err) {
                 console.error(err)
             } else {
-                document.getElementById('autolocation').checked = autolocation
-                document.getElementById('locationfields').disabled = autolocation
+                document.getElementById('autolocation').checked = autolocation;
+                document.getElementById('locationfields').disabled = autolocation;
+                currentValues.autolocation = autolocation;
             }
         })
         
@@ -129,7 +135,8 @@
             if (err) {
                 Homey.error(err)
             } else {
-                document.getElementById('wundergroundKey').value = wundergroundKey
+                document.getElementById('wundergroundKey').value = wundergroundKey;
+                currentValues.wundergroundKey = wundergroundKey;
             }
         })
         
@@ -137,7 +144,8 @@
             if (err) {
                 Homey.error(err)
             } else {
-                document.getElementById('units_auto').checked = units_auto
+                document.getElementById('units_auto').checked = units_auto;
+                currentValues.units_auto = units_auto;
             }
         })
         
@@ -145,7 +153,8 @@
             if (err) {
                 Homey.error(err)
             } else {
-                document.getElementById('units_metric').checked = units_metric
+                document.getElementById('units_metric').checked = units_metric;
+                currentValues.units_metric = units_metric;
             }
         })
         
@@ -153,7 +162,8 @@
             if (err) {
                 Homey.error(err)
             } else {
-                document.getElementById('units_imperial').checked = units_imperial
+                document.getElementById('units_imperial').checked = units_imperial;
+                currentValues.units_imperial = units_imperial;
             }
         })
 
@@ -162,19 +172,71 @@
     
     function save() {
         
+        console.log('current values', currentValues);
+        
         var button_save = document.getElementById('button_save');
         button_save.disabled = true;
         
-        Homey.set('country', document.getElementById('country').value);
-        Homey.set('city', document.getElementById('city').value);
-        Homey.set('updateFrequenty', document.getElementById('updateFrequenty').value);
-        Homey.set('autolocation', document.getElementById('autolocation').checked);
-        Homey.set('wundergroundKey', document.getElementById('wundergroundKey').value);
-        Homey.set('units_imperial', document.getElementById('units_imperial').checked);
-        Homey.set('units_metric', document.getElementById('units_metric').checked);
-        Homey.set('units_auto', document.getElementById('units_auto').checked);
+        var valuesHaveBeenChanged = false;
         
-        Homey.alert('Settings saved')
+        if (currentValues.country != document.getElementById('country').value) {
+            console.log('country value has been changed, saving');
+            Homey.set('country', document.getElementById('country').value);
+            valuesHaveBeenChanged = true;
+            currentValues.country = document.getElementById('country').value;
+        }
+        
+        if (currentValues.city != document.getElementById('city').value) {
+            console.log('city value has been changed, saving');
+            Homey.set('city', document.getElementById('city').value);
+            valuesHaveBeenChanged = true;
+            currentValues.city = document.getElementById('city').value;
+        }
+        
+        if (currentValues.updateFrequenty != document.getElementById('updateFrequenty').value) {
+            console.log('updateFrequenty value has been changed, saving');
+            Homey.set('updateFrequenty', document.getElementById('updateFrequenty').value);
+            valuesHaveBeenChanged = true;
+            currentValues.updateFrequenty = document.getElementById('updateFrequenty').value;
+        }
+        
+        if (currentValues.autolocation != document.getElementById('autolocation').checked) {
+            console.log('autolocation value has been changed, saving');
+            Homey.set('autolocation', document.getElementById('autolocation').checked);
+            valuesHaveBeenChanged = true;
+            currentValues.autolocation = document.getElementById('autolocation').checked;
+        }
+        
+        if (currentValues.wundergroundKey != document.getElementById('wundergroundKey').value) {
+            console.log('wundergroundKey value has been changed, saving');
+            Homey.set('wundergroundKey', document.getElementById('wundergroundKey').value);
+            valuesHaveBeenChanged = true;
+            currentValues.wundergroundKey = document.getElementById('wundergroundKey').value;
+        }
+
+        if (currentValues.units_imperial != document.getElementById('units_imperial').checked) {
+            console.log('units_imperial value has been changed, saving');
+            Homey.set('units_imperial', document.getElementById('units_imperial').checked);
+            valuesHaveBeenChanged = true;
+            currentValues.units_imperial = document.getElementById('units_imperial').checked;
+        }
+        
+        if (currentValues.units_metric != document.getElementById('units_metric').checked) {
+            console.log('units_metric value has been changed, saving');
+            Homey.set('units_metric', document.getElementById('units_metric').checked);
+            valuesHaveBeenChanged = true;
+            currentValues.units_metric = document.getElementById('units_metric').checked;
+        }
+        
+        if (currentValues.units_auto != document.getElementById('units_auto').checked) {
+            console.log('units_auto value has been changed, saving');
+            Homey.set('units_auto', document.getElementById('units_auto').checked);
+            valuesHaveBeenChanged = true;
+            currentValues.units_auto = document.getElementById('units_auto').checked;
+        }
+        
+        if (valuesHaveBeenChanged) Homey.alert(__('settings.app.messages.settings_saved'));
+        else Homey.alert(__('settings.app.messages.settings_noSettingsChanged'));
         
         setTimeout(function() {
             button_save.disabled = false;

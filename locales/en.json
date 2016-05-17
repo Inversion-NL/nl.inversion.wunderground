@@ -40,7 +40,9 @@
              "messages" : {
                  "testing" : "Testing, please wait...",
                  "unable_get_location " : "Unable to get Homey's location, please try again or specify a location manually.",
-                 "settings_saved" : "Settings successfully tested. Please use the save button to save your settings."
+                 "settings_success_tested" : "Settings succesfully tested. Please use the save button to save your settings",
+                 "settings_saved" : "Settings saved",
+                 "settings_noSettingsChanged" : "No setting has been changed"
              }
         }
     }

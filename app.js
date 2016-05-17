@@ -22,8 +22,6 @@ var insightsLogs =
         "visibility"
     ];
 
-
-
 var interval;
 var update_frequenty = defaultUpdateTime;
 var locationGetCounter = 1;
@@ -102,29 +100,55 @@ var self = {
     },
     
     scheduleWeather: function(update_frequenty) {
-      Homey.log("");
-      Homey.log("Schedule weather every " + update_frequenty + " minutes");
-      interval = setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // To minutes
-          function trigger_update() {
-              self.updateWeather();
-          }; 
+        Homey.log("");
+        Homey.log("Schedule weather");
+        if (interval) {
+            Homey.log("Current interval", interval);
+            Homey.log("Clearing current interval");
+            clearInterval(interval);
+        }
+        interval = setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // To minutes
+        Homey.log('Interval:', update_frequenty);
+        function trigger_update() {
+            self.updateWeather();
+        };
+         
+    },
+    
+    setUnits: function() {
+        Homey.log('');
+        Homey.log('setUnits');
+        
+        units_metric = Homey.manager('settings').get('units_metric');
+        var units_imperial = Homey.manager('settings').get('units_imperial');
+        var units_auto = Homey.manager('settings').get('units_auto');
+        var homey_units = Homey.manager('i18n').getUnits();
+        
+        if (units_auto && value_exist(homey_units) && homey_units != "") {
+            Homey.manager('settings').set('currentSettingUnits', 'auto');
+            if (homey_units == 'metric') {
+                Homey.log('Autodetected metric units');
+                units_metric = true;
+            } else {
+                Homey.log('Autodetected imperial units');
+                units_metric = false;
+            }
+        } else if (!value_exist(units_auto) && !value_exist(units_metric) && !value_exist(units_imperial)) {
+            // Something is wring here, none of the radio buttons are checked!
+            Homey.log('No unit value existed, resetting to auto');
+            Homey.manager('settings').set('units_auto', 'true');
+        }
     },
     
     checkSettings: function() {
         Homey.log("");
         Homey.log("Check settings");
         
+        // Check units to use in app
+        self.setUnits();
+        
         // Check if user provided a key in settings
         var myKey = Homey.manager('settings').get('wundergroundKey');
-        units_metric = Homey.manager('settings').get('units_metric');
-        var units_imperial = Homey.manager('settings').get('units_imperial');
-        var units_auto = Homey.manager('settings').get('units_auto');
-        var homey_units = Homey.manager('i18n').getUnits();
-        
-        if (units_auto && !value_exist(homey_units) && homey_units != "") {
-            if (homey_units == 'metric') units_metric = true;
-            else units_metric = false;
-        } else units_metric = true;
 
         var usePersonalKey = false;
         if (!value_exist(myKey) || myKey == "") {
@@ -146,7 +170,7 @@ var self = {
         if (!usePersonalKey) {
             // Using Inversion key, max update frequenty is 60 minutes
             if (update_frequenty < defaultUpdateTime || update_frequenty > 1439 || !value_exist(update_frequenty)) {
-                Homey.log("Update value out of bounds: " + update_frequenty + " minutes");
+                Homey.log("Update value out of bounds, resetting to default");
                 update_frequenty = defaultUpdateTime;                 // in minutes
                 Homey.log("Update value: " + update_frequenty + " minutes");
             }
@@ -201,8 +225,8 @@ var self = {
             Homey.log("Using country and city for location");
             address = country + '/' + city;
         } else { 
-            Homey.log("One of the country/city fields is empty, using defaults");
-            address = "Netherlands/Amsterdam";
+            Homey.log("One of the country/city fields is empty, setting auto location which will trigger checkSettings() again");
+            Homey.manager('settings').set('autolocation', true);
         }
     },
     
@@ -218,18 +242,61 @@ var self = {
     
     settingsChanged: function(settingname) {
         Homey.log("");
-        Homey.log("Setting has changed: " + settingname);
+        // Not interested in currentSettingUnits changes
+        if (settingname != 'currentsettingunits' ) Homey.log("Setting has changed: " + settingname);
 
-        // If key has changed
-        if (settingname == 'updateFrequenty') {
+        if (settingname == 'currentsettingunits') {
+            // Don't do anything when this setting has changed or it will cause a loop
+        } else if (settingname == 'updatefrequenty') {
             // If the frequenty is changed we have to cancel the current interval and schedule a new
             self.checkSettings();
-            Homey.log("Clearing current interval: " + interval);
-            clearInterval(interval);
-            Homey.log("Scheduling weather update every: " + update_frequenty);
+            Homey.log("Scheduling weather update every:", update_frequenty);
             self.scheduleWeather(update_frequenty);
             Homey.log("Fetching weather right now");
             self.updateWeather();
+        } else if (settingname == 'units_auto' || settingname == 'units_imperial' || settingname == 'units_metric') {
+            // Let's check if the units have changed
+            var units_metric = Homey.manager('settings').get('units_metric');
+            Homey.log('units_metric:', units_metric);
+            var units_imperial = Homey.manager('settings').get('units_imperial');
+            Homey.log('units_imperial:', units_imperial);
+            var units_auto = Homey.manager('settings').get('units_auto');
+            Homey.log('units_auto:', units_auto);
+            var currentSettingUnits = Homey.manager('settings').get('currentSettingUnits');
+            Homey.log('currentSettingUnits:', currentSettingUnits);
+            
+            if (units_metric && value_exist(currentSettingUnits)) {
+                if (currentSettingUnits != 'metric') {
+                    // Setting has changed, delete all Insights logs!
+                    Homey.log('Units setting has changed, going to delete all Insights logs!');
+                    //self.deleteAllInsightsLogs();
+                    self.checkInsightsLogs();
+                    Homey.manager('settings').set('currentSettingUnits', 'metric');
+                }
+            } else if (units_imperial && value_exist(currentSettingUnits)) {
+                if (currentSettingUnits != 'imperial') {
+                    // Setting has changed, delete all Insights logs!
+                    Homey.log('Units setting has changed, going to delete all Insights logs!');
+                    //self.deleteAllInsightsLogs();
+                    self.checkInsightsLogs();
+                    Homey.manager('settings').set('currentSettingUnits', 'imperial');
+                }
+            } else if (units_auto && value_exist(currentSettingUnits)) {
+                if (currentSettingUnits != 'auto') {
+                    // Setting has changed, delete all Insights logs!
+                    Homey.log('Units setting has changed, going to delete all Insights logs!');
+                    //self.deleteAllInsightsLogs();
+                    self.checkInsightsLogs();
+                    Homey.manager('settings').set('currentSettingUnits', 'auto');
+                }
+            } else {
+                // Something is wrong here, reset to auto units
+                Homey.log('No unit radio button was checked, setting to auto units');
+                Homey.manager('settings').set('units_metric', false);
+                Homey.manager('settings').set('units_imperial', false);
+                Homey.manager('settings').set('units_auto', true);
+                Homey.manager('settings').set('currentSettingUnits', 'auto');
+            }
         } else {
             self.checkSettings();
         }
@@ -405,15 +472,27 @@ var self = {
     updateWeather: function() {
         Homey.log("");
         Homey.log("Update Weather");
-        Homey.log('Requesting for location: ' + address);
+        Homey.log('Requesting for location', address);
 
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
             
-            Homey.log('err:', err);
-            Homey.log('response:', response);
+            Homey.log('request error:', err);
             
-            if (!err && response) {
+            var error = false;
+            var err_msg;
+            try {
+                // If error is in the response, something must have gone wrong
+                err_msg = result.response.error.description;
+                Homey.log('Error:', err_msg);
+                error = true;
+            } catch(err) {
+                // No error message found so this looks good
+                Homey.log('No error message found in weather request');
+                error = false;
+            }
+            
+            if (!err && response && !error) {
                 
                 // Cut % sign
                 var hum = response.current_observation.relative_humidity;
@@ -421,6 +500,7 @@ var self = {
                 
                 // Use correct user units
                 if (units_metric) {
+                    Homey.log('Using metric units');
                     var temp = parseFloat(response.current_observation.temp_c);
                     var feelslike = parseFloat(response.current_observation.feelslike_c);
                     var dewpoint = parseFloat(response.current_observation.dewpoint_c);
@@ -431,6 +511,7 @@ var self = {
                     var precip_1hr = parseFloat(response.current_observation.precip_1hr_metric);
                     var precip_today = parseFloat(response.current_observation.precip_today_metric);
                 } else {
+                    Homey.log('Using imperial units');
                     var temp = parseFloat(response.current_observation.temp_f);
                     var feelslike = parseFloat(response.current_observation.feelslike_f);
                     var dewpoint = parseFloat(response.current_observation.dewpoint_f);
@@ -558,7 +639,7 @@ var self = {
 
             } else {
                 // Catch error
-                Homey.log("Wunderground request error: " + response);
+                Homey.log("Wunderground request error:", response);
                 return Homey.error(response);
             }
         }
@@ -688,6 +769,26 @@ var self = {
         Homey.log("createInsightsLogs");
         Homey.log("Create Insights log: " + log);
         
+        var temp_unit;
+        var distance_unit;
+        var speed_unit;
+        var distance_small_unit;
+        
+        if (units_metric) {
+            temp_unit = "&degC";
+            distance_unit = 'km';
+            speed_unit = 'kmh';
+            pressure_unit = 'mbar';
+            distance_small_unit = 'mm';
+        }
+        else {
+            temp_unit = "&degF";
+            distance_unit = 'mi';
+            speed_unit = 'mph';
+            pressure_unit = 'inch';
+            distance_small_unit = 'in';
+        }
+        
         switch(log) {
             case 'temp':
                 Homey.manager('insights').createLog('temp', {
@@ -697,8 +798,8 @@ var self = {
                 },
                 type: 'number',
                 units: {
-                    en: '&degF',
-                    nl: '&degC'
+                    en: temp_unit,
+                    nl: temp_unit
                 },
                 decimals: 2
                 },
@@ -739,8 +840,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: '&degF',
-                        nl: '&degC'
+                        en: temp_unit,
+                        nl: temp_unit
                     },
                     decimals: 2
                     },
@@ -760,8 +861,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: 'inch',
-                        nl: 'mbar'
+                        en: pressure_unit,
+                        nl: pressure_unit
                     },
                     decimals: 2
                     },
@@ -781,8 +882,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: 'mph',
-                        nl: 'kph'
+                        en: speed_unit,
+                        nl: speed_unit
                     },
                     decimals: 2
                     },
@@ -802,8 +903,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: 'mph',
-                        nl: 'kph'
+                        en: speed_unit,
+                        nl: speed_unit
                     },
                     decimals: 2
                     },
@@ -844,8 +945,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: '&degF',
-                        nl: '&degC'
+                        en: temp_unit,
+                        nl: temp_unit
                     },
                     decimals: 0
                     },
@@ -865,8 +966,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: 'inch',
-                        nl: 'mm'
+                        en: distance_small_unit,
+                        nl: distance_small_unit
                     },
                     decimals: 2
                     },
@@ -886,8 +987,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: 'inch',
-                        nl: 'mm'
+                        en: distance_small_unit,
+                        nl: distance_small_unit
                     },
                     decimals: 2
                     },
@@ -924,8 +1025,8 @@ var self = {
                     },
                     type: 'number',
                     units: {
-                        en: 'mi',
-                        nl: 'km'
+                        en: distance_unit,
+                        nl: distance_unit
                     },
                     decimals: 2
                     },
@@ -961,13 +1062,10 @@ function testWU(callback, args) {
 
     Homey.log('Testing for location:', address);
     
-    if (wundergroundKey == "" || wundergroundKey == null) {
-        Homey.log("wundergroundkey:", wundergroundkey);
+    if (!value_exist(wundergroundKey) || wundergroundKey == "" || wundergroundKey == null) {
         Homey.log("Weather underground key is empty, using Inversion key");
         wundergroundKey = Homey.env.WUNDERGROUND_KEY;     
-    } else {
-        Homey.log('Using user Weather Underground key');    
-    }
+    } else Homey.log('Using user defined Weather Underground key');    
     
     var wunderground = new Wunderground(wundergroundKey);
     
@@ -976,8 +1074,6 @@ function testWU(callback, args) {
         
         var error = false;
         var err_msg = '';
-        
-        Homey.log('response', response);
         
         try {
             // If error is in the response, something must have gone wrong
