@@ -88,8 +88,14 @@ var self = {
         Homey.manager('flow').on('condition.windgust_below', self.windgustBelow);
         
         // Listen for changes in settings
-        Homey.log("Registering settings listener")
+        Homey.log("Registering settings listener");
         Homey.manager('settings').on('set', self.settingsChanged);
+        
+        // Listen for Homey app warnings
+        Homey.log("Registering several app warning listeners");
+        Homey.on('cpuwarn', self.appWarning);
+        Homey.on('unload', self.appWarning);
+        Homey.on('memwarn', self.appWarning);
 
         // Get location
         self.getLocation(function(err, location) {
@@ -300,6 +306,13 @@ var self = {
         } else {
             self.checkSettings();
         }
+    },
+    
+    appWarning: function(data) {
+        console.log('');
+        console.log('appWarning');
+        console.log('data', data);
+        if (data.count) console.log('count: ' + data.count + '/5'); // count: 1/5, 2/5 etc. after count 5, your app is killed
     },
 
     tempAbove: function(callback, args) {
