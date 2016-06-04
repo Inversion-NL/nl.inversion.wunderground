@@ -88,8 +88,19 @@ var self = {
         Homey.manager('flow').on('condition.windgust_below', self.windgustBelow);
         
         // Listen for changes in settings
-        Homey.log("Registering settings listener")
+        Homey.log("Registering settings listener");
         Homey.manager('settings').on('set', self.settingsChanged);
+        
+        // Listen for Homey app warnings and performance triggers
+        try {
+            Homey.log("Registering several app warning and performance listeners");
+            Homey.on('cpuwarn', self.appWarning);
+            Homey.on('unload', self.appWarning);
+            Homey.on('memwarn', self.appWarning);
+            Homey.on('unload', self.unload);
+        } catch (err) {
+            Homey.log('!!Registration for app warning and performance listeners failed!!')
+        }
 
         // Get location
         self.getLocation(function(err, location) {
@@ -134,7 +145,7 @@ var self = {
                 units_metric = false;
             }
         } else if (!value_exist(units_auto) && !value_exist(units_metric) && !value_exist(units_imperial)) {
-            // Something is wring here, none of the radio buttons are checked!
+            // Something is wrong here, none of the radio buttons are checked!
             Homey.log('No unit value existed, resetting to auto');
             Homey.manager('settings').set('units_auto', 'true');
         }
@@ -191,6 +202,10 @@ var self = {
         var country = Homey.manager('settings').get('country');
         var city = Homey.manager('settings').get('city');
         autolocation = Homey.manager('settings').get('autolocation');
+        if (!value_exist(autolocation) && !value_exist(city) && !value_exist(country)) {
+            Homey.log('location information invalid, resetting to defaults')
+            autolocation = true;
+        }
 
         // Check user settings
         if (autolocation) {
@@ -243,11 +258,11 @@ var self = {
     settingsChanged: function(settingname) {
         Homey.log("");
         // Not interested in currentSettingUnits changes
-        if (settingname != 'currentsettingunits' ) Homey.log("Setting has changed: " + settingname);
-
-        if (settingname == 'currentsettingunits') {
+        if (settingname != 'currentSettingUnits' || settingname != 'currentsettingunits') Homey.log("Setting has changed: " + settingname);
+        // Homey v 0.8.35 has a bug where all variables are lower case
+        if (settingname == 'currentSettingUnits' || settingname != 'currentsettingunits') {
             // Don't do anything when this setting has changed or it will cause a loop
-        } else if (settingname == 'updatefrequenty') {
+        } else if (settingname == 'updatefrequenty' || settingname == 'updateFrequenty') {
             // If the frequenty is changed we have to cancel the current interval and schedule a new
             self.checkSettings();
             Homey.log("Scheduling weather update every:", update_frequenty);
@@ -299,6 +314,22 @@ var self = {
             }
         } else {
             self.checkSettings();
+        }
+    },
+    
+    appWarning: function(data) {
+        Homey.log('');
+        Homey.log('appWarning');
+        Homey.log('data', data);
+        if (data.count) Homey.log('count: ' + data.count + '/5'); // count: 1/5, 2/5 etc. after count 5, your app is killed
+    },
+    
+    unload: function() {
+        Homey.log('');
+        Homey.log('appWarning');
+        if (wunderground != null) {
+            Homey.log("wunderground != null");
+            wunderground = null;
         }
     },
 
@@ -768,11 +799,32 @@ var self = {
         Homey.log("");
         Homey.log("createInsightsLogs");
         Homey.log("Create Insights log: " + log);
+        Homey.log("Metric units", units_metric);
         
         var temp_unit;
         var distance_unit;
         var speed_unit;
+        var pressure_unit;
         var distance_small_unit;
+        
+        // On very first start units aren't 
+        if (!value_exist(units_metric)) {
+            units_metric = Homey.manager('settings').get('units_metric');
+            var units_imperial = Homey.manager('settings').get('units_imperial');
+            var units_auto = Homey.manager('settings').get('units_auto');
+            var homey_units = Homey.manager('i18n').getUnits();
+            
+            if (units_auto && value_exist(homey_units) && homey_units != "") {
+                Homey.manager('settings').set('currentSettingUnits', 'auto');
+                if (homey_units == 'metric') {
+                    Homey.log('Autodetected metric units');
+                    units_metric = true;
+                } else {
+                    Homey.log('Autodetected imperial units');
+                    units_metric = false;
+                }
+            }
+        }
         
         if (units_metric) {
             temp_unit = "&degC";
@@ -780,8 +832,7 @@ var self = {
             speed_unit = 'kmh';
             pressure_unit = 'mbar';
             distance_small_unit = 'mm';
-        }
-        else {
+        } else {
             temp_unit = "&degF";
             distance_unit = 'mi';
             speed_unit = 'mph';
@@ -794,7 +845,7 @@ var self = {
                 Homey.manager('insights').createLog('temp', {
                 label: {
                     en: 'Temperature',
-                    nl: 'Temperature'
+                    nl: 'Temperatuur'
                 },
                 type: 'number',
                 units: {
@@ -1069,53 +1120,60 @@ function testWU(callback, args) {
     
     var wunderground = new Wunderground(wundergroundKey);
     
-    // Get weather data
-    wunderground.conditions().request(address, function(err, response) {
-        
-        var error = false;
-        var err_msg = '';
-        
-        try {
-            // If error is in the response, something must have gone wrong
-            err_msg = response.response.error.description;
-            error = true;
-        } catch(err) {
-            // No error message found so this looks good
-            error = false;
-        }
-        
-        if (!error) {
-            // If still okay, let's test something else
+    if (address && value_exist(address)) {
+            // Get weather data
             try {
-                // Let's test for another possible error
-                var temp = response.current_observation.temp_c;
-                error = false;
+                wunderground.conditions().request(address, function(err, response) {
+                    
+                    var error = false;
+                    var err_msg = '';
+                    
+                    try {
+                        // If error is in the response, something must have gone wrong
+                        err_msg = response.response.error.description;
+                        error = true;
+                    } catch(err) {
+                        // No error message found so this looks good
+                        error = false;
+                    }
+                    
+                    if (!error) {
+                        // If still okay, let's test something else
+                        try {
+                            // Let's test for another possible error
+                            var temp = response.current_observation.temp_c;
+                            error = false;
+                        } catch(err) {
+                            // That's gone wrong, let's create our own error message
+                            response = { response:
+                                { error:
+                                    { description: 'Undefined error, please try city and country without spaces' } } }
+                            error = true;
+                        }
+                    }
+
+                    if (!err && !error) {
+                        Homey.log("Weather response received");
+                        
+                        // Return specific data
+                        var temp = response.current_observation.temp_c;
+                        var city = response.current_observation.display_location.city;
+                        var country = response.current_observation.display_location.country;
+                        var data = {'temp' : temp, 'city' : city, 'country' : country};
+                        callback(null, data);
+
+                    } else {
+                        // Catch error
+                        Homey.log("Wunderground request error");
+                        callback(null, response);
+                    }
+                });
             } catch(err) {
-                // That's gone wrong, let's create our own error message
-                response = { response:
-                    { error:
-                        { description: 'Undefined error, please try city and country without spaces' } } }
-                error = true;
+                callback(false, null);
             }
-        }
-
-        if (!err && !error) {
-            Homey.log("Weather response received");
-            
-            // Return specific data
-            var temp = response.current_observation.temp_c;
-            var city = response.current_observation.display_location.city;
-            var country = response.current_observation.display_location.country;
-            var data = {'temp' : temp, 'city' : city, 'country' : country};
-            callback (null, data);
-
-        } else {
-            // Catch error
-            Homey.log("Wunderground request error");
-            callback (null, response);
-        }
-    });
-    
+    } else {
+        callback(false, null);
+    }  
 }
 
 module.exports = self;
