@@ -14,13 +14,11 @@
         </legend>
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" for="wundergroundKey" data-i18n="settings.app.wunderground.key"></label>
-            <br>
-            <input class="form_input" id="wundergroundKey" type="text" value="123456abcdef"/>
+            <input class="form_input" id="wundergroundKey" type="text"/>
         </div>
         <br>
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" for="updateFrequenty" data-i18n="settings.app.wunderground.update_frequenty"></label>
-            <br>
             <input class="form_input" id="updateFrequenty" type="number" value="60"/>
         </div>
         <p style="font-size:10px" data-i18n="settings.app.wunderground.updateFrequenty_explanation"></p>
@@ -237,10 +235,6 @@
         
         if (valuesHaveBeenChanged) Homey.alert(__('settings.app.messages.settings_saved'));
         else Homey.alert(__('settings.app.messages.settings_noSettingsChanged'));
-        
-        setTimeout(function() {
-            button_save.disabled = false;
-        }, 3500);
     }
     
     function test() {
@@ -289,38 +283,44 @@
             
         }, function(err, result) {
             
-            console.log("Weather response received");
-            
-            button_test.disabled = false;
-            
-            var error = false;
-            var err_msg;
-            try {
-                // If error is in the response, something must have gone wrong
-                err_msg = result.response.error.description;
-                console.log('Error:', err_msg);
-                error = true;
-            } catch(err) {
-                // No error message found so this looks good
-                console.log('No error message found');
-                error = false;
-            }
-            
-            if (!err && !error) {
-                // Alright, no errors, let's rock!
-                button_save.disabled = false;
+            if (!err) {
+                console.log("Weather response received");
                 
-                var temp = result.temp;
-                var city = result.city;
-                var country = result.country;            
-                var weather_string = "It's " + temp + " degrees Celsius in " + city + ", " + country;
+                button_test.disabled = false;
+                
+                var error = false;
+                var err_msg;
+                try {
+                    // If error is in the response, something must have gone wrong
+                    err_msg = result.response.error.description;
+                    console.log('Error:', err_msg);
+                    error = true;
+                } catch(err) {
+                    // No error message found so this looks good
+                    console.log('No error message found');
+                    error = false;
+                }
+                
+                if (!err && !error) {
+                    // Alright, no errors, let's rock!
+                    button_save.disabled = false;
+                    
+                    var temp = result.temp;
+                    var city = result.city;
+                    var country = result.country;            
+                    var weather_string = "It's " + temp + " degrees Celsius in " + city + ", " + country;
 
-                document.getElementById('testresult').innerHTML = weather_string;
-                Homey.alert(__('settings.app.messages.settings_success_tested'))
+                    document.getElementById('testresult').innerHTML = weather_string;
+                    Homey.alert(__('settings.app.messages.settings_success_tested'))
+                } else {
+                    // Let's display the error message in a alert dialog
+                    document.getElementById('testresult').innerHTML = err_msg;
+                    return Homey.alert(err_msg);
+                }
             } else {
-                // Let's display the error message in a alert dialog
-                document.getElementById('testresult').innerHTML = err_msg;
-                return Homey.alert(err_msg);
+                // Something went wrong
+                document.getElementById('testresult').innerHTML = __('settings.app.messages.settings_unexpectedError');
+                return Homey.alert(__('settings.app.messages.settings_unexpectedError'));
             }
         });
     }
