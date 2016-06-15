@@ -22,7 +22,8 @@ var insightsLogs =
         "visibility"
     ];
 
-var interval;
+var weatherInterval;
+var forecastInterval;
 var update_frequenty = defaultUpdateTime;
 var locationGetCounter = 1;
 var difMinute;
@@ -125,23 +126,53 @@ var self = {
         
         // Check settings and start updating weather
         self.checkSettings();
+
+        // Print current date and time
+        Homey.log("Current time: " + new Date());
     },
     
     scheduleWeather: function(update_frequenty) {
         Homey.log("");
         Homey.log("Schedule weather");
 
-        if (interval) {
-            Homey.log("Clearing current interval", interval);
-            clearInterval(interval);
+        if (weatherInterval) {
+            Homey.log("Clearing current weatherInterval", weatherInterval);
+            clearInterval(weatherInterval);
         }
 
-        interval = setInterval(trigger_update.bind(this), update_frequenty * 60 * 1000); // From minutes to milliseconds
-        if (fullLogging) Homey.log('Interval:', interval);
+        if (update_frequenty == null || update_frequenty == 0 || isNaN(update_frequenty)) {
+            Homey.log("Update_frequenty out of bounds, reset to default", update_frequenty);
+            update_frequenty = defaultUpdateTime;
+        }
+
+        var updateTime = update_frequenty * 60 * 1000;
+        weatherInterval = setInterval(trigger_update.bind(this), updateTime); // From minutes to milliseconds
+        if (fullLogging) Homey.log('weatherInterval:', weatherInterval);
         function trigger_update() {
             self.updateWeather();
         };
-         
+    },
+
+    scheduleForecast: function(update_frequenty) {
+        Homey.log("");
+        Homey.log("Schedule forecast");
+
+        if (forecastInterval) {
+            Homey.log("Clearing current forecastInterval", forecastInterval);
+            clearInterval(forecastInterval);
+        }
+
+        if (update_frequenty == null || update_frequenty == 0 || isNaN(update_frequenty)) {
+            Homey.log("Update_frequenty out of bounds, reset to default", update_frequenty);
+            update_frequenty = defaultUpdateTime;
+        }
+
+        var updateTime = update_frequenty * 60 * 1000;
+        forecastInterval = setInterval(trigger_update.bind(this), updateTime); // From minutes to milliseconds
+        if (fullLogging) Homey.log('forecastInterval:', forecastInterval);
+        function trigger_update() {
+            self.updateForecast();
+        };
     },
     
     setUnits: function() {
@@ -231,6 +262,7 @@ var self = {
                 Homey.log("Using lat lon for location");
                 address = lat + ',' + lon;
                 self.scheduleWeather(update_frequenty);
+                self.scheduleForecast(update_frequenty);
             } else {
                 Homey.log("Lat lon data invalid");
 
@@ -244,6 +276,7 @@ var self = {
                             lon = location.longitude;
                             address = lat + ',' + lon;
                             self.scheduleWeather(update_frequenty);
+                            self.scheduleForecast(update_frequenty);
                             // Found location, reset counter
                             locationGetCounter = 0;
                             return;
@@ -253,10 +286,12 @@ var self = {
                     Homey.log("Max location detection attempts reached, using country and city for location");
                     address = country + '/' + city;
                     self.scheduleWeather(update_frequenty);
+                    self.scheduleForecast(update_frequenty);
                 } else { 
                     Homey.log("Max location detection attempts reached and one of the country/city fields is empty, using defaults");
                     address = "Netherlands/Amsterdam";
                     self.scheduleWeather(update_frequenty);
+                    self.scheduleForecast(update_frequenty);
                 }
             }
         } else if (value_exist(country) && value_exist(city) && country != "" && city != "") {
@@ -264,10 +299,12 @@ var self = {
             Homey.log("Using country and city for location");
             address = country + '/' + city;
             self.scheduleWeather(update_frequenty);
+            self.scheduleForecast(update_frequenty);
         } else { 
             Homey.log("One of the country/city fields is empty, setting to autolocation which will trigger checkSettings() again");
             Homey.manager('settings').set('autolocation', true);
             self.scheduleWeather(update_frequenty);
+            self.scheduleForecast(update_frequenty);
         }
     },
     
@@ -521,6 +558,50 @@ var self = {
         });
     },
 
+    // test the Wunderground response for errors
+    testResponse: function(err, result) {
+        
+        if (err) return true;
+        
+        var err_msg;
+        try {
+            // If error is in the response, something must have gone wrong
+            err_msg = result.response.error.description;
+            Homey.log('Error:', err_msg);
+            return true;
+        } catch(err) {
+            // No error message found so this looks good
+            if (fullLogging) Homey.log('No error message found in weather request');
+            return false;
+        }
+    },
+
+    // update the forecast
+    updateForecast: function() {
+        Homey.log("");
+        Homey.log("Update forecast");
+        Homey.log('Requesting for location', address);
+        
+        if (!value_exist(address)) {
+            Homey.log('No valid address data, not fetching forecast')
+            return;
+        }
+
+        // Get forecast data
+        wunderground.forecast().request(address, function(err, response) {
+            Homey.log("");
+            Homey.log("updateForecast response");
+
+            var error = self.testResponse(err, response);
+            
+            if (response && !error) {
+                Homey.log("Response:");
+                var data = response.forecast.txt_forecast.forecastday
+                Homey.log(data);
+            }
+        });
+    },
+
     // update the weather
     updateWeather: function() {
         Homey.log("");
@@ -534,22 +615,9 @@ var self = {
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
             
-            if (fullLogging) Homey.log('request error:', err);
+            var error = self.testResponse(err, response);
             
-            var error = false;
-            var err_msg;
-            try {
-                // If error is in the response, something must have gone wrong
-                err_msg = result.response.error.description;
-                Homey.log('Error:', err_msg);
-                error = true;
-            } catch(err) {
-                // No error message found so this looks good
-                if (fullLogging) Homey.log('No error message found in weather request');
-                error = false;
-            }
-            
-            if (!err && response && !error) {
+            if (response && !error) {
                 
                 var hum = test_weatherData(response.current_observation.relative_humidity);
                 try {
