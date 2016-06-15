@@ -14,7 +14,7 @@
         </legend>
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" for="wundergroundKey" data-i18n="settings.app.wunderground.key"></label>
-            <input class="form_input" id="wundergroundKey" type="text"/>
+            <input class="form_input" id="wundergroundKey" type="text" placeholder="11aabbcc22"/>
         </div>
         <br>
         <div data-role="fieldcontain" style="margin:0;">
@@ -94,44 +94,46 @@
         
         Homey.get('country', function(err, country) {
             if (err) {
-                console.error(err)
-            } else {
-                document.getElementById('country').value = country;
-                currentValues.country = country;
+                console.error(err);
+                country = 'Netherlands';
             }
+            document.getElementById('country').value = country;
+            currentValues.country = country;
         })
 
         Homey.get('city', function(err, city) {
             if (err) {
-                console.error(err)
-            } else {
-                document.getElementById('city').value = city;
-                currentValues.city = city;
+                console.error(err);
+                city = 'Amsterdam'
             }
+            document.getElementById('city').value = city;
+            currentValues.city = city;
         })
 
         Homey.get('updateFrequenty', function(err, updateFrequenty) {
             if (err) {
-                console.error(err)
-            } else {
-                document.getElementById('updateFrequenty').value = updateFrequenty;
-                currentValues.updateFrequenty = updateFrequenty;
+                console.error(err);
+                updateFrequenty = 60;
             }
+            if (typeof updateFrequenty == 'undefined' || updateFrequenty == null) updateFrequenty = 60;
+            document.getElementById('updateFrequenty').value = updateFrequenty;
+            currentValues.updateFrequenty = updateFrequenty;
         })
 
         Homey.get('autolocation', function(err, autolocation) {
             if (err) {
-                console.error(err)
-            } else {
-                document.getElementById('autolocation').checked = autolocation;
-                document.getElementById('locationfields').disabled = autolocation;
-                currentValues.autolocation = autolocation;
+                console.error(err);
+                autolocation = true;
             }
+            if (typeof autolocation == 'undefined' || autolocation == null) autolocation = true;
+            document.getElementById('autolocation').checked = autolocation;
+            document.getElementById('locationfields').disabled = autolocation;
+            currentValues.autolocation = autolocation;
         })
         
         Homey.get('wundergroundKey', function(err, wundergroundKey) {
             if (err) {
-                Homey.error(err)
+                Homey.error(err);
             } else {
                 document.getElementById('wundergroundKey').value = wundergroundKey;
                 currentValues.wundergroundKey = wundergroundKey;
@@ -140,16 +142,16 @@
         
         Homey.get('units_auto', function(err, units_auto) {
             if (err) {
-                Homey.error(err)
-            } else {
-                document.getElementById('units_auto').checked = units_auto;
-                currentValues.units_auto = units_auto;
+                Homey.error(err);
+                units_auto = true;
             }
+            document.getElementById('units_auto').checked = units_auto;
+            currentValues.units_auto = units_auto;
         })
         
         Homey.get('units_metric', function(err, units_metric) {
             if (err) {
-                Homey.error(err)
+                Homey.error(err);
             } else {
                 document.getElementById('units_metric').checked = units_metric;
                 currentValues.units_metric = units_metric;
