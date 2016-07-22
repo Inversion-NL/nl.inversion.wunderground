@@ -3,11 +3,11 @@
 var Wunderground = require('wundergroundnode');
 var wunderground;
 
-var defaultUpdateTime = 10;
+var defaultUpdateTime = 60;
 var maxLocationGetTries = 3;
 var units_metric;
 var insightsLogs =     
-[
+    [
         "temp", 
         "hum", 
         "feelslike", 
@@ -30,7 +30,9 @@ var difMinute;
 var lat = null;
 var lon = null;
 var address;
+var unitData = {};
 var weatherData = {};
+var forecastData = {};
 
 // Enable full logging for more info
 var fullLogging = false;
@@ -73,6 +75,12 @@ function diff(a,b) {
     return Math.abs(a-b);
 }
 
+function isInt(value) {
+  return !isNaN(value) && 
+         parseInt(Number(value)) == value && 
+         !isNaN(parseInt(value, 10));
+}
+
 var self = {
     // this `init` function will be run when Homey is done loading
     init: function() {
@@ -83,6 +91,26 @@ var self = {
         self.checkInsightsLogs();
 
         // Listen for triggers and conditions
+        self.registerTriggerAndConditionListeners;
+
+        // Listen for speech input
+        Homey.manager('speech-input').on('speech', self.parseSpeach);
+        
+        // Listen for changes in settings
+        Homey.log("Registering settings listener");
+        Homey.manager('settings').on('set', self.settingsChanged);
+        
+        // Listen for Homey app warnings and performance triggers
+        self.registerWarningAndPerformanceListeners;
+        
+        // Check settings and start updating weather
+        self.checkSettings();
+
+        // Print current date and time
+        Homey.log("Current time: " + new Date());
+    },
+
+    registerTriggerAndConditionListeners: function() {
         Homey.log("Registering trigger and condition listeners")
         Homey.manager('flow').on('trigger.temp_above', self.tempAbove);
         Homey.manager('flow').on('condition.temp_above', self.tempAbove);
@@ -108,12 +136,17 @@ var self = {
         Homey.manager('flow').on('condition.windgust_above', self.windgustAbove);
         Homey.manager('flow').on('trigger.windgust_below', self.windgustBelow);
         Homey.manager('flow').on('condition.windgust_below', self.windgustBelow);
-        
-        // Listen for changes in settings
-        Homey.log("Registering settings listener");
-        Homey.manager('settings').on('set', self.settingsChanged);
-        
-        // Listen for Homey app warnings and performance triggers
+
+        Homey.manager('flow').on('action.readForecast_today', self.readForecast_today);
+        Homey.manager('flow').on('action.readForecast_today', self.readForecast_tonight);
+        Homey.manager('flow').on('action.readForecast_tomorrow', self.readForecast_tomorrow);
+        Homey.manager('flow').on('action.readForecast_tomorrow', self.readForecast_tomorrowNight);
+        Homey.manager('flow').on('action.readForecast_dayAfterTomorrow', self.readForecast_dayAfterTomorrow);
+        Homey.manager('flow').on('action.readRain_hour', self.readRain_hour);
+        Homey.manager('flow').on('action.readRain_today', self.readRain_today);
+    },
+
+    registerWarningAndPerformanceListeners: function() {
         try {
             Homey.log("Registering several app warning and performance listeners");
             Homey.on('cpuwarn', self.appWarning);
@@ -123,12 +156,6 @@ var self = {
         } catch (err) {
             Homey.log('Registration for one of the app warning and performance listeners failed!')
         }
-        
-        // Check settings and start updating weather
-        self.checkSettings();
-
-        // Print current date and time
-        Homey.log("Current time: " + new Date());
     },
     
     scheduleWeather: function(update_frequenty) {
@@ -141,7 +168,7 @@ var self = {
         }
 
         if (update_frequenty == null || update_frequenty == 0 || isNaN(update_frequenty)) {
-            Homey.log("Update_frequenty out of bounds, reset to default", update_frequenty);
+            Homey.log("Update_frequenty out of bounds, reset to default: ", update_frequenty);
             update_frequenty = defaultUpdateTime;
         }
 
@@ -163,7 +190,7 @@ var self = {
         }
 
         if (update_frequenty == null || update_frequenty == 0 || isNaN(update_frequenty)) {
-            Homey.log("Update_frequenty out of bounds, reset to default", update_frequenty);
+            Homey.log("Update_frequenty out of bounds, reset to default: ", update_frequenty);
             update_frequenty = defaultUpdateTime;
         }
 
@@ -197,6 +224,28 @@ var self = {
             // Something is wrong here, none of the radio buttons are checked!
             Homey.log('No unit value existed, resetting to auto');
             Homey.manager('settings').set('units_auto', 'true');
+            
+            // Let check the units again
+            self.setUnits();
+            return;
+        }
+        
+        if (units_metric) {
+            unitData = {
+                temp_unit : "&degC",
+                distance_unit : 'km',
+                speed_unit : 'kmh',
+                pressure_unit : 'mbar',
+                distance_small_unit : 'mm'
+            }
+        } else {
+            unitData = {
+                temp_unit : "&degF",
+                distance_unit : 'mi',
+                speed_unit : 'mph',
+                pressure_unit : 'inch',
+                distance_small_unit : 'in'
+            }
         }
     },
     
@@ -315,7 +364,11 @@ var self = {
             if (fullLogging) Homey.log("wunderground != null");
             //wunderground = null;
         }
-        wunderground = new Wunderground(key);
+
+        var language = Homey.manager('i18n').getLanguage();
+        if (!value_exist(language)) language = 'EN';
+        Homey.log('Setting language to', language);
+        wunderground = new Wunderground(key, language);
     },
     
     settingsChanged: function(settingname) {
@@ -542,6 +595,67 @@ var self = {
         }
     },
 
+    readForecast_today: function(args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_today");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(0);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readForecast_tonight: function(args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_tonight");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(1);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readForecast_tomorrow: function(args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_tomorrow");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(2);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readForecast_tomorrowNight: function(args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_tomorrowNight");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(3);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readForecast: function(day) {
+        var forecastText;
+        if (isInt(day)) {
+            if (units_metric) 
+                forecastText = forecastData[day].fcttext_metric;
+            else 
+                forecastText = forecastData[day].fcttext;
+            
+            if (value_exist(forecastText)) Homey.manager('speech-output').say(forecastText);
+            else Homey.manager('speech-output').say(__("app.speech.somethingWrong")); 
+        }  
+    },
+
     //get location
     getLocation: function(callback) {
         if (fullLogging) Homey.log("");
@@ -595,9 +709,9 @@ var self = {
             var error = self.testResponse(err, response);
             
             if (response && !error) {
-                Homey.log("Response:");
-                var data = response.forecast.txt_forecast.forecastday
-                Homey.log(data);
+                forecastData = response.forecast.txt_forecast.forecastday;
+            } else {
+                // Do something here
             }
         });
     },
@@ -898,44 +1012,11 @@ var self = {
         if (fullLogging) Homey.log("Create Insights log: " + log);
         if (fullLogging) Homey.log("Metric units", units_metric);
         
-        var temp_unit;
-        var distance_unit;
-        var speed_unit;
-        var pressure_unit;
-        var distance_small_unit;
-        
-        // On very first start units aren't 
-        if (!value_exist(units_metric)) {
-            units_metric = Homey.manager('settings').get('units_metric');
-            var units_imperial = Homey.manager('settings').get('units_imperial');
-            var units_auto = Homey.manager('settings').get('units_auto');
-            var homey_units = Homey.manager('i18n').getUnits();
-            
-            if (units_auto && value_exist(homey_units) && homey_units != "") {
-                Homey.manager('settings').set('currentSettingUnits', 'auto');
-                if (homey_units == 'metric') {
-                    if (fullLogging) Homey.log('Autodetected metric units');
-                    units_metric = true;
-                } else {
-                    if (fullLogging) Homey.log('Autodetected imperial units');
-                    units_metric = false;
-                }
-            }
-        }
-        
-        if (units_metric) {
-            temp_unit = "&degC";
-            distance_unit = 'km';
-            speed_unit = 'kmh';
-            pressure_unit = 'mbar';
-            distance_small_unit = 'mm';
-        } else {
-            temp_unit = "&degF";
-            distance_unit = 'mi';
-            speed_unit = 'mph';
-            pressure_unit = 'inch';
-            distance_small_unit = 'in';
-        }
+        var temp_unit = unitData.temp_unit;
+        var distance_unit = unitData.distance_unit;
+        var speed_unit = unitData.speed_unit;
+        var pressure_unit = unitData.pressure_unit;
+        var distance_small_unit = unitData.distance_small_unit;
         
         switch(log) {
             case 'temp':
@@ -1196,6 +1277,113 @@ var self = {
         Homey.manager('insights').createEntry(logName, value, new Date(), function(err, success){
             if (err) return Homey.error(err);
         })
+    },
+
+    parseSpeach: function(speech, callback) {
+        Homey.log("");
+        Homey.log("parseSpeach");
+
+        // On very first start units aren't always there yet
+        if (!value_exist(units_metric)) {
+            units_metric = Homey.manager('settings').get('units_metric');
+            var units_imperial = Homey.manager('settings').get('units_imperial');
+            var units_auto = Homey.manager('settings').get('units_auto');
+            var homey_units = Homey.manager('i18n').getUnits();
+            
+            if (units_auto && value_exist(homey_units) && homey_units != "") {
+                Homey.manager('settings').set('currentSettingUnits', 'auto');
+                if (homey_units == 'metric') {
+                    if (fullLogging) Homey.log('Autodetected metric units');
+                    units_metric = true;
+                } else {
+                    if (fullLogging) Homey.log('Autodetected imperial units');
+                    units_metric = false;
+                }
+            }
+        }
+
+        self.updateForecast();
+        self.updateWeather();
+
+        if (value_exist(forecastData) && forecastData.length > 0 && value_exist(weatherData) && Object.keys(weatherData).length > 0) {
+            Homey.log("Weather and forecast data available");
+
+            /* Units available:
+                    var temp_unit = unitData.temp_unit;
+                    var distance_unit = unitData.distance_unit;
+                    var speed_unit = unitData.speed_unit;
+                    var pressure_unit = unitData.pressure_unit;
+                    var distance_small_unit = unitData.distance_small_unit;
+            */
+
+            speech.triggers.some(function (trigger) {
+
+                switch (trigger.id) {
+                    case 'weather_tomorrow' : 
+                        Homey.log("weather_tomorrow");
+                        var forecastText;
+
+                        if (units_metric) 
+                            forecastText = forecastData[2].fcttext_metric;
+                        else 
+                            forecastText = forecastData[2].fcttext;
+
+                        speech.say(forecastText);
+                        callback(null, true);
+                        return true;
+
+                    case 'weather_dayAfterTomorrow' : 
+                        Homey.log("weather_dayAfterTomorrow");
+                        var forecastText;
+
+                        if (units_metric) 
+                            forecastText = forecastData[4].fcttext_metric;
+                        else 
+                            forecastText = forecastData[4].fcttext;
+
+                        speech.say(forecastText);
+                        callback(null, true);
+                        return true;
+
+                    case 'weather_today' :
+                        Homey.log("weather_today");
+                        var forecastText;
+
+                        if (units_metric) 
+                            forecastText = forecastData[0].fcttext_metric;
+                        else 
+                            forecastText = forecastData[0].fcttext;
+
+                        speech.say(forecastText);   
+                        callback(null, true);                     
+                        return true;
+
+                    case 'rain_today' :
+                        Homey.log("rain_today"); 
+                        var text = __("app.speech.rainToday") + " " + weatherData.precip_today + unitData.distance_small_unit;
+                        speech.say(text);
+                        text = "";
+                        callback(null, true);
+                        return true;
+
+                    case 'rain_hour' :
+                        Homey.log("rain_hour"); 
+                        var text = __("app.speech.rainToday") + " " + weatherData.precip_1hr + unitData.distance_small_unit;
+                        speech.say(text);
+                        text = "";
+                        callback(null, true);
+                        return true;
+
+                    default:
+                        // Guess it wasn't meant for this app, return that in the callback
+                        callback(true, null);
+                }
+            });
+        } else {
+            if (fullLogging) Homey.log("!! Weather and forecast not available");
+            speech.say(__("app.speech.weatherDataNotAvailableYet"));
+            callback(null, true);
+        }
     }
 }
 

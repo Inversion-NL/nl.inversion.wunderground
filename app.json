@@ -5,10 +5,12 @@
         "en": "Weather Underground",
         "nl": "Weather Underground"
     },
+
     "description": {
         "en": "Informs you about the weather",
         "nl": "Geeft je informatie over het weer"
     },
+
     "version": "0.2.0",
     "compatibility": ">=0.8.29",
     "category": "internet",
@@ -16,16 +18,22 @@
         "name": "Inversion NL",
         "email": "inversion-nl@gmail.com"
     },
+
     "permissions": [
-        "homey:manager:geolocation"
+        "homey:manager:geolocation",
+        "homey:manager:speech-input",
+        "homey:manager:speech-output"
     ],
+
     "images": {
         "large": "./assets/images/large.jpg",
         "small": "./assets/images/small.jpg"
     },
+
     "dependencies": {
         "wundernode": "*"
     },
+
     "flow": {
 
         "triggers": [
@@ -733,6 +741,135 @@
               }
             ]
           }
+        ],
+
+        "actions": [
+          {
+              "id": "readForecast_today",
+              "title": {
+                  "en": "Read forecast for today",
+                  "nl": "Weersvoorspelling voor vandaag oplezen"
+              }
+          },
+          {
+              "id": "readForecast_tonight",
+              "title": {
+                  "en": "Read forecast for tonight",
+                  "nl": "Weersvoorspelling voor vanavond oplezen"
+              }
+          },
+          {
+              "id": "readForecast_tomorrow",
+              "title": {
+                  "en": "Read forecast for tomorrow",
+                  "nl": "Weersvoorspelling voor morgen oplezen"
+              }
+          },
+          {
+              "id": "readForecast_tomorrowNight",
+              "title": {
+                  "en": "Read forecast for tomorrow night",
+                  "nl": "Weersvoorspelling voor morgenavond oplezen"
+              }
+          },
+          {
+              "id": "readForecast_dayAfterTomorrow",
+              "title": {
+                  "en": "Read forecast for day after tomorrow",
+                  "nl": "Weersvoorspelling voor overmorgen oplezen"
+              }
+          },
+          {
+              "id": "readRain_hour",
+              "title": {
+                  "en": "Read amount of rain this hour",
+                  "nl": "Regen hoeveelheid dit uur oplezen"
+              }
+          },
+          {
+              "id": "readRain_today",
+              "title": {
+                  "en": "Read amount of rain today",
+                  "nl": "Regen hoeveelheid vandaag oplezen"
+              }
+          }
+    ]
+    },
+    
+
+    "speech": [
+    {
+      "id": "weather_tomorrow",
+      "importance": 0.7,
+      "triggers": {
+        "en": [
+          "weather tomorrow",
+          "weather for tomorrow"
+        ],
+        "nl": [
+          "weer morgen",
+          "weer voor morgen"
         ]
+      }
+    },
+
+    {
+      "id": "weather_dayAfterTomorrow",
+      "importance": 0.7,
+      "triggers": {
+        "en": [
+          "weather day after tomorrow",
+          "weather for the day after tomorrow"
+        ],
+        "nl": [
+          "weer overmorgen",
+          "weer voor overmorgen"
+        ]
+      }
+    },
+
+    {
+      "id": "weather_today",
+      "importance": 0.7,
+      "triggers": {
+        "en": [
+          "weather today",
+          "weather for today"
+        ],
+        "nl": [
+          "weer vandaag",
+          "weer voor vandaag"
+        ]
+      }
+    },
+    {
+      "id": "rain_today",
+      "importance": 0.7,
+      "triggers": {
+        "en": [
+          "rainfall today",
+          "rain is fallen today"
+        ],
+        "nl": [
+          "regen is er vandaag gevallen",
+          "regen vandaag",
+          "regen valt er vandaag"
+        ]
+      }
+    },
+    {
+      "id": "rain_hour",
+      "importance": 0.7,
+      "triggers": {
+        "en": [
+          "rainfall this hour",
+          "rain has fallen this hour"
+        ],
+        "nl": [
+          "regen is er dit uur gevallen",
+          "regen dit uur"
+        ]
+      }
     }
+  ]
 }

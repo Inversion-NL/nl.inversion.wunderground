@@ -46,5 +46,15 @@
                  "settings_unexpectedError" : "Onverwachte fout opgetreden. Probeer nogmaals a.u.b."
              }
         }
+    },
+
+    "app" : {
+        "speech" : {
+            "weatherDataNotAvailableYet" : "Sorry, weer gegevens nog niet opgehaald. Probeer het later nogmaals",
+            "weatherDataNotAvailable" : "Sorry, weer gegevens niet beschikbaar. Probeer het later nogmaals",
+            "somethingWrong" : "Sorry, er is iets mis gegaan. Probeer het later nogmaals",
+            "rainToday" : "Vandaag heeft het tot nu toe",
+            "rainHour" : "Het afgelopen uur heeft het"
+        }
     }
 }
