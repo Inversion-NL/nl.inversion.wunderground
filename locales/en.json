@@ -46,5 +46,15 @@
                  "settings_unexpectedError" : "Unexpected error occured. Please try again"
              }
         }
+    },
+
+    "app" : {
+        "speech" : {
+            "weatherDataNotAvailableYet" : "I'm sorry, weather data isn't available yet. Please try again later",
+            "weatherDataNotAvailable" : "I'm sorry, weather data isn't available. Please try again later",
+            "somethingWrong" : "I'm sorry, something went wrong. Please try again later",
+            "rainToday" : "Today it has been raining",
+            "rainHour" : "The past hour it has rained"
+        }
     }
 }
