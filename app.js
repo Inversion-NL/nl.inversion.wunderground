@@ -138,9 +138,9 @@ var self = {
         Homey.manager('flow').on('condition.windgust_below', self.windgustBelow);
 
         Homey.manager('flow').on('action.readForecast_today', self.readForecast_today);
-        Homey.manager('flow').on('action.readForecast_today', self.readForecast_tonight);
+        Homey.manager('flow').on('action.readForecast_tonight', self.readForecast_tonight);
         Homey.manager('flow').on('action.readForecast_tomorrow', self.readForecast_tomorrow);
-        Homey.manager('flow').on('action.readForecast_tomorrow', self.readForecast_tomorrowNight);
+        Homey.manager('flow').on('action.readForecast_tomorrowNight', self.readForecast_tomorrowNight);
         Homey.manager('flow').on('action.readForecast_dayAfterTomorrow', self.readForecast_dayAfterTomorrow);
         Homey.manager('flow').on('action.readRain_hour', self.readRain_hour);
         Homey.manager('flow').on('action.readRain_today', self.readRain_today);
@@ -595,7 +595,7 @@ var self = {
         }
     },
 
-    readForecast_today: function(args) {
+    readForecast_today: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_today");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -607,7 +607,7 @@ var self = {
         }
     },
 
-    readForecast_tonight: function(args) {
+    readForecast_tonight: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tonight");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -619,7 +619,7 @@ var self = {
         }
     },
 
-    readForecast_tomorrow: function(args) {
+    readForecast_tomorrow: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrow");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -631,7 +631,31 @@ var self = {
         }
     },
 
-    readForecast_tomorrowNight: function(args) {
+    readForecast_tomorrowNight: function(callback, args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_tomorrowNight");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(3);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readRain_hour: function(callback, args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_tomorrow");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(2);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readRain_today: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrowNight");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -650,7 +674,7 @@ var self = {
                 forecastText = forecastData[day].fcttext_metric;
             else 
                 forecastText = forecastData[day].fcttext;
-            
+            Homey.log('forecast text', forecastText);
             if (value_exist(forecastText)) Homey.manager('speech-output').say(forecastText);
             else Homey.manager('speech-output').say(__("app.speech.somethingWrong")); 
         }  
