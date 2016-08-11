@@ -1418,16 +1418,17 @@ function testWU(callback, args) {
     var Wunderground = require('wundergroundnode');
     var wundergroundKey = args.body.wundergroundkey;
     var address = args.body.address;
+    var language = Homey.manager('i18n').getLanguage();
 
     Homey.log('Testing for location:', address);
     
     if (!value_exist(wundergroundKey) || wundergroundKey == "" || wundergroundKey == null) {
         if (fullLogging) Homey.log("Weather underground key is empty, using Inversion key");
-        wundergroundKey = Homey.env.WUNDERGROUND_KEY;     
-    } else Homey.log('Using user defined Weather Underground key');    
-    
-    var wunderground = new Wunderground(wundergroundKey);
-    
+        wundergroundKey = Homey.env.WUNDERGROUND_KEY;
+    } else Homey.log('Using user defined Weather Underground key');
+
+    var wunderground = new Wunderground(wundergroundKey, language);
+
     if (address && value_exist(address)) {
             // Get weather data
             try {
