@@ -39,7 +39,7 @@
             
              "messages" : {
                  "testing" : "Bezig met testen, moment geduld aub...",
-                 "unable_get_location " : "Niet gelukt om Homey's locatie te krijgen, probeer het opnieuw of geef een handmatige locatie op.",
+                 "unable_get_location" : "Niet gelukt om Homey's locatie te krijgen, probeer het opnieuw of geef een handmatige locatie op.",
                  "settings_success_tested" : "Instellingen succesvol getest. Gebruik de opslaan-knop om je instellingen op te slaan.",
                  "settings_saved" : "Instellingen opgeslagen",
                  "settings_noSettingsChanged" : "Er is niets gewijzigingd",
@@ -55,6 +55,11 @@
             "somethingWrong" : "Sorry, er is iets mis gegaan. Probeer het later nogmaals",
             "rainToday" : "Vandaag heeft het tot nu toe",
             "rainHour" : "Het afgelopen uur heeft het"
+        },
+        "messages" : {
+            "error_stop_updateting" : "Automatisch bepalen van de locatie mislukt of geen geldige locatie ingevoerd. Weer wordt niet meer bijgewerkt!",
+            "error_unable_getEnvironmentKey" : "Niet gelukt om Inversion key op te halen uit Homey!",
+            "error_appWarning" : "Wunderground wordt gestopt omdat: "
         }
     }
 }

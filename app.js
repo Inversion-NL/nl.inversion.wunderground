@@ -138,9 +138,9 @@ var self = {
         Homey.manager('flow').on('condition.windgust_below', self.windgustBelow);
 
         Homey.manager('flow').on('action.readForecast_today', self.readForecast_today);
-        Homey.manager('flow').on('action.readForecast_today', self.readForecast_tonight);
+        Homey.manager('flow').on('action.readForecast_tonight', self.readForecast_tonight);
         Homey.manager('flow').on('action.readForecast_tomorrow', self.readForecast_tomorrow);
-        Homey.manager('flow').on('action.readForecast_tomorrow', self.readForecast_tomorrowNight);
+        Homey.manager('flow').on('action.readForecast_tomorrowNight', self.readForecast_tomorrowNight);
         Homey.manager('flow').on('action.readForecast_dayAfterTomorrow', self.readForecast_dayAfterTomorrow);
         Homey.manager('flow').on('action.readRain_hour', self.readRain_hour);
         Homey.manager('flow').on('action.readRain_today', self.readRain_today);
@@ -172,10 +172,11 @@ var self = {
             update_frequenty = defaultUpdateTime;
         }
 
-        var updateTime = update_frequenty * 60 * 1000;
-        weatherInterval = setInterval(trigger_update.bind(this), updateTime); // From minutes to milliseconds
-        if (fullLogging) Homey.log('weatherInterval:', weatherInterval);
+        var updateTime = update_frequenty * 60 * 1000;  // From minutes to milliseconds
+        weatherInterval = setInterval(trigger_update.bind(this), updateTime);
+        if (fullLogging) Homey.log('Current weather interval:', weatherInterval);
         function trigger_update() {
+            Homey.log("Triggering update");
             self.updateWeather();
         };
     },
@@ -194,9 +195,9 @@ var self = {
             update_frequenty = defaultUpdateTime;
         }
 
-        var updateTime = update_frequenty * 60 * 1000;
-        forecastInterval = setInterval(trigger_update.bind(this), updateTime); // From minutes to milliseconds
-        if (fullLogging) Homey.log('forecastInterval:', forecastInterval);
+        var updateTime = update_frequenty * 60 * 1000;  // From minutes to milliseconds
+        forecastInterval = setInterval(trigger_update.bind(this), updateTime); 
+        if (fullLogging) Homey.log('Current forecast interval:', forecastInterval);
         function trigger_update() {
             self.updateForecast();
         };
@@ -261,10 +262,15 @@ var self = {
 
         var usePersonalKey = false;
         if (!value_exist(myKey) || myKey == "") {
-            Homey.log("No personal key defined by user");
-            var inversionKey = Homey.env.WUNDERGROUND_KEY;
-            self.initWunderground(inversionKey);
             Homey.log("Using Weather Underground Inversion key");
+            var inversionKey = Homey.env.WUNDERGROUND_KEY;
+            if (value_exist(inversionKey)) self.initWunderground(inversionKey);
+            else {
+                var error = __("app.messages.error_unable_getEnvironmentKey");
+                var tokens = {'error': error};
+                Homey.manager('flow').trigger('error', tokens);
+                throw new Error(error);
+            }
         } else {
             Homey.log("Personal key defined by user");
             usePersonalKey = true;
@@ -319,6 +325,11 @@ var self = {
                     Homey.log("Fetching location, try " + locationGetCounter + " of " + maxLocationGetTries)
                     locationGetCounter++;
                     self.getLocation(function(err, location) {
+
+                        if (fullLogging) Homey.log("Location callback");
+                        if (fullLogging) Homey.log("err", err);
+                        if (fullLogging) Homey.log("location", location);
+
                         if (!err && location != null) {
                             Homey.log("Location found"); 
                             lat = location.latitude;
@@ -329,6 +340,10 @@ var self = {
                             // Found location, reset counter
                             locationGetCounter = 0;
                             return;
+                        } else {
+                            Homey.log("Location not found, trying again");
+                            self.checkSettings();
+                            return;
                         }
                     });
                 } else if (value_exist(country) && value_exist(city) && country != "" && city != "") {
@@ -337,10 +352,10 @@ var self = {
                     self.scheduleWeather(update_frequenty);
                     self.scheduleForecast(update_frequenty);
                 } else { 
-                    Homey.log("Max location detection attempts reached and one of the country/city fields is empty, using defaults");
-                    address = "Netherlands/Amsterdam";
-                    self.scheduleWeather(update_frequenty);
-                    self.scheduleForecast(update_frequenty);
+                    Homey.log("Max location detection attempts reached and one or all of the country/city fields are empty. Stopped updating weather!");
+                    var error = __("app.messages.error_stop_updateting");
+                    var tokens = {'error': error};
+                    Homey.manager('flow').trigger('error', tokens);
                 }
             }
         } else if (value_exist(country) && value_exist(city) && country != "" && city != "") {
@@ -438,9 +453,16 @@ var self = {
     appWarning: function(data) {
         Homey.log('');
         Homey.log('appWarning');
-        Homey.log('data', data);
+        if (fullLogging) Homey.log('data', data);
         try {
-            if (data != null && value_exist(data) && data.count) Homey.log('count: ' + data.count + '/5'); // count: 1/5, 2/5 etc. after count 5, your app is killed
+            if (data != null && value_exist(data) && data.count) {
+                Homey.log('count: ' + data.count + '/15');
+                if (data.count == 15) {
+                    var error = __("app.messages.error_appWarning" + data);
+                    var tokens = {'error': error};
+                    Homey.manager('flow').trigger('error', tokens);
+                }
+            }
         } catch(err) {
             Homey.log('appWarning error', err);
         }
@@ -595,7 +617,7 @@ var self = {
         }
     },
 
-    readForecast_today: function(args) {
+    readForecast_today: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_today");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -607,7 +629,7 @@ var self = {
         }
     },
 
-    readForecast_tonight: function(args) {
+    readForecast_tonight: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tonight");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -619,7 +641,7 @@ var self = {
         }
     },
 
-    readForecast_tomorrow: function(args) {
+    readForecast_tomorrow: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrow");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -631,7 +653,31 @@ var self = {
         }
     },
 
-    readForecast_tomorrowNight: function(args) {
+    readForecast_tomorrowNight: function(callback, args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_tomorrowNight");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(3);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readRain_hour: function(callback, args) {
+        if (fullLogging) Homey.log("");
+        if (fullLogging) Homey.log("function readForecast_tomorrow");
+        if (value_exist(forecastData) && forecastData.length > 0) {
+            self.readForecast(2);
+            callback(null, true);
+        } else {
+            Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));  
+            callback(null, true);
+        }
+    },
+
+    readRain_today: function(callback, args) {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrowNight");
         if (value_exist(forecastData) && forecastData.length > 0) {
@@ -650,7 +696,7 @@ var self = {
                 forecastText = forecastData[day].fcttext_metric;
             else 
                 forecastText = forecastData[day].fcttext;
-            
+            Homey.log('forecast text', forecastText);
             if (value_exist(forecastText)) Homey.manager('speech-output').say(forecastText);
             else Homey.manager('speech-output').say(__("app.speech.somethingWrong")); 
         }  
@@ -834,7 +880,7 @@ var self = {
                     // Start trigger
                     self.humAboveBelow(weatherData.temp, weatherData.relative_humidity, weatherData.weather_descr);
                 } else {
-                    // No temperature data available!
+                    // No humidity data available!
                     Homey.log("Humidity is undefined!")
                 }
                 
@@ -843,7 +889,7 @@ var self = {
                     // Start trigger
                     self.uvAboveBelow(weatherData.uv);
                 } else {
-                    // No temperature data available!
+                    // No UV data available!
                     Homey.log("UV is undefined!")
                 }
                 
@@ -852,7 +898,7 @@ var self = {
                     // Start trigger
                     self.windAboveBelow(weatherData.wind);
                 } else {
-                    // No temperature data available!
+                    // No wind data available!
                     Homey.log("Wind is undefined!")
                 }
                             
@@ -861,7 +907,7 @@ var self = {
                     // Start trigger
                     self.windgustAboveBelow(weatherData.wind_gust);
                 } else {
-                    // No temperature data available!
+                    // No wind_gust data available!
                     Homey.log("Wind_gust is undefined!")
                 }
 
@@ -998,7 +1044,7 @@ var self = {
                 // Let's check all required logs are there on Homey
                 for (var l in insightsLogs) {
                     if (currentInsightLogs.indexOf(insightsLogs[l]) < 0) {
-                        if (fullLogging) Homey.log("Log " + insightsLogs[l] + " is not on Homey");
+                        Homey.log("Log " + insightsLogs[l] + " is not on Homey");
                         self.createInsightsLogs(insightsLogs[l]);
                     }
                 }
@@ -1007,9 +1053,8 @@ var self = {
     },
 
     createInsightsLogs: function(log) {
-        if (fullLogging) Homey.log("");
-        if (fullLogging) Homey.log("createInsightsLogs");
-        if (fullLogging) Homey.log("Create Insights log: " + log);
+        Homey.log("");
+        Homey.log("Create Insights log: " + log);
         if (fullLogging) Homey.log("Metric units", units_metric);
         
         var temp_unit = unitData.temp_unit;
@@ -1394,16 +1439,17 @@ function testWU(callback, args) {
     var Wunderground = require('wundergroundnode');
     var wundergroundKey = args.body.wundergroundkey;
     var address = args.body.address;
+    var language = Homey.manager('i18n').getLanguage();
 
     Homey.log('Testing for location:', address);
     
     if (!value_exist(wundergroundKey) || wundergroundKey == "" || wundergroundKey == null) {
         if (fullLogging) Homey.log("Weather underground key is empty, using Inversion key");
-        wundergroundKey = Homey.env.WUNDERGROUND_KEY;     
-    } else Homey.log('Using user defined Weather Underground key');    
-    
-    var wunderground = new Wunderground(wundergroundKey);
-    
+        wundergroundKey = Homey.env.WUNDERGROUND_KEY;
+    } else Homey.log('Using user defined Weather Underground key');
+
+    var wunderground = new Wunderground(wundergroundKey, language);
+
     if (address && value_exist(address)) {
             // Get weather data
             try {

@@ -11,7 +11,7 @@
         "nl": "Geeft je informatie over het weer"
     },
 
-    "version": "0.2.0",
+    "version": "0.2.1",
     "compatibility": ">=0.8.29",
     "category": "internet",
     "author": {
@@ -534,6 +534,27 @@
                 {
                   "en": "wind gust",
                   "nl": "windstoten"
+                }
+              }
+            ]
+          },
+
+          {
+            "id": "error",
+            "title": {
+              "en": "Error fetching weather data",
+              "nl": "Fout tijdens ophalen weer gegevens"
+            },
+            "tokens": [
+              {
+                "name": "error",
+                "title": {
+                  "en": "error",
+                  "nl": "fout"
+                },
+                "example": {
+                  "en": "Error example",
+                  "nl": "Voorbeeld van fout"
                 }
               }
             ]
