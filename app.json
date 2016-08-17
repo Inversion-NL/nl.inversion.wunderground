@@ -537,6 +537,27 @@
                 }
               }
             ]
+          },
+
+          {
+            "id": "error",
+            "title": {
+              "en": "Error fetching weather data",
+              "nl": "Fout tijdens ophalen weer gegevens"
+            },
+            "tokens": [
+              {
+                "name": "error",
+                "title": {
+                  "en": "error",
+                  "nl": "fout"
+                },
+                "example": {
+                  "en": "Error example",
+                  "nl": "Voorbeeld van fout"
+                }
+              }
+            ]
           }
           
         ],

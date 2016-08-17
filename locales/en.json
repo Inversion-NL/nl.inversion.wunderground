@@ -39,7 +39,7 @@
             
              "messages" : {
                  "testing" : "Testing, please wait...",
-                 "unable_get_location " : "Unable to get Homey's location, please try again or specify a location manually.",
+                 "unable_get_location" : "Unable to get Homey's location, please try again or specify a location manually.",
                  "settings_success_tested" : "Settings succesfully tested. Please use the save button to save your settings",
                  "settings_saved" : "Settings saved",
                  "settings_noSettingsChanged" : "No setting has been changed",
@@ -55,6 +55,11 @@
             "somethingWrong" : "I'm sorry, something went wrong. Please try again later",
             "rainToday" : "Today it has been raining",
             "rainHour" : "The past hour it has rained"
+        },
+        "messages" : {
+            "error_stop_updateting" : "Max location detection attempts reached and one or all of the country/city fields are empty. Stopped updating weather!",
+            "error_unable_getEnvironmentKey" : "Unable to get Inversion key from environment!",
+            "error_appWarning" : "Wunderground is being killed because: "
         }
     }
 }

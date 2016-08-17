@@ -262,7 +262,10 @@
                     getWeather(wundergroundkey, address);
                 } else {
                     // Oeps, something went wrong here
-                    Homey.alert(__('settings.app.messages.unable_get_location'))
+                    Homey.alert(__('settings.app.messages.unable_get_location'));
+                    document.getElementById('testresult').innerHTML = __('settings.app.messages.unable_get_location');
+                    button_test.disabled = false;
+                    button_save.disabled = true;
                 }
                 
             });
