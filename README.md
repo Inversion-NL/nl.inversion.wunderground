@@ -83,10 +83,31 @@ If you don't have a key the app uses my key and will update every 60 minutes.
 
 
 #Changes
-* Version 2.0
+* Version 0.2.1
+  * Add action card if any blocking issue occur:
+    * Unable to detect current location
+    * Unable to read Inversion WU key
+    * WU is killed because if misbehaviour
+* Version 0.2.0
   * Better checks to prevent undefined crashes
-  * Built in triggers to read the weather forecast
-  * Flow action to read the weather (Read in Homey's set language!)
+  * Action card to read the weather forecast for today
+  * Action card to read the weather forecast for tomorrow
+  * Action card to read the weather forecast for day after tomorrow
+  * Action card to read the rain this hour
+  * Action card to read the rain today
+  * Build in voice triggers:
+    * weather today
+    * weather for today
+    * weather tomorrow
+    * weather for tomorrow
+    * weather day after tomorrow
+    * weather for the day after tomorrow
+    * rainfall today
+    * rain is fallen today
+    * rainfall this hour
+    * rain has fallen this hour
+* Version 0.1.0
+  * First public release
 
 
 #Donate

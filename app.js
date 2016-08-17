@@ -456,7 +456,7 @@ var self = {
         if (fullLogging) Homey.log('data', data);
         try {
             if (data != null && value_exist(data) && data.count) {
-                Homey.log('count: ' + data.count + '/5'); // count: 1/5, 2/5 etc. after count 5, your app is killed
+                Homey.log('count: ' + data.count + '/15');
                 if (data.count == 15) {
                     var error = __("app.messages.error_appWarning" + data);
                     var tokens = {'error': error};
