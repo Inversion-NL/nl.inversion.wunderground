@@ -57,7 +57,7 @@
             "rainHour" : "The past hour it has rained"
         },
         "messages" : {
-            "error_stop_updateting" : "Max location detection attempts reached and one or all of the country/city fields are empty. Stopped updating weather!",
+            "error_stop_updating" : "Max location detection attempts reached and one or all of the country/city fields are empty. Stopped updating weather!",
             "error_unable_getEnvironmentKey" : "Unable to get Inversion key from environment!",
             "error_appWarning" : "Wunderground is being killed because: "
         }

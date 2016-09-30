@@ -8,10 +8,10 @@
 
     "description": {
         "en": "Informs you about the weather",
-        "nl": "Geeft je informatie over het weer"
+        "nl": "Geeft informatie over het weer"
     },
 
-    "version": "0.2.1",
+    "version": "0.2.2",
     "compatibility": ">=0.8.29",
     "category": "internet",
     "author": {
@@ -473,7 +473,7 @@
             ]
           },
           
-            {
+          {
             "id": "windgust_above",
             "title": {
               "en": "Wind gust is above",
@@ -772,6 +772,7 @@
                   "nl": "Weersvoorspelling voor vandaag oplezen"
               }
           },
+
           {
               "id": "readForecast_tonight",
               "title": {
@@ -779,6 +780,7 @@
                   "nl": "Weersvoorspelling voor vanavond oplezen"
               }
           },
+
           {
               "id": "readForecast_tomorrow",
               "title": {
@@ -786,6 +788,7 @@
                   "nl": "Weersvoorspelling voor morgen oplezen"
               }
           },
+
           {
               "id": "readForecast_tomorrowNight",
               "title": {
@@ -793,6 +796,7 @@
                   "nl": "Weersvoorspelling voor morgenavond oplezen"
               }
           },
+
           {
               "id": "readForecast_dayAfterTomorrow",
               "title": {
@@ -800,6 +804,7 @@
                   "nl": "Weersvoorspelling voor overmorgen oplezen"
               }
           },
+
           {
               "id": "readRain_hour",
               "title": {
@@ -807,6 +812,7 @@
                   "nl": "Regen hoeveelheid dit uur oplezen"
               }
           },
+
           {
               "id": "readRain_today",
               "title": {
@@ -863,6 +869,7 @@
         ]
       }
     },
+
     {
       "id": "rain_today",
       "importance": 0.7,
@@ -878,6 +885,7 @@
         ]
       }
     },
+
     {
       "id": "rain_hour",
       "importance": 0.7,

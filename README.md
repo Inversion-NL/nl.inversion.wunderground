@@ -69,7 +69,7 @@ Weather Underground app helps you accomplish these!
 
 #Settings
 * You can use your own API key, (available here: https://www.wunderground.com/weather/api it's free!) so you can update up to every 10 minutes.
-If you don't have a key the app uses my key and will update every 60 minutes.
+If you don't have a key the app uses my key and will update every 90 minutes.
 * Use Homey's location or a custom location
 * Celsius and Fahrenheit support
 
@@ -78,11 +78,15 @@ If you don't have a key the app uses my key and will update every 60 minutes.
 * Trigger/condition on current weather condition (Cloudy, Raining etc)
 * Trigger on weather alerts
 * Average/high/low temperature on this date
-* Triggers and conditions for precipation 1hr/today
+* Triggers and conditions for precipitation 1hr/today
 * Much more!
 
 
 #Changes
+* Version 0.2.2
+  * Bugfix: trigger if temp/hum/etc is above or below
+  * New Weather Underground key because of to much calls on my key
+  * Update every 90min if using my key (use your onw key, its free! See settings section above)
 * Version 0.2.1
   * Add action card if any blocking issue occur:
     * Unable to detect current location
