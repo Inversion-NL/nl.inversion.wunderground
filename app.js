@@ -403,14 +403,16 @@ var self = {
         if (fullLogging) Homey.log("getLocation");
 
         Homey.manager('geolocation').getLocation(function(err, location) {
-            if (!value_exist(location.latitude) || location.latitude == 0) {
-                if (fullLogging) Homey.log("Location", location);
-                if (fullLogging) Homey.log("Location is undefined");
-                callback(true, null);
-            } else {
-                if (fullLogging) Homey.log("location found:", location);
-                callback(false, location);
-            }
+            if (value_exist(location)) {
+                if (!value_exist(location.latitude) || location.latitude == 0) {
+                    if (fullLogging) Homey.log("Location", location);
+                    if (fullLogging) Homey.log("Location is undefined");
+                    callback(true, null);
+                } else {
+                    if (fullLogging) Homey.log("location found:", location);
+                    callback(false, location);
+                }
+            } else callback(true, null);
         });
     },
 

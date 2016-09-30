@@ -83,6 +83,8 @@ If you don't have a key the app uses my key and will update every 90 minutes.
 
 
 #Changes
+* Version 0.2.3
+  * Bugfix: Better check when no location is received from Homey
 * Version 0.2.2
   * Bugfix: trigger if temp/hum/etc is above or below
   * New Weather Underground key because of to much calls on my key
