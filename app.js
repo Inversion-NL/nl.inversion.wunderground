@@ -1210,7 +1210,7 @@ function registerTriggerAndConditionListeners() {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_today");
         if (value_exist(forecastData) && forecastData.length > 0) {
-            self.readForecast(0);
+            readForecast(0);
             callback(null, true);
         } else {
             Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));
@@ -1222,7 +1222,7 @@ function registerTriggerAndConditionListeners() {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tonight");
         if (value_exist(forecastData) && forecastData.length > 0) {
-            self.readForecast(1);
+            readForecast(1);
             callback(null, true);
         } else {
             Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));
@@ -1234,7 +1234,7 @@ function registerTriggerAndConditionListeners() {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrow");
         if (value_exist(forecastData) && forecastData.length > 0) {
-            self.readForecast(2);
+            readForecast(2);
             callback(null, true);
         } else {
             Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));
@@ -1246,7 +1246,7 @@ function registerTriggerAndConditionListeners() {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrowNight");
         if (value_exist(forecastData) && forecastData.length > 0) {
-            self.readForecast(3);
+            readForecast(3);
             callback(null, true);
         } else {
             Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));
@@ -1258,7 +1258,7 @@ function registerTriggerAndConditionListeners() {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrowNight");
         if (value_exist(forecastData) && forecastData.length > 0) {
-            self.readForecast(5);
+            readForecast(5);
             callback(null, true);
         } else {
             Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));
@@ -1270,7 +1270,7 @@ function registerTriggerAndConditionListeners() {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrow");
         if (value_exist(forecastData) && forecastData.length > 0) {
-            self.readForecast(2);
+            readForecast(2);
             callback(null, true);
         } else {
             Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));
@@ -1282,7 +1282,7 @@ function registerTriggerAndConditionListeners() {
         if (fullLogging) Homey.log("");
         if (fullLogging) Homey.log("function readForecast_tomorrowNight");
         if (value_exist(forecastData) && forecastData.length > 0) {
-            self.readForecast(3);
+            readForecast(3);
             callback(null, true);
         } else {
             Homey.manager('speech-output').say(__("app.speech.weatherDataNotAvailable"));
