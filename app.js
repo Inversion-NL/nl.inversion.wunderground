@@ -474,7 +474,7 @@ var self = {
             
             var error = self.testResponse(err, response);
             
-            if (response && !error) {
+            if (response && !error && value_exist(response.current_observation)) {
                 
                 var hum = test_weatherData(response.current_observation.relative_humidity);
                 var hum_float = 0;
