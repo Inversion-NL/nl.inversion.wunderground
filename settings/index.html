@@ -18,10 +18,10 @@
         </div>
         <br>
         <div data-role="fieldcontain" style="margin:0;">
-            <label class="form_label" for="updateFrequenty" data-i18n="settings.app.wunderground.update_frequenty"></label>
-            <input class="form_input" id="updateFrequenty" type="number" value="60"/>
+            <label class="form_label" for="updateFrequency" data-i18n="settings.app.wunderground.update_frequency"></label>
+            <input class="form_input" id="updateFrequency" type="number" value="60"/>
         </div>
-        <p style="font-size:10px" data-i18n="settings.app.wunderground.updateFrequenty_explanation"></p>
+        <p style="font-size:10px" data-i18n="settings.app.wunderground.updateFrequency_explanation"></p>
     </fieldset>
     
     <fieldset id="units">  
@@ -30,16 +30,23 @@
         </legend>  
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" data-i18n="settings.app.generic.units_label"></label>
-            <br>
-            <input class="form_input" name="units" id="units_auto" type="radio" checked="checked"></input>
+            <input class="form_input" name="units" id="units_auto" type="radio" checked="true"></input>
             <label for="units_auto" data-i18n="settings.app.generic.units_auto"></label>
             <br>
             <input class="form_input" name="units" id="units_metric" type="radio"></input>
             <label for="units_metric" data-i18n="settings.app.generic.units_metric"></label>
             <br>
             <input class="form_input" name="units" id="units_imperial" type="radio"/>
-            <label for="units_emperial" data-i18n="settings.app.generic.units_imperial"></label>
+            <label for="units_imperial" data-i18n="settings.app.generic.units_imperial"></label>
             <p style="font-size:10px" data-i18n="settings.app.generic.unitChange_explanation"></p>
+        </div>
+        <br>
+        <div data-role="fieldcontain" style="margin:0;">
+            <label class="form_label" data-i18n="settings.app.generic.notifications_label"></label>
+            <div class="field">
+                <input class="checkbox" id="useNotifications" type="checkbox" checked="true">
+                <label class="form_label" for="useNotifications" data-i18n="settings.app.generic.notifications_text"></label>
+            </div>
         </div>
     </fieldset>
     
@@ -70,7 +77,7 @@
             <div class="field row">
                 <label class="form_label" for="city" data-i18n="settings.app.location.city"></label>
                 <br>
-                <input class="form_input" input id="city" type="text" value="Amsterdam"/><br><br>
+                <input class="form_input" id="city" type="text" value="Amsterdam"/><br><br>
             </div>
         </fieldset>
     </fieldset>
@@ -99,7 +106,7 @@
             }
             document.getElementById('country').value = country;
             currentValues.country = country;
-        })
+        });
 
         Homey.get('city', function(err, city) {
             if (err) {
@@ -108,28 +115,33 @@
             }
             document.getElementById('city').value = city;
             currentValues.city = city;
-        })
+        });
 
-        Homey.get('updateFrequenty', function(err, updateFrequenty) {
+        Homey.get('updateFrequency', function(err, updateFrequency) {
             if (err) {
                 console.error(err);
-                updateFrequenty = 60;
+                updateFrequency = 60;
             }
-            if (typeof updateFrequenty == 'undefined' || updateFrequenty == null) updateFrequenty = 60;
-            document.getElementById('updateFrequenty').value = updateFrequenty;
-            currentValues.updateFrequenty = updateFrequenty;
-        })
+            if (typeof updateFrequency == 'undefined' || updateFrequency == null) updateFrequency = 60;
+            document.getElementById('updateFrequency').value = updateFrequency;
+            currentValues.updateFrequency = updateFrequency;
+        });
 
         Homey.get('autolocation', function(err, autolocation) {
+            console.log('autolocation setting:', autolocation);
+            console.log('autolocation variable get err:', err);
             if (err) {
                 console.error(err);
                 autolocation = true;
             }
-            if (typeof autolocation == 'undefined' || autolocation == null) autolocation = true;
+            if (typeof autolocation == 'undefined' || autolocation == null) {
+                console.log('var autolocation:', autolocation);
+                autolocation = true;
+            }
             document.getElementById('autolocation').checked = autolocation;
             document.getElementById('locationfields').disabled = autolocation;
             currentValues.autolocation = autolocation;
-        })
+        });
         
         Homey.get('wundergroundKey', function(err, wundergroundKey) {
             if (err) {
@@ -138,7 +150,7 @@
                 document.getElementById('wundergroundKey').value = wundergroundKey;
                 currentValues.wundergroundKey = wundergroundKey;
             }
-        })
+        });
         
         Homey.get('units_auto', function(err, units_auto) {
             if (err) {
@@ -147,7 +159,7 @@
             }
             document.getElementById('units_auto').checked = units_auto;
             currentValues.units_auto = units_auto;
-        })
+        });
         
         Homey.get('units_metric', function(err, units_metric) {
             if (err) {
@@ -156,7 +168,7 @@
                 document.getElementById('units_metric').checked = units_metric;
                 currentValues.units_metric = units_metric;
             }
-        })
+        });
         
         Homey.get('units_imperial', function(err, units_imperial) {
             if (err) {
@@ -165,7 +177,7 @@
                 document.getElementById('units_imperial').checked = units_imperial;
                 currentValues.units_imperial = units_imperial;
             }
-        })
+        });
 
         Homey.ready()
     }
@@ -193,18 +205,21 @@
             currentValues.city = document.getElementById('city').value;
         }
         
-        if (currentValues.updateFrequenty != document.getElementById('updateFrequenty').value) {
-            console.log('updateFrequenty value has been changed, saving');
-            Homey.set('updateFrequenty', document.getElementById('updateFrequenty').value);
+        if (currentValues.updateFrequency != document.getElementById('updateFrequency').value) {
+            console.log('updateFrequency value has been changed, saving');
+            Homey.set('updateFrequency', document.getElementById('updateFrequency').value);
             valuesHaveBeenChanged = true;
-            currentValues.updateFrequenty = document.getElementById('updateFrequenty').value;
+            currentValues.updateFrequency = document.getElementById('updateFrequency').value;
         }
         
         if (currentValues.autolocation != document.getElementById('autolocation').checked) {
-            console.log('autolocation value has been changed, saving');
-            Homey.set('autolocation', document.getElementById('autolocation').checked);
+            var autolocation = document.getElementById('autolocation').checked;
+            console.log('Saving auto location setting:', autolocation);
+            Homey.set('autolocation', autolocation);
             valuesHaveBeenChanged = true;
             currentValues.autolocation = document.getElementById('autolocation').checked;
+        } else {
+            console.log('autolocation value has NOT been changed');
         }
         
         if (currentValues.wundergroundKey != document.getElementById('wundergroundKey').value) {

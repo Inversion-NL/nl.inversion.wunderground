@@ -6,8 +6,8 @@
             "wunderground" : {
                 "wunderground_title" : "Weather Underground instellingen",
                 "key" : "Persoonlijke key",
-                "update_frequenty" : "Bijwerken elke (min)",
-                "updateFrequenty_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 60 minuten."
+                "update_frequency" : "Bijwerken elke (min)",
+                "updateFrequency_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 60 minuten."
             },
             
             "generic" : {
@@ -16,7 +16,9 @@
                 "units_label" : "Eenheden",
                 "units_metric" : "Metrisch",
                 "units_imperial" : "Imperiaal",
-                "unitChange_explanation": "Als eenheden aangepast wordt zullen alle bestaande Insights logs verwijderd worden!" 
+                "unitChange_explanation": "Als eenheden aangepast wordt zullen alle bestaande historie uit Inzichten verwijderd worden!",
+                "notifications_label" : "Meldingen",
+                "notifications_text" : "Stuur meldingen naar meldingen centrum als er fouten optreden"
             },
             
             "location" : {

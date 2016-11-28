@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/tmsns/homey-json-schema/master/schema.json",
-    "id": "nl.inversion.wunderground",
+    "id": "nl.inversion.wunderground2",
     "name": {
-        "en": "Weather Underground",
-        "nl": "Weather Underground"
+        "en": "Weather Underground2",
+        "nl": "Weather Underground2"
     },
 
     "description": {
@@ -11,8 +11,8 @@
         "nl": "Geeft informatie over het weer"
     },
 
-    "version": "0.2.6",
-    "compatibility": ">=0.8.29",
+    "version": "0.2.7",
+    "compatibility": ">=1.0.1",
     "category": "internet",
     "author": {
         "name": "Inversion NL",

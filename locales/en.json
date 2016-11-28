@@ -6,8 +6,8 @@
             "wunderground" : {
                 "wunderground_title" : "Weather Underground settings",
                 "key" : "Personal key",
-                "update_frequenty" : "Update every (min)",
-                "updateFrequenty_explanation" : "When no personal Weather Underground API key is specified, the update frequenty is 60 minutes minimal."
+                "update_frequency" : "Update every (min)",
+                "updateFrequency_explanation" : "When no personal Weather Underground API key is specified, the update frequency is 60 minutes minimal."
             },
             
             "generic" : {
@@ -16,7 +16,9 @@
                 "units_label" : "Units",
                 "units_metric" : "Metric",
                 "units_imperial" : "Imperial",
-                "unitChange_explanation": "If the units are changed, all current Insights logs will be deleted!"
+                "unitChange_explanation": "If the units are changed, all current Insights logs will be deleted!",
+                "notifications_label" : "Notifications",
+                "notifications_text" : "Send notifications to notification center when error occur"
             },
             
             "location" : {
