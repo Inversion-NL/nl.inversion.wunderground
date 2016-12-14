@@ -7,7 +7,7 @@
                 "wunderground_title" : "Weather Underground settings",
                 "key" : "Personal key",
                 "update_frequency" : "Update every (min)",
-                "updateFrequency_explanation" : "When no personal Weather Underground API key is specified, the update frequency is 60 minutes minimal."
+                "updateFrequency_explanation" : "When no personal Weather Underground API key is specified, the update frequency is 90 minutes minimal."
             },
             
             "generic" : {
@@ -42,10 +42,10 @@
              "messages" : {
                  "testing" : "Testing, please wait...",
                  "unable_get_location" : "Unable to get Homey's location, please try again or specify a location manually.",
-                 "settings_success_tested" : "Settings succesfully tested. Please use the save button to save your settings",
+                 "settings_success_tested" : "Settings successfully tested. Please use the save button to save your settings",
                  "settings_saved" : "Settings saved",
                  "settings_noSettingsChanged" : "No setting has been changed",
-                 "settings_unexpectedError" : "Unexpected error occured. Please try again"
+                 "settings_unexpectedError" : "Unexpected error occurred. Please try again"
              }
         }
     },
@@ -61,7 +61,8 @@
         "messages" : {
             "error_stop_updating" : "Max location detection attempts reached and one or all of the country/city fields are empty. Stopped updating weather!",
             "error_unable_getEnvironmentKey" : "Unable to get Inversion key from environment!",
-            "error_appWarning" : "Wunderground is being killed because: "
+            "error_appWarning" : "Wunderground is being killed because: ",
+            "error_deletingInsightsLog": "Error while deleting Insights log: "
         }
     }
 }

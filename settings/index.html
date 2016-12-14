@@ -19,7 +19,7 @@
         <br>
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" for="updateFrequency" data-i18n="settings.app.wunderground.update_frequency"></label>
-            <input class="form_input" id="updateFrequency" type="number" value="60"/>
+            <input class="form_input" id="updateFrequency" type="number" value="90"/>
         </div>
         <p style="font-size:10px" data-i18n="settings.app.wunderground.updateFrequency_explanation"></p>
     </fieldset>
@@ -44,8 +44,8 @@
         <div data-role="fieldcontain" style="margin:0;">
             <label class="form_label" data-i18n="settings.app.generic.notifications_label"></label>
             <div class="field">
-                <input class="checkbox" id="useNotifications" type="checkbox" checked="true">
-                <label class="form_label" for="useNotifications" data-i18n="settings.app.generic.notifications_text"></label>
+                <input class="checkbox" id="useErrorNotifications" type="checkbox" checked="true">
+                <label class="form_label" for="useErrorNotifications" data-i18n="settings.app.generic.notifications_text"></label>
             </div>
         </div>
     </fieldset>
@@ -142,6 +142,21 @@
             document.getElementById('locationfields').disabled = autolocation;
             currentValues.autolocation = autolocation;
         });
+
+        Homey.get('useErrorNotifications', function(err, useErrorNotifications) {
+            console.log('useErrorNotifications setting:', useErrorNotifications);
+            console.log('useErrorNotifications variable get err:', err);
+            if (err) {
+                console.error(err);
+                useErrorNotifications = true;
+            }
+            if (typeof useErrorNotifications == 'undefined' || useErrorNotifications == null) {
+                console.log('var autolocation:', useErrorNotifications);
+                useErrorNotifications = true;
+            }
+            document.getElementById('useErrorNotifications').checked = useErrorNotifications;
+            currentValues.useErrorNotifications = useErrorNotifications;
+        });
         
         Homey.get('wundergroundKey', function(err, wundergroundKey) {
             if (err) {
@@ -218,8 +233,14 @@
             Homey.set('autolocation', autolocation);
             valuesHaveBeenChanged = true;
             currentValues.autolocation = document.getElementById('autolocation').checked;
-        } else {
-            console.log('autolocation value has NOT been changed');
+        }
+
+        if (currentValues.useErrorNotifications != document.getElementById('useErrorNotifications').checked) {
+            var useErrorNotifications = document.getElementById('useErrorNotifications').checked;
+            console.log('Saving error notifications setting:', useErrorNotifications);
+            Homey.set('useErrorNotifications', useErrorNotifications);
+            valuesHaveBeenChanged = true;
+            currentValues.useErrorNotifications = document.getElementById('useErrorNotifications').checked;
         }
         
         if (currentValues.wundergroundKey != document.getElementById('wundergroundKey').value) {

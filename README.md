@@ -83,18 +83,22 @@ If you don't have a key the app uses my key and will update every 90 minutes.
 
 
 #Changes
-* Version 0.2.7
-  * Stringify object for readable error output
-  * Send error to notification center (minimal Homey firmware 1.0.1)
+* Version 0.3.0
+  * Abbreviations in speech will be converted to full text (Thanks to jghaanstra!)
+  * Start using Sentry for debugging
+  * More readable error output to error trigger card
+  * Send error to notification center
   * Add option in app settings to disable error notifications
   * Add logging to Sentry
-  * Fixed bug where units wasn't set to automatic by default 
+  * Fixed bug where units wasn't set to automatic by default
+  * Fixed bug where the 'use Homey's location' checkbox wasn't saved
+  * Fixed bug: https://github.com/Inversion-NL/nl.inversion.wunderground/issues/21
 * Version 0.2.6
-  * Bugfux for: https://github.com/Inversion-NL/nl.inversion.wunderground/issues/16
+  * Fixed bug: https://github.com/Inversion-NL/nl.inversion.wunderground/issues/16
 * Version 0.2.3
-  * Bugfix: Better check when no location is received from Homey
+  * Fixed bug: Better check when no location is received from Homey
 * Version 0.2.2
-  * Bugfix: trigger if temp/hum/etc is above or below
+  * Fixed bug: trigger if temp/hum/etc is above or below
   * New Weather Underground key because of to much calls on my key
   * Update every 90min if using my key (use your onw key, its free! See settings section above)
 * Version 0.2.1

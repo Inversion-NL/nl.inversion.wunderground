@@ -7,7 +7,7 @@
                 "wunderground_title" : "Weather Underground instellingen",
                 "key" : "Persoonlijke key",
                 "update_frequency" : "Bijwerken elke (min)",
-                "updateFrequency_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 60 minuten."
+                "updateFrequency_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 90 minuten."
             },
             
             "generic" : {
@@ -61,7 +61,8 @@
         "messages" : {
             "error_stop_updateting" : "Automatisch bepalen van de locatie mislukt of geen geldige locatie ingevoerd. Weer wordt niet meer bijgewerkt!",
             "error_unable_getEnvironmentKey" : "Niet gelukt om Inversion key op te halen uit Homey!",
-            "error_appWarning" : "Wunderground wordt gestopt omdat: "
+            "error_appWarning" : "Wunderground wordt gestopt omdat: ",
+            "error_deletingInsightsLog": "Fout bij het verwijderen van Inzichten log: "
         }
     }
 }
