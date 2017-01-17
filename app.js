@@ -3,6 +3,7 @@
 const Wunderground = require('wundergroundnode');
 const Log = require('homey-log').Log;
 var wunderground;
+var util = require('util');
 
 // Enable full logging for more info
 const fullLogging = false;
@@ -47,106 +48,6 @@ var useErrorNotifications;
 // Variables for when value has changed
 var oldTemp;
 var oldHum;
-
-/**
- * Helper function to check if the variable is not undefined and null
- * @param string Variable to check
- * @returns {boolean} true when not undefined or null
- */
-function value_exist(string) {
-    //noinspection RedundantIfStatementJS
-    if (typeof string != 'undefined' && string != null) return true;
-    else return false;
-}
-
-/**
- * Helper function to test weather data
- * @param data Data to test
- * @returns {object} returns the weather object or a empty string the data was null or undefined
- */
-function testWeatherData(data) {
-    if (!value_exist(data)) {
-        wuLog('Test weather data: Value was undefined or null, returning empty string', severity.debug);
-        return "";
-    }
-    else return data;
-}
-
-/**
- * Helper function to test the Weather Underground response
- * @param err
- * @param result
- * @returns {boolean} True is everything is fine
- */
-function testResponse(err, result){
-
-    if (err) return true;
-
-    var err_msg;
-    try {
-        // If error is in the response, something must have gone wrong
-        err_msg = result.response.error.description;
-        wuLog('test response error: ' + JSON.stringify(err_msg), severity.error);
-        return true;
-    } catch(err) {
-        // If it catches the error it means that there is no result.response.error.description
-        // so all is good
-        if (fullLogging) wuLog('No error message found in weather request', severity.debug);
-        return false;
-    }
-}
-
-/**
- * Helper function to parse float from a string
- * @param data
- * @returns {*} Returns 0 if unable to parse, otherwise the parsed floating value
- */
-function parseWeatherFloat(data) {
-    var temp = parseFloat(data);
-    if (isNaN(temp)) {
-        if (fullLogging) wuLog('parseWeatherFloat', severity.debug);
-        if (fullLogging) wuLog('Value was NaN, returning 0', severity.debug);
-        return 0;
-    }
-    else return temp;
-}
-
-/**
- * Helper function to convert epoch time to a date variable
- * @param epoch Epoch time (in milli seconds)
- * @returns {Date} Returns the date
- */
-function epochToString(epoch) {
-    var date = new Date(0);
-    date.setUTCSeconds(epoch);
-    return date;
-}
-
-/**
- * Helper function to calculates the difference between two values
- * @param a Value 1
- * @param b Value 2
- * @returns {number} Returns the difference, 0 if something went wrong
- */
-function diff(a,b) {
-    try {
-        return Math.abs(a-b);
-    } catch(err) {
-        wuLog('Error while calculating the difference between ' + JSON.stringify(a) + ' and ' + JSON.stringify(b), severity.debug);
-        return 0;
-    }
-}
-
-/**
- * Helper function to check if a value is a integer
- * @param value Value to check
- * @returns {boolean} Returns true if integer
- */
-function isInt(value) {
-  return !isNaN(value) &&
-         parseInt(Number(value)) == value &&
-         !isNaN(parseInt(value, 10));
-}
 
 var self = {
     // this `init` function will be run when Homey is done loading
