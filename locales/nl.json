@@ -18,7 +18,9 @@
                 "units_imperial" : "Imperiaal",
                 "unitChange_explanation": "Als eenheden aangepast wordt zullen alle bestaande historie uit Inzichten verwijderd worden!",
                 "notifications_label" : "Meldingen",
-                "notifications_text" : "Stuur meldingen naar meldingen centrum als er fouten optreden"
+                "notifications_text" : "Stuur meldingen naar meldingen centrum als er fouten optreden",
+                "user_id_text" : "Uniek ID",
+                "user_id_explanation" : "Dit ID kan worden gebruikt door de ontwikkelaar voor anoniem oplossen van fouten in de app"
             },
             
             "location" : {

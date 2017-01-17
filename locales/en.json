@@ -18,7 +18,9 @@
                 "units_imperial" : "Imperial",
                 "unitChange_explanation": "If the units are changed, all current Insights logs will be deleted!",
                 "notifications_label" : "Notifications",
-                "notifications_text" : "Send notifications to notification center when error occur"
+                "notifications_text" : "Send notifications to notification center when error occur",
+                "user_id_text" : "Unique user ID",
+                "user_id_explanation" : "This ID can be used by the developer for anonymous bug tracking for this app"
             },
             
             "location" : {

@@ -287,10 +287,13 @@ var self = {
         // Check if there is a unique ID in settings, otherwise create one.
         // Used by Sentry logging without invading users privacy
         var uniqueUserId = Homey.manager('settings').get('uniqueUserId');
-        if (!value_exist(uniqueUserId)) uniqueUserId = generateUniqueId();
+        if (!value_exist(uniqueUserId)) {
+            uniqueUserId = generateUniqueId();
+            Homey.manager('settings').set('uniqueUserId', uniqueUserId);
+            wuLog('Generating new unique user ID', severity.debug);
+        }
         wuLog('Unique user ID: ' + JSON.stringify(uniqueUserId), severity.debug);
         Log.setUser(uniqueUserId);
-        Homey.manager('settings').set('uniqueUserId', uniqueUserId);
 
         var usePersonalKey = false;
         if (!value_exist(myKey) || myKey == "") {

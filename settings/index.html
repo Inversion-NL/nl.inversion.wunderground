@@ -48,6 +48,13 @@
                 <label class="form_label" for="useErrorNotifications" data-i18n="settings.app.generic.notifications_text"></label>
             </div>
         </div>
+        <br>
+        <br>
+        <div data-role="fieldcontain" style="margin:0;">
+            <label class="form_label" data-i18n="settings.app.generic.user_id_text"></label>
+            <p id="user_id">00112233445566778899AABBCC</p>
+            <p style="font-size:12px" data-i18n="settings.app.generic.user_id_explanation"></p>
+        </div>
     </fieldset>
     
     <fieldset id="location">
@@ -157,7 +164,13 @@
             document.getElementById('useErrorNotifications').checked = useErrorNotifications;
             currentValues.useErrorNotifications = useErrorNotifications;
         });
-        
+
+        Homey.get('uniqueUserId', function(err, uniqueUserId) {
+            console.log('uniqueUserId setting:', uniqueUserId);
+            document.getElementById('user_id').innerHTML = uniqueUserId;
+            currentValues.uniqueUserId = uniqueUserId;
+        });
+
         Homey.get('wundergroundKey', function(err, wundergroundKey) {
             if (err) {
                 Homey.error(err);
