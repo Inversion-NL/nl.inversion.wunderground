@@ -12,7 +12,7 @@
     },
 
     "version": "0.3.0",
-    "compatibility": ">=1.0.1",
+    "compatibility": ">=1.1.2",
     "category": "internet",
     "author": {
         "name": "Inversion NL",
@@ -45,29 +45,26 @@
               },
               "tokens": [
                 {
-                    "name": "temp",
-                    "title": {
-                        "en": "temp",
-                        "nl": "temp"
-                    },
-                    "example": {
-                        "en": "5",
-                        "nl": "5"
-                    }
+                  "name": "temp",
+                  "type": "number",
+                  "title": {
+                      "en": "temp",
+                      "nl": "temp"
+                  },
+                  "example": 5
                 },
                 {
                   "name": "hum",
+                  "type": "number",
                   "title": {
                     "en": "hum",
                     "nl": "vocht"
                   },
-                  "example": {
-                    "en": "50%",
-                    "nl": "50%"
-                  }
+                  "example": 50
                 },
                 {
                   "name": "weather_descr",
+                  "type": "string",
                   "title": {
                     "en": "weather",
                     "nl": "weer"
@@ -89,28 +86,25 @@
             "tokens": [
               {
                 "name": "hum",
+                "type": "number",
                 "title": {
                   "en": "hum",
                   "nl": "vocht"
                 },
-                "example": {
-                  "en": "50",
-                  "nl": "50"
-                }
+                "example": 50
               },
               {
                 "name": "temp",
+                "type": "number",
                 "title": {
                   "en": "temp",
                   "nl": "temp"
                 },
-                "example": {
-                  "en": "5",
-                  "nl": "5"
-                }
+                "example": 5
               },
               {
                 "name": "weather_descr",
+                "type": "string",
                 "title": {
                   "en": "weather",
                   "nl": "weer"
@@ -132,28 +126,25 @@
             "tokens": [
               {
                 "name": "temp",
+                "type": "number",
                 "title": {
                   "en": "temp",
                   "nl": "temp"
                 },
-                "example": {
-                  "en": "5",
-                  "nl": "5"
-                }
+                "example": 5
               },
               {
                 "name": "hum",
+                "type": "number",
                 "title": {
                   "en": "hum",
                   "nl": "vocht"
                 },
-                "example": {
-                  "en": "50%",
-                  "nl": "50%"
-                }
+                "example": 50
               },
               {
                 "name": "weather_descr",
+                "type": "string",
                 "title": {
                   "en": "weather",
                   "nl": "weer"
@@ -187,28 +178,25 @@
             "tokens": [
               {
                 "name": "temp",
+                "type": "number",
                 "title": {
                   "en": "temp",
                   "nl": "temp"
                 },
-                "example": {
-                  "en": "5",
-                  "nl": "5"
-                }
+                "example": 5
               },
               {
                 "name": "hum",
+                "type": "number",
                 "title": {
                   "en": "hum",
                   "nl": "vocht"
                 },
-                "example": {
-                  "en": "50%",
-                  "nl": "50%"
-                }
+                "example": 50
               },
               {
                 "name": "weather_descr",
+                "type": "string",
                 "title": {
                   "en": "weather",
                   "nl": "weer"
@@ -242,28 +230,25 @@
             "tokens": [
               {
                 "name": "hum",
+                "type": "number",
                 "title": {
                   "en": "hum",
                   "nl": "vocht"
                 },
-                "example": {
-                  "en": "50%",
-                  "nl": "50%"
-                }
+                "example": 50
               },
               {
                 "name": "temp",
+                "type": "number",
                 "title": {
                   "en": "temp",
                   "nl": "temp"
                 },
-                "example": {
-                  "en": "5",
-                  "nl": "5"
-                }
+                "example": 5
               },
               {
                 "name": "weather_descr",
+                "type": "string",
                 "title": {
                   "en": "weather",
                   "nl": "weer"
@@ -297,28 +282,25 @@
             "tokens": [
               {
                 "name": "hum",
+                "type": "number",
                 "title": {
                   "en": "hum",
                   "nl": "vocht"
                 },
-                "example": {
-                  "en": "50%",
-                  "nl": "50%"
-                }
+                "example": 50
               },
               {
                 "name": "temp",
+                "type": "number",
                 "title": {
                   "en": "temp",
                   "nl": "temp"
                 },
-                "example": {
-                  "en": "5",
-                  "nl": "5"
-                }
+                "example": 5
               },
               {
                 "name": "weather_descr",
+                "type": "string",
                 "title": {
                   "en": "weather",
                   "nl": "weer"
@@ -352,14 +334,12 @@
             "tokens": [
               {
                 "name": "uv",
+                "type": "number",
                 "title": {
                   "en": "UV",
                   "nl": "UV"
                 },
-                "example": {
-                  "en": "5",
-                  "nl": "5"
-                }
+                "example": 7
               }
             ],
             "args": [
@@ -384,14 +364,12 @@
             "tokens": [
               {
                 "name": "uv",
+                "type": "number",
                 "title": {
                   "en": "UV",
                   "nl": "UV"
                 },
-                "example": {
-                  "en": "5",
-                  "nl": "5"
-                }
+                "example": 5
               }
             ],
             "args": [
@@ -416,14 +394,12 @@
             "tokens": [
               {
                 "name": "wind",
+                "type": "number",
                 "title": {
                   "en": "wind",
                   "nl": "wind"
                 },
-                "example": {
-                  "en": "15",
-                  "nl": "15"
-                }
+                "example": 50
               }
             ],
             "args":
@@ -449,14 +425,12 @@
             "tokens": [
               {
                 "name": "wind",
+                "type": "number",
                 "title": {
                   "en": "wind",
                   "nl": "wind"
                 },
-                "example": {
-                  "en": "15",
-                  "nl": "15"
-                }
+                "example": 50
               }
             ],
             "args":
@@ -482,14 +456,12 @@
             "tokens": [
               {
                 "name": "wind_gust",
+                "type": "number",
                 "title": {
                   "en": "wind_gust",
                   "nl": "windstoten"
                 },
-                "example": {
-                  "en": "50",
-                  "nl": "50"
-                }
+                "example": 75
               }
             ],
             "args":
@@ -515,14 +487,12 @@
             "tokens": [
               {
                 "name": "wind_gust",
+                "type": "number",
                 "title": {
                   "en": "wind gust",
                   "nl": "windstoten"
                 },
-                "example": {
-                  "en": "50",
-                  "nl": "50"
-                }
+                "example": 75
               }
             ],
             "args":
@@ -548,6 +518,7 @@
             "tokens": [
               {
                 "name": "error",
+                "type": "string",
                 "title": {
                   "en": "error",
                   "nl": "fout"
