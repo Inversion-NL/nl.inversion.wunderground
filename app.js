@@ -143,15 +143,15 @@ function diff(a,b) {
  * @returns {boolean} Returns true if integer
  */
 function isInt(value) {
-  return !isNaN(value) && 
-         parseInt(Number(value)) == value && 
+  return !isNaN(value) &&
+         parseInt(Number(value)) == value &&
          !isNaN(parseInt(value, 10));
 }
 
 var self = {
     // this `init` function will be run when Homey is done loading
     init: function() {
-        
+
         wuLog("Initializing Weather Underground", severity.debug);
         wuLog("", severity.debug);
 
@@ -166,17 +166,17 @@ var self = {
         // Listen for changes in settings
         wuLog("Registering settings listener", severity.debug);
         Homey.manager('settings').on('set', self.settingsChanged);
-        
+
         // Listen for Homey app warnings and performance triggers
         registerWarningAndPerformanceListeners();
-        
+
         // Check settings and start updating weather
         self.checkSettings();
 
         // Print current date and time
         wuLog("Current time: " + new Date(), severity.debug);
     },
-    
+
     scheduleWeather: function(update_frequency) {
         wuLog("", severity.debug);
         wuLog("Schedule weather", severity.debug);
@@ -219,16 +219,16 @@ var self = {
             self.updateForecast();
         }
     },
-    
+
     setUnits: function() {
         if (fullLogging) wuLog('', severity.debug);
         if (fullLogging) wuLog('setUnits', severity.debug);
-        
+
         units_metric = Homey.manager('settings').get('units_metric');
         var units_imperial = Homey.manager('settings').get('units_imperial');
         var units_auto = Homey.manager('settings').get('units_auto');
         var homey_units = Homey.manager('i18n').getUnits();
-        
+
         if (units_auto && value_exist(homey_units) && homey_units != "") {
             Homey.manager('settings').set('currentSettingUnits', 'auto');
             if (homey_units == 'metric') {
@@ -242,12 +242,12 @@ var self = {
             // Something is wrong here, none of the radio buttons are checked!
             wuLog('No unit value existed, resetting to auto', severity.debug);
             Homey.manager('settings').set('units_auto', 'true');
-            
+
             // Let check the units again
             self.setUnits();
             return;
         }
-        
+
         if (units_metric) {
             //noinspection SpellCheckingInspection
             unitData = {
@@ -267,14 +267,14 @@ var self = {
             }
         }
     },
-    
+
     checkSettings: function() {
         wuLog("", severity.debug);
         wuLog("Check settings", severity.debug);
-        
+
         // Check units to use in app
         self.setUnits();
-        
+
         // Check if user provided a key in settings
         var myKey = Homey.manager('settings').get('wundergroundKey');
 
@@ -298,7 +298,7 @@ var self = {
             self.initWunderground(myKey);
             wuLog("Using Weather Underground personal key", severity.debug);
         }
-        
+
         // Get user settings for update frequency
         update_frequency = Homey.manager('settings').get('updateFrequency');
         wuLog("Update every (user setting): " + update_frequency, severity.debug);
@@ -378,14 +378,14 @@ var self = {
             address = country + '/' + city;
             self.scheduleWeather(update_frequency);
             self.scheduleForecast(update_frequency);
-        } else { 
+        } else {
             wuLog("One of the country/city fields is empty, setting to autolocation which will trigger checkSettings() again", severity.debug);
             Homey.manager('settings').set('autolocation', true);
             self.scheduleWeather(update_frequency);
             self.scheduleForecast(update_frequency);
         }
     },
-    
+
     initWunderground: function(key) {
         if (fullLogging) wuLog("", severity.debug);
         if (fullLogging) wuLog("initWunderground", severity.debug);
@@ -399,7 +399,7 @@ var self = {
         wuLog('Setting language to ' + JSON.stringify(language), severity.debug);
         wunderground = new Wunderground(key, language);
     },
-    
+
     settingsChanged: function(settingName) {
         wuLog("", severity.debug);
         // Not interested in currentSettingUnits changes
@@ -407,7 +407,7 @@ var self = {
         if (settingName != "currentSettingUnits" || settingName != "currentsettingunits") {
             wuLog("Setting has changed " + JSON.stringify(settingName), severity.debug);
         }
-        
+
         // Homey v 0.8.35 has a bug where all variables are lower case
         if (settingName == "currentSettingUnits" || settingName == "currentSettingUnits") {
             // Don't do anything when this setting has changed or it will cause a loop
@@ -426,7 +426,7 @@ var self = {
             if (fullLogging) wuLog('units_auto:' + units_auto, severity.debug);
             var currentSettingUnits = Homey.manager('settings').get('currentSettingUnits');
             if (fullLogging) wuLog('currentSettingUnits:' + currentSettingUnits, severity.debug);
-            
+
             if (units_metric && value_exist(currentSettingUnits)) {
                 if (currentSettingUnits != 'metric') {
                     // Setting has changed, delete all Insights logs!
@@ -463,7 +463,7 @@ var self = {
             self.checkSettings();
         }
     },
-    
+
     unload: function() {
         if (fullLogging) wuLog('', severity.debug);
         if (fullLogging) wuLog('unload', severity.debug);
@@ -497,7 +497,7 @@ var self = {
         wuLog("", severity.debug);
         wuLog("Update forecast", severity.debug);
         wuLog('Requesting for location ' + JSON.stringify(address), severity.debug);
-        
+
         if (!value_exist(address)) {
             wuLog('No valid address data, not fetching forecast', severity.debug);
             return;
@@ -509,7 +509,7 @@ var self = {
             wuLog("updateForecast response", severity.debug);
 
             var error = testResponse(err, response);
-            
+
             if (response && !error && response.forecast) {
                 forecastData = response.forecast.txt_forecast.forecastday;
             } else {
@@ -531,11 +531,11 @@ var self = {
 
         // Get weather data
         wunderground.conditions().request(address, function(err, response) {
-            
+
             var error = testResponse(err, response);
-            
+
             if (response && !error && value_exist(response.current_observation)) {
-                
+
                 var hum = testWeatherData(response.current_observation.relative_humidity);
                 var hum_float = 0;
                 try {
@@ -544,7 +544,7 @@ var self = {
                 } catch(err) {
                     wuLog("Error while parsing relative_humidity to float, setting to 0", severity.error);
                 }
-                
+
                 var temp, feelslike, dewpoint, pressure, wind, wind_gust, visibility, precip_1hr, precip_today;
 
                 // Use correct user units
@@ -571,7 +571,7 @@ var self = {
                     precip_1hr = parseWeatherFloat(testWeatherData(response.current_observation.precip_1hr_in));
                     precip_today = parseWeatherFloat(testWeatherData(response.current_observation.precip_today_in));
                 }
-                
+
                 // Reset values they are below zero
                 var uv = parseWeatherFloat(testWeatherData(response.current_observation.UV));
                 if (uv < 0) uv = 0;
@@ -595,7 +595,7 @@ var self = {
                     precip_1hr: precip_1hr,
                     precip_today: precip_today
                 };
-                
+
                 wuLog("Current time: " + new Date(), severity.debug);
                 wuLog("Observation time: " + epochToString(weatherData.observation_epoch), severity.debug);
                 if (fullLogging) wuLog("Weather data: " + JSON.stringify(weatherData), severity.debug);
@@ -644,7 +644,7 @@ var self = {
                     // No humidity data available!
                     wuLog("Humidity is undefined!", severity.debug)
                 }
-                
+
                 // UV triggers and conditions
                 if (value_exist(weatherData.uv)) {
                     // Start trigger
@@ -653,7 +653,7 @@ var self = {
                     // No UV data available!
                     wuLog("UV is undefined!", severity.debug)
                 }
-                
+
                 // Wind triggers and conditions
                 if (value_exist(weatherData.wind)) {
                     // Start trigger
@@ -662,7 +662,7 @@ var self = {
                     // No wind data available!
                     wuLog("Wind is undefined!", severity.debug)
                 }
-                            
+
                 // Wind gust triggers and conditions
                 if (value_exist(weatherData.wind_gust)) {
                     // Start trigger
@@ -734,31 +734,31 @@ var self = {
         Homey.manager('flow').trigger('hum_above', tokens);
         Homey.manager('flow').trigger('hum_below', tokens);
     },
-    
+
     // Handler for UV triggers and conditions
     uvAboveBelow: function(uv) {
         var tokens = {'uv': uv};
         Homey.manager('flow').trigger('uv_above', tokens);
         Homey.manager('flow').trigger('uv_below', tokens);
     },
-    
+
     // Handler for wind triggers and conditions
     windAboveBelow: function(wind) {
         var tokens = {'wind': wind};
         Homey.manager('flow').trigger('wind_above', tokens);
         Homey.manager('flow').trigger('wind_below', tokens);
     },
-    
+
     // Handler for wind triggers and conditions
     windgustAboveBelow: function(windgust) {
         var tokens = {'wind_gust': windgust};
         Homey.manager('flow').trigger('windgust_above', tokens);
         Homey.manager('flow').trigger('windgust_below', tokens);
     },
-    
+
     deleteInsightsLog: function(log) {
         wuLog("Deleting log " + log, severity.debug);
-        
+
         Homey.manager('insights').deleteLog(log, function callback(err){
             if (err) {
                 triggerError(__("app.messages.error_deletingInsightsLog") + JSON.stringify(err));
@@ -766,13 +766,13 @@ var self = {
                 return Homey.error(err);
             }
             else wuLog("Log " + log + " deleted", severity.debug);
-        });  
+        });
     },
-    
+
     deleteAllInsightsLogs: function() {
         wuLog("", severity.debug);
         wuLog("deleteAllInsightsLogs", severity.debug);
-        
+
         Homey.manager('insights').getLogs(function callback(err, logs) {
             if (err) {
                 triggerError(__("app.messages.error_deletingInsightsLog") + JSON.stringify(err));
@@ -784,16 +784,16 @@ var self = {
                     //noinspection JSUnfilteredForInLoop
                     self.deleteInsightsLog(logs[l]);
                 }
-            }   
-        });       
+            }
+        });
     },
-    
+
     checkInsightsLogs: function() {
         wuLog("", severity.debug);
         wuLog("checkInsightsLogs", severity.debug);
-        
+
         // self.deleteInsightsLog("precip_today");
-        
+
         Homey.manager('insights').getLogs(function callback(err, logs) {
             if (err) {
                 // Error, let's create them all
@@ -812,7 +812,7 @@ var self = {
                     // Add current Homey log names to array
                     //noinspection JSUnfilteredForInLoop
                     currentInsightLogs.push(logs[l].name);
-                    
+
                     //noinspection JSUnfilteredForInLoop
                     if (insightsLogs.indexOf(logs[l].name) < 0) {
                         //noinspection JSUnfilteredForInLoop
@@ -832,21 +832,21 @@ var self = {
                         self.createInsightsLogs(insightsLogs[l]);
                     }
                 }
-            }   
-        }); 
+            }
+        });
     },
 
     createInsightsLogs: function(log) {
         wuLog("", severity.debug);
         wuLog("Create Insights log: " + log, severity.debug);
         if (fullLogging) wuLog("Metric units" + units_metric, severity.debug);
-        
+
         var temp_unit = unitData.temp_unit;
         var distance_unit = unitData.distance_unit;
         var speed_unit = unitData.speed_unit;
         var pressure_unit = unitData.pressure_unit;
         var distance_small_unit = unitData.distance_small_unit;
-        
+
         switch(log) {
             case 'temp':
                 Homey.manager('insights').createLog('temp', {
@@ -868,7 +868,7 @@ var self = {
                     }
                 });
                 break;
-                
+
             case 'hum':
                 Homey.manager('insights').createLog('hum', {
                 label: {
@@ -889,7 +889,7 @@ var self = {
                     }
                 });
                 break;
-                
+
             case 'feelslike':
                 Homey.manager('insights').createLog('feelslike', {
                     label: {
@@ -910,7 +910,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case 'pressure':
                 Homey.manager('insights').createLog('pressure', {
                     label: {
@@ -931,7 +931,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case 'wind':
                 Homey.manager('insights').createLog('wind', {
                     label: {
@@ -952,7 +952,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case 'wind_gust':
                 Homey.manager('insights').createLog('wind_gust', {
                     label: {
@@ -973,7 +973,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case 'wind_degrees':
                 Homey.manager('insights').createLog('wind_degrees', {
                     label: {
@@ -994,7 +994,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case 'dewpoint':
                 Homey.manager('insights').createLog('dewpoint', {
                     label: {
@@ -1015,7 +1015,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case "precip_today":
                 Homey.manager('insights').createLog('precip_today', {
                     label: {
@@ -1036,7 +1036,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case "precip_1hr":
                 Homey.manager('insights').createLog('precip_1hr', {
                     label: {
@@ -1057,7 +1057,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case "uv":
                 Homey.manager('insights').createLog('uv', {
                     label: {
@@ -1074,7 +1074,7 @@ var self = {
                         }
                     });
                 break;
-                
+
             case "visibility":
                 Homey.manager('insights').createLog('visibility', {
                     label: {
@@ -1095,7 +1095,7 @@ var self = {
                         }
                     });
                 break;
-            
+
             default:
                 wuLog("Create Insights log default switch-case was hit which means one log wasn't created!", severity.error);
                 break;
@@ -1300,9 +1300,9 @@ function registerTriggerAndConditionListeners() {
                 forecastText = forecastData[day].fcttext_metric;
             else
                 forecastText = forecastData[day].fcttext;
-            
+
             wuLog('forecast text ' + JSON.stringify(forecastText), severity.debug);
-            
+
             if (value_exist(forecastText)) Homey.manager('speech-output').say(forecastText);
             else {
                 wuLog('Read forecast but forecast data is empty: ' + JSON.stringify(forecastData), severity.error);
@@ -1514,7 +1514,7 @@ function testWU(callback, args) {
 
 function triggerError(errorMsg) {
     if (useErrorNotifications) sendNotification(errorMsg);
-    
+
     var tokens = {'error': errorMsg};
     Homey.manager('flow').trigger('error', tokens);
 }
@@ -1553,7 +1553,7 @@ function wuLog(message, level) {
 function parseAbbreviations(text) {
     // map with replace function parameters
 
-    if (Homey.manager('i18n').getLanguage() == 'NL') {
+    if (Homey.manager('i18n').getLanguage() == 'nl') {
         //noinspection SpellCheckingInspection,JSDuplicatedDeclaration
         var replaceMap = [
             ['km/u', ' kilometer per uur'],
