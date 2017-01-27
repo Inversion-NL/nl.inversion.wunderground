@@ -410,8 +410,11 @@ var self = {
             if (response && !error && response.forecast && response.forecast.txt_forecast) {
                 forecastData = response.forecast.txt_forecast.forecastday;
             } else {
-                util.wuLog('Error while receiving weather forecast: ' + JSON.stringify(err), severity.error);
-                triggerError("Error while receiving weather forecast " + JSON.stringify(err));
+                var message;
+                if (error == true) message = 'Error while receiving weather forecast: ' + JSON.stringify(response);
+                else message = 'Error while receiving weather forecast: ' + JSON.stringify(err) + JSON.stringify(response);
+                util.wuLog(message, severity.error);
+                triggerError(message);
             }
         });
     },
@@ -421,8 +424,9 @@ var self = {
         util.wuLog("", severity.debug);
         util.wuLog("Update Weather", severity.debug);
         util.wuLog('Requesting for location ' + JSON.stringify(address), severity.debug);
+
         if (!util.value_exist(address)) {
-            util.wuLog('No valid address data, not updating weather', severity.error);
+            util.wuLog('No valid address data, not updating weather for address ' + JSON.stringify(address), severity.error);
             return;
         }
 
@@ -492,6 +496,8 @@ var self = {
                     precip_1hr: precip_1hr,
                     precip_today: precip_today
                 };
+
+                util.updateGlobalTokens(weatherData);
 
                 util.wuLog("Current time: " + new Date(), severity.debug);
                 util.wuLog("Observation time: " + util.epochToString(weatherData.observation_epoch), severity.debug);
@@ -584,8 +590,11 @@ var self = {
                 self.addInsightsEntry("visibility", weatherData.visibility);
 
             } else {
-                util.wuLog('Wunderground request error: ' + JSON.stringify(response), severity.error);
-                triggerError("Wunderground request error: " + JSON.stringify(response));
+                var message;
+                if (error == true) message = 'Error while receiving weather forecast: ' + JSON.stringify(response);
+                else message = 'Error while receiving weather forecast: ' + JSON.stringify(err) + JSON.stringify(response);
+                util.wuLog(message, severity.error);
+                triggerError(message);
             }
         }
       )

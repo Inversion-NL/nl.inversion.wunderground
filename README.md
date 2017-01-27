@@ -83,6 +83,9 @@ If you don't have a key the app uses my key and will update every 90 minutes.
 
 
 #Changes
+* Version 1.0.0
+  * First stable release
+  * Support for global tokens
 * Version 0.3.0
   * Abbreviations in speech will be converted to full text (Thanks to Erik van Dongen for the source code!)
   * Start using Sentry for debugging

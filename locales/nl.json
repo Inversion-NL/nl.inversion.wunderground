@@ -1,70 +1,90 @@
 {
-    "settings" : {
-        "app" : {
-            "title" : "Weather Underground instellingen",
-                    
-            "wunderground" : {
-                "wunderground_title" : "Weather Underground instellingen",
-                "key" : "Persoonlijke key",
-                "update_frequency" : "Bijwerken elke (min)",
-                "updateFrequency_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 90 minuten."
-            },
-            
-            "generic" : {
-                "units_title" : "Algemeen",
-                "units_auto" : "Automatisch",
-                "units_label" : "Eenheden",
-                "units_metric" : "Metrisch",
-                "units_imperial" : "Imperiaal",
-                "unitChange_explanation": "Als eenheden aangepast wordt zullen alle bestaande historie uit Inzichten verwijderd worden!",
-                "notifications_label" : "Meldingen",
-                "notifications_text" : "Stuur meldingen naar meldingen centrum als er fouten optreden",
-                "user_id_text" : "Uniek ID",
-                "user_id_explanation" : "Dit ID kan worden gebruikt door de ontwikkelaar voor anoniem oplossen van fouten in de app"
-            },
-            
-            "location" : {
-                "location" : "Locatie",
-                "autolocation" : "Gebruik Homey's locatie",
-                "manualLocation_label" : "Handmatige locatie",
-                "manualLocation_explanation" : "Gebruik onderstaande velden om handmatig een locatie op te geven voor de weersinformatie.",
-                "city" : "Stad (of leeg als station ID gebruikt wordt)",
-                "country" : "Land (of station ID)"
-            },
-            
-            "button" : {
-                "save" : "Opslaan",
-                "test" : "Test"
-            },
-            
-            "log" : {
-                "title" : "Test log:"
-            },
-            
-             "messages" : {
-                 "testing" : "Bezig met testen, moment geduld aub...",
-                 "unable_get_location" : "Niet gelukt om Homey's locatie te krijgen, probeer het opnieuw of geef een handmatige locatie op.",
-                 "settings_success_tested" : "Instellingen succesvol getest. Gebruik de opslaan-knop om je instellingen op te slaan.",
-                 "settings_saved" : "Instellingen opgeslagen",
-                 "settings_noSettingsChanged" : "Er is niets gewijzigingd",
-                 "settings_unexpectedError" : "Onverwachte fout opgetreden. Probeer nogmaals a.u.b."
-             }
-        }
-    },
-
+  "settings" : {
     "app" : {
-        "speech" : {
-            "weatherDataNotAvailableYet" : "Sorry, weer gegevens nog niet opgehaald. Probeer het later nogmaals",
-            "weatherDataNotAvailable" : "Sorry, weer gegevens niet beschikbaar. Probeer het later nogmaals",
-            "somethingWrong" : "Sorry, er is iets mis gegaan. Probeer het later nogmaals",
-            "rainToday" : "Vandaag heeft het tot nu toe",
-            "rainHour" : "Het afgelopen uur heeft het"
-        },
-        "messages" : {
-            "error_stop_updateting" : "Automatisch bepalen van de locatie mislukt of geen geldige locatie ingevoerd. Weer wordt niet meer bijgewerkt!",
-            "error_unable_getEnvironmentKey" : "Niet gelukt om Inversion key op te halen uit Homey!",
-            "error_appWarning" : "Wunderground wordt gestopt omdat: ",
-            "error_deletingInsightsLog": "Fout bij het verwijderen van Inzichten log: "
-        }
+      "title" : "Weather Underground instellingen",
+          
+      "wunderground" : {
+        "wunderground_title" : "Weather Underground instellingen",
+        "key" : "Persoonlijke key",
+        "update_frequency" : "Bijwerken elke (min)",
+        "updateFrequency_explanation" : "Als er geen gebruik wordt gemaakt van een persoonlijke Weather Underground API key is de minimum bijwerk tijd 90 minuten."
+      },
+      
+      "generic" : {
+        "units_title" : "Algemeen",
+        "units_auto" : "Automatisch",
+        "units_label" : "Eenheden",
+        "units_metric" : "Metrisch",
+        "units_imperial" : "Imperiaal",
+        "unitChange_explanation": "Als eenheden aangepast wordt zullen alle bestaande historie uit Inzichten verwijderd worden!",
+        "notifications_label" : "Meldingen",
+        "notifications_text" : "Stuur meldingen naar meldingen centrum als er fouten optreden",
+        "user_id_text" : "Uniek ID",
+        "user_id_explanation" : "Dit ID kan worden gebruikt door de ontwikkelaar voor anoniem oplossen van fouten in de app"
+      },
+      
+      "location" : {
+        "location" : "Locatie",
+        "autolocation" : "Gebruik Homey's locatie",
+        "manualLocation_label" : "Handmatige locatie",
+        "manualLocation_explanation" : "Gebruik onderstaande velden om handmatig een locatie op te geven voor de weersinformatie.",
+        "city" : "Stad (of leeg als station ID gebruikt wordt)",
+        "country" : "Land (of station ID)"
+      },
+      
+      "button" : {
+        "save" : "Opslaan",
+        "test" : "Test"
+      },
+      
+      "log" : {
+        "title" : "Test log:"
+      },
+      
+       "messages" : {
+         "testing" : "Bezig met testen, moment geduld aub...",
+         "unable_get_location" : "Niet gelukt om Homey's locatie te krijgen, probeer het opnieuw of geef een handmatige locatie op.",
+         "settings_success_tested" : "Instellingen succesvol getest. Gebruik de opslaan-knop om je instellingen op te slaan.",
+         "settings_saved" : "Instellingen opgeslagen",
+         "settings_noSettingsChanged" : "Er is niets gewijzigingd",
+         "settings_unexpectedError" : "Onverwachte fout opgetreden. Probeer nogmaals a.u.b."
+       }
     }
+  },
+
+  "app" : {
+    "speech" : {
+      "weatherDataNotAvailableYet" : "Sorry, weer gegevens nog niet opgehaald. Probeer het later nogmaals",
+      "weatherDataNotAvailable" : "Sorry, weer gegevens niet beschikbaar. Probeer het later nogmaals",
+      "somethingWrong" : "Sorry, er is iets mis gegaan. Probeer het later nogmaals",
+      "rainToday" : "Vandaag heeft het tot nu toe",
+      "rainHour" : "Het afgelopen uur heeft het"
+    },
+    "messages" : {
+      "error_stop_updateting" : "Automatisch bepalen van de locatie mislukt of geen geldige locatie ingevoerd. Weer wordt niet meer bijgewerkt!",
+      "error_unable_getEnvironmentKey" : "Niet gelukt om Inversion key op te halen uit Homey!",
+      "error_appWarning" : "Wunderground wordt gestopt omdat: ",
+      "error_deletingInsightsLog": "Fout bij het verwijderen van Inzichten log: "
+    }
+  },
+
+  "weather" : {
+    "city": "Stad",
+    "country": "Land",
+    "weather_descr" : "Beschrijving",
+    "relative_humidity" : "Vochtigheid",
+    "observation_epoch": "Observatie tijd",
+    "wind_degrees" : "Windrichting (graden)",
+    "wind_dir" : "Windrichting",
+    "uv" : "UV",
+    "temp": "Temp",
+    "feelslike": "Voelt als",
+    "dewpoint" : "Dauwpunt",
+    "pressure": "Luchtdruk",
+    "wind": "Wind",
+    "wind_gust": "Windstoten",
+    "visibility": "Zicht",
+    "precip_1hr": "Regen (1 uur)",
+    "precip_today": "Regen (vandaag)"
+  }
 }

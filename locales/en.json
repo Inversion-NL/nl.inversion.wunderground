@@ -1,70 +1,90 @@
 {
-    "settings" : {
-        "app" : {
-            "title" : "Weather Underground settings",
-            
-            "wunderground" : {
-                "wunderground_title" : "Weather Underground settings",
-                "key" : "Personal key",
-                "update_frequency" : "Update every (min)",
-                "updateFrequency_explanation" : "When no personal Weather Underground API key is specified, the update frequency is 90 minutes minimal."
-            },
-            
-            "generic" : {
-                "units_title" : "Generic",
-                "units_auto" : "Automatic",
-                "units_label" : "Units",
-                "units_metric" : "Metric",
-                "units_imperial" : "Imperial",
-                "unitChange_explanation": "If the units are changed, all current Insights logs will be deleted!",
-                "notifications_label" : "Notifications",
-                "notifications_text" : "Send notifications to notification center when error occur",
-                "user_id_text" : "Unique user ID",
-                "user_id_explanation" : "This ID can be used by the developer for anonymous bug tracking for this app"
-            },
-            
-            "location" : {
-                "location" : "Location",
-                "autolocation" : "Use Homey's location",
-                "manualLocation_label" : "Manual location",
-                "manualLocation_explanation" : "Use the fields below to specify an location for the weather data.",
-                "city" : "City (or empty when using station ID)",
-                "country" : "Country (or station ID)"
-            },
-            
-            "button" : {
-                "save" : "Save",
-                "test" : "Test"
-            },
-            
-             "log" : {
-                "title" : "Test log:"
-            },
-            
-             "messages" : {
-                 "testing" : "Testing, please wait...",
-                 "unable_get_location" : "Unable to get Homey's location, please try again or specify a location manually.",
-                 "settings_success_tested" : "Settings successfully tested. Please use the save button to save your settings",
-                 "settings_saved" : "Settings saved",
-                 "settings_noSettingsChanged" : "No setting has been changed",
-                 "settings_unexpectedError" : "Unexpected error occurred. Please try again"
-             }
-        }
-    },
-
+  "settings" : {
     "app" : {
-        "speech" : {
-            "weatherDataNotAvailableYet" : "I'm sorry, weather data isn't available yet. Please try again later",
-            "weatherDataNotAvailable" : "I'm sorry, weather data isn't available. Please try again later",
-            "somethingWrong" : "I'm sorry, something went wrong. Please try again later",
-            "rainToday" : "Today it has been raining",
-            "rainHour" : "The past hour it has rained"
-        },
-        "messages" : {
-            "error_stop_updating" : "Max location detection attempts reached and one or all of the country/city fields are empty. Stopped updating weather!",
-            "error_unable_getEnvironmentKey" : "Unable to get Inversion key from environment!",
-            "error_appWarning" : "Wunderground is being killed because: ",
-            "error_deletingInsightsLog": "Error while deleting Insights log: "
-        }
+      "title" : "Weather Underground settings",
+      
+      "wunderground" : {
+        "wunderground_title" : "Weather Underground settings",
+        "key" : "Personal key",
+        "update_frequency" : "Update every (min)",
+        "updateFrequency_explanation" : "When no personal Weather Underground API key is specified, the update frequency is 90 minutes minimal."
+      },
+      
+      "generic" : {
+        "units_title" : "Generic",
+        "units_auto" : "Automatic",
+        "units_label" : "Units",
+        "units_metric" : "Metric",
+        "units_imperial" : "Imperial",
+        "unitChange_explanation": "If the units are changed, all current Insights logs will be deleted!",
+        "notifications_label" : "Notifications",
+        "notifications_text" : "Send notifications to notification center when error occur",
+        "user_id_text" : "Unique user ID",
+        "user_id_explanation" : "This ID can be used by the developer for anonymous bug tracking for this app"
+      },
+      
+      "location" : {
+        "location" : "Location",
+        "autolocation" : "Use Homey's location",
+        "manualLocation_label" : "Manual location",
+        "manualLocation_explanation" : "Use the fields below to specify an location for the weather data.",
+        "city" : "City (or empty when using station ID)",
+        "country" : "Country (or station ID)"
+      },
+      
+      "button" : {
+        "save" : "Save",
+        "test" : "Test"
+      },
+      
+       "log" : {
+        "title" : "Test log:"
+      },
+      
+       "messages" : {
+         "testing" : "Testing, please wait...",
+         "unable_get_location" : "Unable to get Homey's location, please try again or specify a location manually.",
+         "settings_success_tested" : "Settings successfully tested. Please use the save button to save your settings",
+         "settings_saved" : "Settings saved",
+         "settings_noSettingsChanged" : "No setting has been changed",
+         "settings_unexpectedError" : "Unexpected error occurred. Please try again"
+       }
     }
+  },
+
+  "app" : {
+    "speech" : {
+      "weatherDataNotAvailableYet" : "I'm sorry, weather data isn't available yet. Please try again later",
+      "weatherDataNotAvailable" : "I'm sorry, weather data isn't available. Please try again later",
+      "somethingWrong" : "I'm sorry, something went wrong. Please try again later",
+      "rainToday" : "Today it has been raining",
+      "rainHour" : "The past hour it has rained"
+    },
+    "messages" : {
+      "error_stop_updating" : "Max location detection attempts reached and one or all of the country/city fields are empty. Stopped updating weather!",
+      "error_unable_getEnvironmentKey" : "Unable to get Inversion key from environment!",
+      "error_appWarning" : "Wunderground is being killed because: ",
+      "error_deletingInsightsLog": "Error while deleting Insights log: "
+    }
+  },
+
+  "weather" : {
+    "city": "City",
+    "country": "Country",
+    "weather_descr" : "Description",
+    "relative_humidity" : "Humidity",
+    "observation_epoch": "Observation time",
+    "wind_degrees" : "Direction (degrees)",
+    "wind_dir" : "Direction",
+    "uv" : "UV",
+    "temp": "Temp",
+    "feelslike": "Feels like",
+    "dewpoint" : "Dewpoint",
+    "pressure": "Pressure",
+    "wind": "Wind",
+    "wind_gust": "Wind gust",
+    "visibility": "Visibility",
+    "precip_1hr": "Precipitation (1hr)",
+    "precip_today": "Precipitation (today)"
+  }
 }
