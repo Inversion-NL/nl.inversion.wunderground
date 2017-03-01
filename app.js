@@ -1236,7 +1236,7 @@ function registerTriggerAndConditionListeners() {
 
             util.wuLog('forecast text ' + JSON.stringify(forecastText), severity.debug);
 
-            if (util.value_exist(forecastText)) Homey.manager('speech-output').say(forecastText);
+            if (util.value_exist(forecastText)) Homey.manager('speech-output').say(parseAbbreviations(forecastText));
             else {
                 util.wuLog('Read forecast but forecast data is empty: ' + JSON.stringify(forecastData), severity.error);
                 Homey.manager('speech-output').say(__("app.speech.somethingWrong"));
