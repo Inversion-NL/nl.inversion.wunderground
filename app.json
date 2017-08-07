@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/tmsns/homey-json-schema/master/schema.json",
-    "id": "nl.inversion.wunderground",
+    "id": "nl.inversion.wunderground2",
     "name": {
-        "en": "Weather Underground",
-        "nl": "Weather Underground"
+        "en": "Weather Underground2",
+        "nl": "Weather Underground2"
     },
 
     "description": {
@@ -33,6 +33,90 @@
     "dependencies": {
         "wundernode": "*"
     },
+
+    "capabilities": {
+      "wu_visibility": {
+        "type": "number",
+        "title": {
+          "en": "Visibility",
+          "nl": "Zicht"
+        },
+        "getable": true,
+        "setable": false,
+        "units": {
+          "en": "Km"
+        },
+        "min": 0,
+        "max": 20,
+        "step": 1
+      },
+      "wu_description": {
+        "type": "string",
+        "title": {
+          "en": "Description",
+          "nl": "Beschrijving"
+        },
+        "getable": true,
+        "setable": false
+      }
+    },
+
+    "drivers": [{
+        "id": "weather_card",
+        "name": {
+          "en": "Weather card",
+          "nl": "Weer kaart"
+        },
+        "images": {
+          "large": "drivers/weather_card/assets/images/large.png",
+          "small": "drivers/weather_card/assets/images/small.png"
+        },
+        "class": "sensor",
+        "capabilities": [
+          "measure_temperature",
+          "measure_humidity",
+          "measure_pressure",
+          "measure_wind_strength",
+          "measure_gust_strength",
+          "measure_wind_angle",
+          "measure_rain",
+          "measure_ultraviolet",
+          "wu_visibility",
+          "wu_description"
+        ],
+        "pair": [{
+          "id": "start"
+        }],
+      "mobile": {
+        "components": [
+          {
+            "id": "icon",
+            "capabilities": [ ]
+          },
+          {
+            "id": "sensor",
+            "capabilities": [
+              "measure_temperature",
+              "measure_humidity",
+              "measure_pressure",
+              "measure_wind_strength",
+              "measure_gust_strength",
+              "measure_wind_angle",
+              "measure_rain",
+              "measure_ultraviolet",
+              "wu_visibility",
+              "wu_description"
+            ],
+            "options": {
+              "icons": {
+                "wu_visibility": "./drivers/weather_card/assets/images/visibility.png",
+                "wu_description": "./drivers/weather_card/assets/images/description.png"
+              }
+            }
+          }
+        ]
+      }
+    }],
 
     "flow": {
 
@@ -793,7 +877,6 @@
           }
     ]
     },
-    
 
     "speech": [
     {

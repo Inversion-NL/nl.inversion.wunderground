@@ -1,4 +1,11 @@
 {
+  "pair": {
+      "start": {
+          "intro": "This will add a weather mobile card for the Weather Underground app",
+          "save": "Save"
+      }
+  },
+
   "settings" : {
     "app" : {
       "title" : "Weather Underground settings",
