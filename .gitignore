@@ -1,2 +1,5 @@
 # client id & secret
 env.json
+.idea/modules.xml
+.idea/nl.inversion.wunderground.iml
+.idea/workspace.xml
