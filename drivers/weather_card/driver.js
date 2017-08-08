@@ -9,7 +9,6 @@ var intervalId = {};
 // the `init` method is called when your driver is loaded for the first time
 module.exports.init = function( devices_data, callback ) {
   devices_data.forEach(initDevice);
-  //setInterval(monitor, 15000);
   callback(true, null);
 }
 
@@ -17,7 +16,7 @@ module.exports.init = function( devices_data, callback ) {
 module.exports.added = function( device_data, callback ) {
     initDevice( device_data );
 
-    Homey.log('Device added! * ' + device_data.id + ' *');
+    Homey.log('New device added:', device_data);
     callback( null, true );
 }
 
@@ -25,18 +24,17 @@ module.exports.added = function( device_data, callback ) {
 module.exports.deleted = function( device_data, callback ) {
     delete devices[ device_data.id ];
 
-    clearInterval(intervalId[device_data.id]);
-    delete intervalId[device_data.id];
-    Homey.log('Device deleted');
+    Homey.log('Deleting device', device_data);
     callback( null, true );
 }
 
 // the `pair` method is called when a user start pairing
 module.exports.pair = function( socket ) {
-    socket.on('pair', function( device, callback ){
     Homey.log('Pair');
-    callback(null, result);
- })
+    socket.on('pair', function( device, callback ){
+        Homey.log('Pair2');
+        callback(null, 'success');
+    })
 }
 
 // these are the methods that respond to get/set calls from Homey
@@ -48,6 +46,17 @@ module.exports.capabilities = {
         // `device_data` is the object as saved during pairing
         // `callback` should return the current value in the format callback( err, value )
         get: function( device_data, callback ){
+
+            Homey.log('Get temperature');
+            Homey.api('POST', '/get/weather/', {
+            }, function(err, result) {
+                if (!err) {
+                    Homey.log('No error, weather data:', result);
+                } else {
+                    Homey.log('Error!', err);
+                }
+
+            });
 
             // get the bulb with a locally defined function
             var device = getDeviceByData( device_data );
@@ -138,4 +147,11 @@ function getDeviceByData( device_data ) {
     } else {
         return device;
     }
+}
+
+// a helper method to add a device to the devices list
+function initDevice( device_data, newSettingsObj, callback) {
+    devices[device_data.id] = {};
+    devices[device_data.id].data = device_data;
+    console.log('Added device to devices list:', device_data);
 }

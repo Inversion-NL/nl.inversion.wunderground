@@ -1,15 +1,14 @@
-<script>
+<script type="text/javascript">
   function addDevice() {
-	  Homey.addDevice({
-		name: 'weather_card'
+	Homey.addDevice({
+	    name: 'Weather'
+    })
+    Homey.done();
   }
 </script>
 
-<fieldset>
-  <legend>Weather card</legend>
-  <p data-i18n="pair.start.intro">intro</p>
+<b>Weather card</b><br>
+<p data-i18n="pair.start.intro">intro</p>
 
-  <br></br>
-  <button onClick="addDevice()" data-i18n="pair.start.save">Save</button>
-
-</fieldset>
+<br>
+<button class="button" id="authentication_button" onclick="addDevice();" data-i18n="pair.start.save" />
