@@ -1489,6 +1489,16 @@ function testResponse(err, result){
     }
 }
 
+function getWeatherData() {
+    Homey.log('Get weather data export called')
+    Homey.log('Weather data', weatherData);
+    if (util.value_exist(weatherData)) {
+        return weatherData;
+    }
+    else return null;
+}
+
 module.exports = self;
 module.exports.testWU = testWU;
 module.exports.getlocation = self.getLocation;
+module.exports.getWeatherData = getWeatherData;

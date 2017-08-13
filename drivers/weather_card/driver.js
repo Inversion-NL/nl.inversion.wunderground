@@ -37,6 +37,28 @@ module.exports.pair = function( socket ) {
     })
 }
 
+/*
+                weatherData = {
+                    city: weather.testWeatherData(response.current_observation.display_location.city),
+                    country: weather.testWeatherData(response.current_observation.display_location.country),
+                    weather_descr: weather.testWeatherData(response.current_observation.weather),
+                    relative_humidity: hum_float,
+                    observation_epoch: weather.testWeatherData(response.current_observation.observation_epoch),
+                    wind_degrees: weather.parseWeatherFloat((weather.testWeatherData(response.current_observation.wind_degrees))),
+                    wind_dir: weather.testWeatherData(response.current_observation.wind_dir),
+                    uv: uv,
+                    temp: temp,
+                    feelslike: feelslike,
+                    dewpoint: dewpoint,
+                    pressure: pressure,
+                    wind: wind,
+                    wind_gust: wind_gust,
+                    visibility: visibility,
+                    precip_1hr: precip_1hr,
+                    precip_today: precip_today
+                };
+*/
+
 // these are the methods that respond to get/set calls from Homey
 // for example when a user pressed a button
 module.exports.capabilities = {
@@ -47,94 +69,72 @@ module.exports.capabilities = {
         // `callback` should return the current value in the format callback( err, value )
         get: function( device_data, callback ){
 
-            Homey.log('Get temperature');
-            Homey.api('POST', '/get/weather/', {
-            }, function(err, result) {
-                if (!err) {
-                    Homey.log('No error, weather data:', result);
-                } else {
-                    Homey.log('Error!', err);
-                }
-
-            });
-
-            // get the bulb with a locally defined function
-            var device = getDeviceByData( device_data );
-            if( device instanceof Error ) return callback( device );
-
-            return callback( null, device.LastUsage );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.temp );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
         }
     },
     measure_humidity: {
         get: function( device_data, callback ){
-        var device = getDeviceByData( device_data );
-        if( device instanceof Error ) return callback( device );
-
-        return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.relative_humidity );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
         }
     },
     measure_pressure: {
         get: function( device_data, callback ){
-        var device = getDeviceByData( device_data );
-        if( device instanceof Error ) return callback( device );
-
-        return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.pressure );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
         }
     },
     measure_wind_strength: {
         get: function( device_data, callback ){
-         var device = getDeviceByData( device_data );
-         if( device instanceof Error ) return callback( device );
-
-         return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.wind );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
         }
     },
     measure_gust_strength: {
          get: function( device_data, callback ){
-          var device = getDeviceByData( device_data );
-          if( device instanceof Error ) return callback( device );
-
-          return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.wind_gust );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
          }
     },
     measure_wind_angle: {
       get: function( device_data, callback ){
-       var device = getDeviceByData( device_data );
-       if( device instanceof Error ) return callback( device );
-
-       return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.wind_degrees );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
       }
     },
     measure_rain: {
         get: function( device_data, callback ){
-        var device = getDeviceByData( device_data );
-        if( device instanceof Error ) return callback( device );
-
-        return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.precip_today );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
         }
     },
     measure_ultraviolet: {
         get: function( device_data, callback ){
-        var device = getDeviceByData( device_data );
-        if( device instanceof Error ) return callback( device );
-
-        return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.uv );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
         }
     },
     wu_visibility: {
      get: function( device_data, callback ){
-     var device = getDeviceByData( device_data );
-     if( device instanceof Error ) return callback( device );
-
-     return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.visibility );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
      }
     },
     wu_description: {
      get: function( device_data, callback ){
-     var device = getDeviceByData( device_data );
-     if( device instanceof Error ) return callback( device );
-
-     return callback( null, device.totalKWH );
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.weather_descr );
+            else Homey.log('Weather data is null'); return callback ('weather data is null');
      }
     }
 }
