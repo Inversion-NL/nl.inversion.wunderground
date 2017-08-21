@@ -1,4 +1,12 @@
 {
+  "pair": {
+    "start": {
+      "intro": "Dit zal een weer gegevens kaart toevoegen voor de Weather Underground app.",
+      "intro2": "Er is verder geen configuratie vereist. Druk op de opslaan knop om verder te gaan.",
+      "save": "Opslaan"
+    }
+  },
+
   "settings" : {
     "app" : {
       "title" : "Weather Underground instellingen",

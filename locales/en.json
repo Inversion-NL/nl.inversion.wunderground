@@ -2,6 +2,7 @@
   "pair": {
       "start": {
           "intro": "This will add a weather mobile card for the Weather Underground app",
+          "intro2": "There is no further configuration required. Please click save to continue.",
           "save": "Save"
       }
   },

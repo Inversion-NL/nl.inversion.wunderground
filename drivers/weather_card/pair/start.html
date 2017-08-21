@@ -1,7 +1,13 @@
 <script type="text/javascript">
   function addDevice() {
 	Homey.addDevice({
-	    name: 'Weather'
+	    name: 'Weather',
+	    data: {
+	        id: Math.floor((Math.random() * 1000) + 1)
+	    },
+	    settings: {
+	        name: 'Weather'
+        }
     })
     Homey.done();
   }
@@ -9,6 +15,7 @@
 
 <b>Weather card</b><br>
 <p data-i18n="pair.start.intro">intro</p>
+<p data-i18n="pair.start.intro2">intro</p>
 
 <br>
 <button class="button" id="authentication_button" onclick="addDevice();" data-i18n="pair.start.save" />

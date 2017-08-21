@@ -3,13 +3,14 @@ var request = require('request');
 // a list of devices, with their 'id' as key
 // it is generally advisable to keep a list of
 // paired and active devices in your driver's memory.
-var devices = {};
+var devices = [];
 var intervalId = {};
 
 // the `init` method is called when your driver is loaded for the first time
 module.exports.init = function( devices_data, callback ) {
-  devices_data.forEach(initDevice);
-  callback(true, null);
+    console.log('Device init:', devices_data);
+    devices_data.forEach(initDevice);
+    callback(true, null);
 }
 
 // the `added` method is called is when pairing is done and a device has been added
@@ -26,15 +27,6 @@ module.exports.deleted = function( device_data, callback ) {
 
     Homey.log('Deleting device', device_data);
     callback( null, true );
-}
-
-// the `pair` method is called when a user start pairing
-module.exports.pair = function( socket ) {
-    Homey.log('Pair');
-    socket.on('pair', function( device, callback ){
-        Homey.log('Pair2');
-        callback(null, 'success');
-    })
 }
 
 /*
@@ -139,6 +131,24 @@ module.exports.capabilities = {
     }
 }
 
+module.exports.updateMobileCardData = function(weatherData) {
+    Homey.log('Weather data', weatherData);
+
+    devices.forEach(function(device_data) {
+        Homey.log('Device', device_data);
+        module.exports.realtime(device_data.data, 'measure_temperature', weatherData.temp);
+        module.exports.realtime(device_data.data, 'measure_humidity', weatherData.relative_humidity);
+        module.exports.realtime(device_data.data, 'measure_pressure', weatherData.pressure);
+        module.exports.realtime(device_data.data, 'measure_wind_strength', weatherData.wind);
+        module.exports.realtime(device_data.data, 'measure_gust_strength', weatherData.wind_gust);
+        module.exports.realtime(device_data.data, 'measure_wind_angle', weatherData.wind_degrees);
+        module.exports.realtime(device_data.data, 'measure_rain', weatherData.precip_today);
+        module.exports.realtime(device_data.data, 'measure_ultraviolet', weatherData.uv);
+        module.exports.realtime(device_data.data, 'wu_visibility', weatherData.visibility);
+        module.exports.realtime(device_data.data, 'wu_description', weatherData.weather_descr);
+    });
+}
+
 // a helper method to get a device from the devices list by it's device_data object
 function getDeviceByData( device_data ) {
     var device = devices[ device_data.id ];
@@ -153,5 +163,4 @@ function getDeviceByData( device_data ) {
 function initDevice( device_data, newSettingsObj, callback) {
     devices[device_data.id] = {};
     devices[device_data.id].data = device_data;
-    console.log('Added device to devices list:', device_data);
 }

@@ -499,6 +499,9 @@ var self = {
 
                 util.updateGlobalTokens(weatherData);
 
+                // Update data on mobile device cards
+                Homey.manager('drivers').getDriver('weather_card').updateMobileCardData(weatherData);
+
                 util.wuLog("Current time: " + new Date(), severity.debug);
                 util.wuLog("Observation time: " + util.epochToString(weatherData.observation_epoch), severity.debug);
                 if (fullLogging) util.wuLog("Weather data: " + JSON.stringify(weatherData), severity.debug);
@@ -1490,8 +1493,6 @@ function testResponse(err, result){
 }
 
 function getWeatherData() {
-    Homey.log('Get weather data export called')
-    Homey.log('Weather data', weatherData);
     if (util.value_exist(weatherData)) {
         return weatherData;
     }
