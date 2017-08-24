@@ -408,7 +408,10 @@ var self = {
             var error = testResponse(err, response);
 
             if (response && !error && response.forecast && response.forecast.txt_forecast) {
+                util.wuLog('Forecast data', severity.debug);
+                util.wuLog(JSON.stringify(response.forecast), severity.debug);
                 forecastData = response.forecast.txt_forecast.forecastday;
+                util.updateGlobalForecastTokens(forecastData);
             } else {
                 var message;
                 if (error == true) message = 'Error while receiving weather forecast: ' + JSON.stringify(response);

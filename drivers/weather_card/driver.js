@@ -1,8 +1,7 @@
 "use strict";
-var request = require('request');
-// a list of devices, with their 'id' as key
-// it is generally advisable to keep a list of
-// paired and active devices in your driver's memory.
+const util = require('../../lib/util.js');
+
+const severity = util.severity;
 var devices = [];
 var intervalId = {};
 
@@ -17,7 +16,7 @@ module.exports.init = function( devices_data, callback ) {
 module.exports.added = function( device_data, callback ) {
     initDevice( device_data );
 
-    Homey.log('New device added:', device_data);
+    util.wuLog('New device added:' + JSON.stringify(device_data), severity.debug);
     callback( null, true );
 }
 
@@ -25,7 +24,7 @@ module.exports.added = function( device_data, callback ) {
 module.exports.deleted = function( device_data, callback ) {
     delete devices[ device_data.id ];
 
-    Homey.log('Deleting device', device_data);
+    util.wuLog('Deleting device' + JSON.stringify(device_data), severity.debug);
     callback( null, true );
 }
 
@@ -63,79 +62,77 @@ module.exports.capabilities = {
 
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.temp );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
         }
     },
     measure_humidity: {
         get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.relative_humidity );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
         }
     },
     measure_pressure: {
         get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.pressure );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
         }
     },
     measure_wind_strength: {
         get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.wind );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
         }
     },
     measure_gust_strength: {
          get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.wind_gust );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
          }
     },
     measure_wind_angle: {
       get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.wind_degrees );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
       }
     },
     measure_rain: {
         get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.precip_today );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
         }
     },
     measure_ultraviolet: {
         get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.uv );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
         }
     },
     wu_visibility: {
      get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.visibility );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
      }
     },
     wu_description: {
      get: function( device_data, callback ){
             var weatherData = Homey.app.getWeatherData();
             if (weatherData != null) return callback( null, weatherData.weather_descr );
-            else Homey.log('Weather data is null'); return callback ('weather data is null');
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
      }
     }
 }
 
 module.exports.updateMobileCardData = function(weatherData) {
-    Homey.log('Weather data', weatherData);
-
     devices.forEach(function(device_data) {
-        Homey.log('Device', device_data);
+        util.wuLog('Device' + JSON.stringify(device_data), severity.debug);
         module.exports.realtime(device_data.data, 'measure_temperature', weatherData.temp);
         module.exports.realtime(device_data.data, 'measure_humidity', weatherData.relative_humidity);
         module.exports.realtime(device_data.data, 'measure_pressure', weatherData.pressure);
