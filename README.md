@@ -83,6 +83,8 @@ If you don't have a key the app uses my key and will update every 90 minutes.
 
 
 #Changes
+* Version 1.0.2
+ * Add mobile card
 * Version 1.0.1
   * Add abbreviations to speech (thanks to J. Haanstra)
 * Version 1.0.0
