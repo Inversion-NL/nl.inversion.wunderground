@@ -4,7 +4,8 @@
       "intro": "Dit zal een weer gegevens kaart toevoegen voor de Weather Underground app.",
       "intro2": "De gegevens zullen automatisch verschijnen bij de volgende weer update",
       "intro3": "Er is verder geen configuratie vereist. Druk op de opslaan knop om verder te gaan.",
-      "save": "Opslaan"
+      "save": "Opslaan",
+      "weather": "Weer"
     }
   },
 

@@ -1,12 +1,12 @@
 <script type="text/javascript">
   function addDevice() {
 	Homey.addDevice({
-	    name: 'Weather',
+	    name: __("pair.start.weather"),
 	    data: {
 	        id: Math.floor((Math.random() * 1000) + 1)
 	    },
 	    settings: {
-	        name: 'Weather'
+	        name: __("pair.start.weather")
         }
     })
     Homey.done();

@@ -7,7 +7,7 @@ var intervalId = {};
 
 // the `init` method is called when your driver is loaded for the first time
 module.exports.init = function( devices_data, callback ) {
-    console.log('Device init:', devices_data);
+    util.wuLog('Device init:' + JSON.stringify(devices_data), severity.debug);
     devices_data.forEach(initDevice);
     callback(true, null);
 }
