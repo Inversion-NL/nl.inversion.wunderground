@@ -1,5 +1,4 @@
 {
-  "$schema": "https://raw.githubusercontent.com/tmsns/homey-json-schema/master/schema.json",
     "id": "nl.inversion.wunderground",
     "name": {
         "en": "Weather Underground",
@@ -11,12 +10,40 @@
         "nl": "Geeft informatie over het weer"
     },
 
-    "version": "1.0.2",
+    "version": "1.0.3",
     "compatibility": ">=1.1.2",
     "category": "internet",
+
     "author": {
         "name": "Inversion NL",
         "email": "inversion-nl@gmail.com"
+    },
+
+    "contributors": {
+      "developers": [
+        {
+          "name": "Robin van Kekem",
+          "email": "nl.inversion@gmail.com"
+        },
+        {
+          "name": "Edwin Woudt",
+          "email": "mail@mail.com"
+        }
+      ]
+    },
+
+    "athomForumDiscussionId": 1414,
+
+    "contributing": {
+      "donate": {
+        "paypal": {
+          "username": "RvanKekem"
+        }
+      }
+    },
+
+    "bugs": {
+      "url": "https://github.com/Inversion-NL/nl.inversion.wunderground/issues"
     },
 
     "permissions": [
@@ -168,7 +195,8 @@
 
     "flow": {
 
-        "triggers": [
+        "triggers": 
+        [
           {
             "id": "temp_changed",
             "title": {
@@ -994,80 +1022,80 @@
     },
 
     "speech": [
-    {
-      "id": "weather_tomorrow",
-      "importance": 0.7,
-      "triggers": {
-        "en": [
-          "weather tomorrow",
-          "weather for tomorrow"
-        ],
-        "nl": [
-          "weer morgen",
-          "weer voor morgen"
-        ]
-      }
-    },
+      {
+        "id": "weather_tomorrow",
+        "importance": 0.7,
+        "triggers": {
+          "en": [
+            "weather tomorrow",
+            "weather for tomorrow"
+          ],
+          "nl": [
+            "weer morgen",
+            "weer voor morgen"
+          ]
+        }
+      },
 
-    {
-      "id": "weather_dayAfterTomorrow",
-      "importance": 0.7,
-      "triggers": {
-        "en": [
-          "weather day after tomorrow",
-          "weather for the day after tomorrow"
-        ],
-        "nl": [
-          "weer overmorgen",
-          "weer voor overmorgen"
-        ]
-      }
-    },
+      {
+        "id": "weather_dayAfterTomorrow",
+        "importance": 0.7,
+        "triggers": {
+          "en": [
+            "weather day after tomorrow",
+            "weather for the day after tomorrow"
+          ],
+          "nl": [
+            "weer overmorgen",
+            "weer voor overmorgen"
+          ]
+        }
+      },
 
-    {
-      "id": "weather_today",
-      "importance": 0.7,
-      "triggers": {
-        "en": [
-          "weather today",
-          "weather for today"
-        ],
-        "nl": [
-          "weer vandaag",
-          "weer voor vandaag"
-        ]
-      }
-    },
+      {
+        "id": "weather_today",
+        "importance": 0.7,
+        "triggers": {
+          "en": [
+            "weather today",
+            "weather for today"
+          ],
+          "nl": [
+            "weer vandaag",
+            "weer voor vandaag"
+          ]
+        }
+      },
 
-    {
-      "id": "rain_today",
-      "importance": 0.7,
-      "triggers": {
-        "en": [
-          "rainfall today",
-          "rain is fallen today"
-        ],
-        "nl": [
-          "regen is er vandaag gevallen",
-          "regen vandaag",
-          "regen valt er vandaag"
-        ]
-      }
-    },
+      {
+        "id": "rain_today",
+        "importance": 0.7,
+        "triggers": {
+          "en": [
+            "rainfall today",
+            "rain is fallen today"
+          ],
+          "nl": [
+            "regen is er vandaag gevallen",
+            "regen vandaag",
+            "regen valt er vandaag"
+          ]
+        }
+      },
 
-    {
-      "id": "rain_hour",
-      "importance": 0.7,
-      "triggers": {
-        "en": [
-          "rainfall this hour",
-          "rain has fallen this hour"
-        ],
-        "nl": [
-          "regen is er dit uur gevallen",
-          "regen dit uur"
-        ]
+      {
+        "id": "rain_hour",
+        "importance": 0.7,
+        "triggers": {
+          "en": [
+            "rainfall this hour",
+            "rain has fallen this hour"
+          ],
+          "nl": [
+            "regen is er dit uur gevallen",
+            "regen dit uur"
+          ]
+        }
       }
-    }
-  ]
+    ]
 }

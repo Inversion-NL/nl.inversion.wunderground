@@ -76,13 +76,14 @@ If you don't have a key the app uses my key and will update every 90 minutes.
 
 #Future functions
 * Trigger/condition on current weather condition (Cloudy, Raining etc)
-* Trigger on weather alerts
 * Average/high/low temperature on this date
 * Triggers and conditions for precipitation 1hr/today
 * Much more!
 
 
 #Changes
+* Version 1.0.3
+ * Add weather alert (Thanks to woudt!)
 * Version 1.0.2
  * Add mobile card
 * Version 1.0.1
