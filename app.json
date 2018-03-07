@@ -58,6 +58,15 @@
         },
         "getable": true,
         "setable": false
+      },
+      "wu_alert_description": {
+        "type": "string",
+        "title": {
+          "en": "Alert level",
+          "nl": "Alarm niveau"
+        },
+        "getable": true,
+        "setable": false
       }
     },
 
@@ -82,7 +91,8 @@
           "measure_rain",
           "measure_ultraviolet",
           "wu_visibility",
-          "wu_description"
+          "wu_description",
+          "wu_alert_description"
         ],
         "pair": [{
           "id": "start"
@@ -105,12 +115,14 @@
               "measure_rain",
               "measure_ultraviolet",
               "wu_visibility",
-              "wu_description"
+              "wu_description",
+              "wu_alert_description"
             ],
             "options": {
               "icons": {
                 "wu_visibility": "./drivers/weather_card/assets/images/visibility.png",
-                "wu_description": "./drivers/weather_card/assets/images/description.png"
+                "wu_description": "./drivers/weather_card/assets/images/description.png",
+                "wu_alert_description": "./drivers/weather_card/assets/images/description.png"
               }
             }
           }
@@ -121,53 +133,22 @@
     "flow": {
 
         "triggers": [
-            {
-              "id": "temp_changed",
-              "title": {
-                  "en": "Temperature has changed",
-                  "nl": "Temperatuur is veranderd"
-              },
-              "tokens": [
-                {
-                  "name": "temp",
-                  "type": "number",
-                  "title": {
-                      "en": "temp",
-                      "nl": "temp"
-                  },
-                  "example": 5
-                },
-                {
-                  "name": "hum",
-                  "type": "number",
-                  "title": {
-                    "en": "hum",
-                    "nl": "vocht"
-                  },
-                  "example": 50
-                },
-                {
-                  "name": "weather_descr",
-                  "type": "string",
-                  "title": {
-                    "en": "weather",
-                    "nl": "weer"
-                  },
-                  "example": {
-                    "en": "Cloudy",
-                    "nl": "Bewolkt"
-                  }
-                }
-              ]
-          },
-
           {
-            "id": "hum_changed",
+            "id": "temp_changed",
             "title": {
-              "en": "Humidity has changed",
-              "nl": "Luchtvochtigheid is veranderd"
+                "en": "Temperature has changed",
+                "nl": "Temperatuur is veranderd"
             },
             "tokens": [
+              {
+                "name": "temp",
+                "type": "number",
+                "title": {
+                    "en": "temp",
+                    "nl": "temp"
+                },
+                "example": 5
+              },
               {
                 "name": "hum",
                 "type": "number",
@@ -176,15 +157,6 @@
                   "nl": "vocht"
                 },
                 "example": 50
-              },
-              {
-                "name": "temp",
-                "type": "number",
-                "title": {
-                  "en": "temp",
-                  "nl": "temp"
-                },
-                "example": 5
               },
               {
                 "name": "weather_descr",
@@ -199,9 +171,71 @@
                 }
               }
             ]
-          },
+        },
 
-          {
+        {
+          "id": "hum_changed",
+          "title": {
+            "en": "Humidity has changed",
+            "nl": "Luchtvochtigheid is veranderd"
+          },
+          "tokens": [
+            {
+              "name": "hum",
+              "type": "number",
+              "title": {
+                "en": "hum",
+                "nl": "vocht"
+              },
+              "example": 50
+            },
+            {
+              "name": "temp",
+              "type": "number",
+              "title": {
+                "en": "temp",
+                "nl": "temp"
+              },
+              "example": 5
+            },
+            {
+              "name": "weather_descr",
+              "type": "string",
+              "title": {
+                "en": "weather",
+                "nl": "weer"
+              },
+              "example": {
+                "en": "Cloudy",
+                "nl": "Bewolkt"
+              }
+            }
+          ]
+        },
+
+        {
+          "id": "alert_changed",
+          "title": {
+            "en": "Alert level has changed",
+            "nl": "Alarm niveau is veranderd"
+          },
+          "tokens": [
+            {
+              "name": "level",
+              "type": "string",
+              "title": {
+                "en": "level",
+                "nl": "niveau"
+              },
+              "example": {
+                "en": "Orange",
+                "nl": "Oranje"
+              }
+            }
+          ]
+        },
+
+      {
             "id": "temp_above",
             "title": {
               "en": "Temperature is above",
@@ -694,6 +728,51 @@
                   "en": "Percentage",
                   "nl": "Percentage"
                 }
+              }
+            ]
+          },
+          
+          {
+            "id": "alert_equal",
+            "title": {
+              "en": "Alert level !{{is|isn't}} equal to",
+              "nl": "Alarm niveau !{{is|is niet}} gelijk aan"
+            },
+            "args":
+            [
+              {
+                "name": "variable",
+                "type": "dropdown",
+                "values": [
+                  {
+                    "id": "Green",
+                    "label": {
+                        "en": "Green",
+                        "nl": "Groen"
+                    }
+                  },
+                  {
+                    "id": "Yellow",
+                    "label": {
+                        "en": "Yellow",
+                        "nl": "Geel"
+                    }
+                  },
+                  {
+                    "id": "Orange",
+                    "label": {
+                        "en": "Orange",
+                        "nl": "Oranje"
+                    }
+                  },
+                  {
+                    "id": "Red",
+                    "label": {
+                        "en": "Red",
+                        "nl": "Rood"
+                    }
+                  }
+                ]
               }
             ]
           },

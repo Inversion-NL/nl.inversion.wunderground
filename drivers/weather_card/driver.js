@@ -127,6 +127,13 @@ module.exports.capabilities = {
             if (weatherData != null) return callback( null, weatherData.weather_descr );
             else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
      }
+    },
+    wu_alert_description: {
+     get: function( device_data, callback ){
+            var weatherData = Homey.app.getWeatherData();
+            if (weatherData != null) return callback( null, weatherData.alert_description );
+            else util.wuLog('Weather data is null', severity.debug); return callback ('weather data is null');
+     }
     }
 }
 
@@ -143,6 +150,7 @@ module.exports.updateMobileCardData = function(weatherData) {
         module.exports.realtime(device_data.data, 'measure_ultraviolet', weatherData.uv);
         module.exports.realtime(device_data.data, 'wu_visibility', weatherData.visibility);
         module.exports.realtime(device_data.data, 'wu_description', weatherData.weather_descr);
+        module.exports.realtime(device_data.data, 'wu_alert_description', weatherData.alert_description);
     });
 }
 

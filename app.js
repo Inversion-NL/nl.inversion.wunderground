@@ -23,11 +23,13 @@ const insightsLogs = [
         "precip_today",
         "precip_1hr",
         "uv",
-        "visibility"
+        "visibility",
+        "alert_level"
     ];
 const severity = util.severity;
 
 var units_metric;
+var language;
 var weatherInterval;
 var forecastInterval;
 var update_frequency = defaultUpdateTime;
@@ -43,6 +45,7 @@ var useErrorNotifications;
 // Variables for when value has changed
 var oldTemp;
 var oldHum;
+var oldAlert;
 
 var self = {
     // this `init` function will be run when Homey is done loading
@@ -294,7 +297,7 @@ var self = {
             //wunderground = null;
         }
 
-        var language = Homey.manager('i18n').getLanguage();
+        language = Homey.manager('i18n').getLanguage();
         if (!util.value_exist(language)) language = 'EN';
         util.wuLog('Setting language to ' + JSON.stringify(language), severity.debug);
         wunderground = new Wunderground(key, language);
@@ -434,12 +437,54 @@ var self = {
         }
 
         // Get weather data
-        wunderground.conditions().request(address, function(err, response) {
+        wunderground.conditions().alerts().request(address, function(err, response) {
 
             var error = testResponse(err, response);
 
             if (response && !error && util.value_exist(response.current_observation)) {
 
+                util.wuLog('Condition data', severity.debug);
+                util.wuLog(JSON.stringify(response), severity.debug);
+
+                var alert_level = 0;
+                var alert_description;
+                var alert_description_en = "Unknown";
+                var alert_description_nl = "Onbekend";
+                if (util.value_exist(response.alerts)) {
+                    for (var i = 0; i < response.alerts.length; i++) {
+                        var alert = response.alerts[i];
+                        var level = weather.parseWeatherInt(weather.testWeatherData(alert.level_meteoalarm));
+                        if (level > alert_level) {
+                            alert_level = level;
+                        }
+                    }
+                }
+                switch (alert_level) {
+                    case 0:
+                        alert_description_en = "Green";
+                        alert_description_nl = "Groen";
+                        break;
+                    case 1, 2:
+                        alert_description_en = "Yellow";
+                        alert_description_nl = "Geel";
+                        break;
+                    case 3:
+                        alert_description_en = "Orange";
+                        alert_description_nl = "Oranje";
+                        break;
+                    case 4:
+                        alert_description_en = "Red";
+                        alert_description_nl = "Rood";
+                        break;
+                }
+                if (language === 'nl') {
+                    alert_description = alert_description_nl;
+                } else {
+                    alert_description = alert_description_en
+                }
+                util.wuLog(language, severity.debug);
+                util.wuLog(alert_description, severity.debug);
+                
                 var hum = weather.testWeatherData(response.current_observation.relative_humidity);
                 var hum_float = 0;
                 try {
@@ -497,7 +542,11 @@ var self = {
                     wind_gust: wind_gust,
                     visibility: visibility,
                     precip_1hr: precip_1hr,
-                    precip_today: precip_today
+                    precip_today: precip_today,
+                    alert_level: alert_level,
+                    alert_description: alert_description,
+                    alert_description_en: alert_description_en,
+                    alert_description_nl: alert_description_nl
                 };
 
                 util.updateGlobalTokens(weatherData);
@@ -554,6 +603,24 @@ var self = {
                     util.wuLog("Humidity is undefined!", severity.debug)
                 }
 
+                // Alert triggers and conditions
+                if (util.value_exist(weatherData.alert_description_en)) {
+                    // Determine if the alert has changed
+                    if (!util.value_exist(oldAlert)){
+                        // First time update after reboot/install
+                        oldAlert = weatherData.alert_description_en;
+                        self.alertChanged(weatherData.alert_description);
+                    } else if (oldAlert !== weatherData.alert_description_en) {
+                        // Alert has changed from previous value
+                        if (fullLogging) util.wuLog("oldAlert: " + oldAlert + " alert: " + weatherData.alert_description_en, severity.debug);
+                        oldAlert = weatherData.alert_description_en;
+                        self.alertChanged(weatherData.alert_description);
+                    }
+                } else {
+                    // No alert data available!
+                    util.wuLog("Alert is undefined!", severity.debug)
+                }
+
                 // UV triggers and conditions
                 if (util.value_exist(weatherData.uv)) {
                     // Start trigger
@@ -594,7 +661,8 @@ var self = {
                 self.addInsightsEntry("precip_1hr", weatherData.precip_1hr);
                 self.addInsightsEntry("uv", weatherData.uv);
                 self.addInsightsEntry("visibility", weatherData.visibility);
-
+                self.addInsightsEntry("alert_level", weatherData.alert_level);
+                
             } else {
                 var message;
                 if (error == true) message = 'Error while receiving weather forecast: ' + JSON.stringify(response);
@@ -622,6 +690,13 @@ var self = {
                       'weather_descr': weather_descr};
         if (fullLogging) util.wuLog("Sending trigger hum_changed with tokens: " + JSON.stringify(tokens), severity.debug);
         Homey.manager('flow').trigger('hum_changed', tokens);
+    },
+
+    // Handler for temp status changes
+    alertChanged: function(level) {
+        var tokens = {'level': level};
+        if (fullLogging) util.wuLog("Sending trigger alert_changed with tokens: " + JSON.stringify(tokens), severity.debug);
+        Homey.manager('flow').trigger('alert_changed', tokens);
     },
 
     // Handler for temp above and below triggers
@@ -987,7 +1062,7 @@ var self = {
                     });
                 break;
 
-            case "visibility":
+                case "visibility":
                 Homey.manager('insights').createLog('visibility', {
                     label: {
                         en: 'Visibility',
@@ -1003,6 +1078,27 @@ var self = {
                     function callback(err){
                         if (err) {
                             util.wuLog("createLog visibility error", severity.error);
+                            return Homey.error(err);
+                        }
+                    });
+                break;
+
+                case "alert_level":
+                Homey.manager('insights').createLog('alert_level', {
+                    label: {
+                        en: 'Alert level',
+                        nl: 'Alarm niveau'
+                    },
+                    type: 'number',
+                    units: {
+                        en: "",
+                        nl: ""
+                    },
+                    decimals: 0
+                    },
+                    function callback(err){
+                        if (err) {
+                            util.wuLog("createLog alert_level error", severity.error);
                             return Homey.error(err);
                         }
                     });
@@ -1033,6 +1129,8 @@ function registerTriggerAndConditionListeners() {
     Homey.manager('flow').on('condition.hum_above', humAbove);
     Homey.manager('flow').on('trigger.hum_below', humBelow);
     Homey.manager('flow').on('condition.hum_below', humBelow);
+
+    Homey.manager('flow').on('condition.alert_equal', alertEqual);
 
     Homey.manager('flow').on('trigger.uv_above', uvAbove);
     Homey.manager('flow').on('condition.uv_above', uvAbove);
@@ -1068,6 +1166,14 @@ function registerTriggerAndConditionListeners() {
     function tempBelow(callback, args) {
         if (weatherData.temp < args.variable) {
             util.wuLog('Current temp of ' + weatherData.temp + ' is lower then trigger value of ' + args.variable, severity.debug);
+            callback(null, true);
+        }
+        else callback(null, false);
+    }
+
+    function alertEqual(callback, args) {
+        if (weatherData.alert_description_en === args.variable) {
+            util.wuLog('Current alert of ' + weatherData.alert_description_en + ' is equal to value of ' + args.variable, severity.debug);
             callback(null, true);
         }
         else callback(null, false);
