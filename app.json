@@ -1,0 +1,192 @@
+{
+  "id": "nl.inversion.wunderground-new",
+  "version": "2.0.0",
+  "compatibility": ">=1.1.2",
+  "sdk": 2,
+
+  "name": {
+    "en": "Weather Underground sdk2",
+    "nl": "Weather Underground sdk2"
+  },
+  
+  "description": {
+    "en": "Informs you about the weather sdk2",
+    "nl": "Geeft informatie over het weer sdk2"
+  },
+  
+  "category": [
+    "internet"
+  ],
+  
+  "permissions": [
+    "homey:manager:geolocation",
+    "homey:manager:speech-input",
+    "homey:manager:speech-output"
+  ],
+  
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  },
+  
+  "author": {
+    "name": "Inversion NL",
+    "email": "inversion-nl@gmail.com"
+  },
+
+  "athomForumDiscussionId": 1414,
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "RvanKekem"
+      }
+    }
+  },
+
+  "bugs": {
+    "url": "https://github.com/Inversion-NL/nl.inversion.wunderground/issues"
+    },
+  
+  "capabilities": {
+    "wu_visibility": {
+      "type": "number",
+      "title": {
+        "en": "Visibility",
+        "nl": "Zicht"
+      },
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "Km"
+      },
+      "min": 0,
+      "max": 20,
+      "step": 1
+    },
+    "wu_description": {
+      "type": "string",
+      "title": {
+        "en": "Description",
+        "nl": "Beschrijving"
+      },
+      "getable": true,
+      "setable": false
+    },
+    "wu_alert_description": {
+      "type": "string",
+      "title": {
+        "en": "Alert level",
+        "nl": "Alarm niveau"
+      },
+      "getable": true,
+      "setable": false
+    }
+  },
+  
+  "drivers": [{
+    "id": "weather_card",
+    "name": {
+      "en": "Weather card",
+      "nl": "Weer kaart"
+    },
+    "images": {
+      "large": "drivers/weather_card/assets/images/large.png",
+      "small": "drivers/weather_card/assets/images/small.png"
+    },
+    "class": "sensor",
+    "capabilities": [
+      "measure_temperature",
+      "measure_humidity",
+      "measure_pressure",
+      "measure_wind_strength",
+      "measure_gust_strength",
+      "measure_wind_angle",
+      "measure_rain",
+      "measure_ultraviolet",
+      "wu_visibility",
+      "wu_description",
+      "wu_alert_description"
+    ],
+    "capabilitiesOptions": {
+      "measure_temperature": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "measure_humidity": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "measure_pressure": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "measure_wind_strength": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "measure_gust_strength": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "measure_wind_angle": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "measure_rain": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "measure_ultraviolet": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "wu_visibility": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "wu_description": {
+        "preventInsights": true,
+        "preventTag": true
+      },
+      "wu_alert_description": {
+        "preventInsights": true,
+        "preventTag": true
+      }
+
+    },
+    "pair": [{
+      "id": "start"
+    }],
+    "mobile": {
+      "components": [
+        {
+          "id": "icon",
+          "capabilities": [ ]
+        },
+        {
+          "id": "sensor",
+          "capabilities": [
+            "measure_temperature",
+            "measure_humidity",
+            "measure_pressure",
+            "measure_wind_strength",
+            "measure_gust_strength",
+            "measure_wind_angle",
+            "measure_rain",
+            "measure_ultraviolet",
+            "wu_visibility",
+            "wu_description",
+            "wu_alert_description"
+          ],
+          "options": {
+            "icons": {
+              "wu_visibility": "./drivers/weather_card/assets/images/visibility.png",
+              "wu_description": "./drivers/weather_card/assets/images/description.png",
+              "wu_alert_description": "./drivers/weather_card/assets/images/alert.png"
+            }
+          }
+        }
+      ]
+    }
+  }]
+}

@@ -1,0 +1,35 @@
+{   
+    "pair": {
+        "start": {
+          "intro": "Dit zal een weer gegevens kaart toevoegen voor de Weather Underground app.",
+          "intro2": "De gegevens zullen automatisch verschijnen bij de volgende weer update",
+          "intro3": "Er is verder geen configuratie vereist. Druk op de opslaan knop om verder te gaan.",
+          "save": "Opslaan",
+          "weather": "Weer"
+        }
+      },
+    "weather" : {
+        "city": "Stad",
+        "country": "Land",
+        "weather_descr" : "Beschrijving",
+        "relative_humidity" : "Vochtigheid",
+        "observation_epoch": "Observatie tijd",
+        "wind_degrees" : "Windrichting (graden)",
+        "wind_dir" : "Windrichting",
+        "uv" : "UV",
+        "temp": "Temp",
+        "feelslike": "Voelt als",
+        "dewpoint" : "Dauwpunt",
+        "pressure": "Luchtdruk",
+        "wind": "Wind",
+        "wind_gust": "Windstoten",
+        "visibility": "Zicht",
+        "precip_1hr": "Regen (1 uur)",
+        "precip_today": "Regen (vandaag)",
+        "alert_description":"Alert niveau",
+        "alert_level_green": "Groen",
+        "alert_level_yellow": "Geel",
+        "alert_level_orange": "Oranje",
+        "alert_level_red": "Rood"
+    }
+}

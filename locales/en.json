@@ -1,0 +1,35 @@
+{
+    "pair": {
+        "start": {
+            "intro": "This will add a weather mobile card for the Weather Underground app",
+            "intro2": "After the next weather update, the data will appear in the mobile card.",
+            "intro3": "There is no further configuration required. Please click save to continue.",
+            "save": "Save",
+            "weather": "Weather"
+        }
+    },
+    "weather" : {
+        "city": "City",
+        "country": "Country",
+        "weather_descr" : "Description",
+        "relative_humidity" : "Humidity",
+        "observation_epoch": "Observation time",
+        "wind_degrees" : "Direction (degrees)",
+        "wind_dir" : "Direction",
+        "uv" : "UV",
+        "temp": "Temp",
+        "feelslike": "Feels like",
+        "dewpoint" : "Dewpoint",
+        "pressure": "Pressure",
+        "wind": "Wind",
+        "wind_gust": "Wind gust",
+        "visibility": "Visibility",
+        "precip_1hr": "Precipitation (1hr)",
+        "precip_today": "Precipitation (today)",
+        "alert_description":"Alert level",
+        "alert_level_green": "Green",
+        "alert_level_yellow": "Yellow",
+        "alert_level_orange": "Orange",
+        "alert_level_red": "Red"
+    }
+}
