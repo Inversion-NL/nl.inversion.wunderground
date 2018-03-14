@@ -94,11 +94,19 @@ class Wunderground extends Homey.App {
 
 			// Temperature triggers and conditions
 			if (util.value_exist(weatherData.temp)) {
-				
+
 			}
 		});
 	}
 	
 }
 
+function getWeatherData() {
+    if (util.value_exist(weatherData)) {
+        return weatherData;
+    }
+    else return null;
+}
+
 module.exports = Wunderground;
+module.exports.getWeatherData = getWeatherData;
